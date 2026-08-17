@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useRef, useState } from 'react';
 import { useAudit } from '../../context/AuditContext';
 import { SECTORS, DEPARTMENTS, SECTOR_DEPARTMENTS, STANDARDS } from '../../data';
@@ -31,6 +33,16 @@ export const AuditFormView: React.FC = () => {
 
   const sectorDeptKeys = SECTOR_DEPARTMENTS[currentSector] || [];
   const currentSectorObj = SECTORS.find(s => s.val === currentSector);
+
+  // Auto-reset department if switched to a sector where selectedDept is invalid
+  React.useEffect(() => {
+    if (selectedDept && !sectorDeptKeys.includes(selectedDept)) {
+      setSelectedDept('');
+      clearAuditSession();
+      signatureRef.current?.clear();
+      setHasSignature(false);
+    }
+  }, [currentSector, selectedDept, sectorDeptKeys, setSelectedDept, clearAuditSession]);
 
   const relevantStandards = STANDARDS.filter(
     std => std.sectors.includes(currentSector) && std.depts.includes(selectedDept)
@@ -91,7 +103,11 @@ export const AuditFormView: React.FC = () => {
 
   const handleFinalize = (e: React.FormEvent) => {
     e.preventDefault();
-    finalizeAuditSession(hasSignature);
+    const success = finalizeAuditSession(hasSignature);
+    if (success) {
+      signatureRef.current?.clear();
+      setHasSignature(false);
+    }
   };
 
   return (

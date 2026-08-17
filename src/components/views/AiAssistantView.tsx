@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useAudit } from '../../context/AuditContext';
 import { SECTOR_DEPARTMENTS, DEPARTMENTS } from '../../data';
@@ -10,6 +12,8 @@ export const AiAssistantView: React.FC = () => {
     complaint,
     setComplaint,
     analyzeComplaintAi,
+    escalateToCapa,
+    setActiveTab,
     dispatchWhatsApp,
     dispatchEmail,
     showToast,
@@ -362,6 +366,39 @@ export const AiAssistantView: React.FC = () => {
                       {complaint.output.capaPreventive}
                     </p>
                   </div>
+                </div>
+
+                {/* 1-Click Push to CAPA Tracker */}
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const deptName = DEPARTMENTS[complaint.dept]?.[isAr ? 'ar' : 'en'] || complaint.dept;
+                      const title = isAr
+                        ? `معالجة شكوى (${complaint.guestName || 'عميل'}) - قسم ${deptName}`
+                        : `Customer Incident Resolution (${complaint.guestName || 'Client'}) - ${deptName}`;
+
+                      escalateToCapa(
+                        'COMPLAINT',
+                        complaint.room || 'GUEST',
+                        title,
+                        deptName,
+                        complaint.output!.capaRootCause,
+                        complaint.output!.capaImmediate,
+                        complaint.output!.capaPreventive,
+                        'HIGH'
+                      );
+                      setActiveTab('capa');
+                    }}
+                    className="w-full py-3 rounded-2xl bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-700 hover:to-amber-700 text-white text-xs font-black shadow-md shadow-rose-500/20 transition-all flex items-center justify-center gap-2 active:scale-98"
+                  >
+                    <i className="fa-solid fa-arrows-spin"></i>
+                    <span>
+                      {isAr
+                        ? 'اعتماد وتصدير الخطة مباشرة إلى سجل CAPA Master Tracker'
+                        : 'Push & Escalate Plan Directly to CAPA Tracker'}
+                    </span>
+                  </button>
                 </div>
               </div>
             </div>

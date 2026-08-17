@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useAudit } from '../../context/AuditContext';
 import { SECTORS, DEPARTMENTS, SECTOR_DEPARTMENTS, STANDARDS } from '../../data';
@@ -46,12 +48,12 @@ export const PrintReportTemplate: React.FC = () => {
           </div>
         </div>
 
-        <div className="text-end text-xs space-y-0.5">
-          <div className="font-bold">
+        <div className="text-end text-xs space-y-0.5" suppressHydrationWarning>
+          <div className="font-bold" suppressHydrationWarning>
             {isAr ? 'التاريخ:' : 'Date:'} {clocks.gregorianDate}
           </div>
-          <div className="font-mono text-[11px] text-slate-600">{clocks.time}</div>
-          <div className="font-mono text-[10px] text-slate-500">REF #{Date.now()}</div>
+          <div className="font-mono text-[11px] text-slate-600" suppressHydrationWarning>{clocks.time}</div>
+          <div className="font-mono text-[10px] text-slate-500" suppressHydrationWarning>REF #AUDIT-CERT</div>
         </div>
       </div>
 

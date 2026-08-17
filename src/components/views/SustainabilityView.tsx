@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useAudit } from '../../context/AuditContext';
 import { calculateCarbonFootprint } from '../../utils/calculations';

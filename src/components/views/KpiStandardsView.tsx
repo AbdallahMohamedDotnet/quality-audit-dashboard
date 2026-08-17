@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useMemo } from 'react';
 import { useAudit } from '../../context/AuditContext';
 import { SECTORS, DEPARTMENTS, STANDARDS } from '../../data';

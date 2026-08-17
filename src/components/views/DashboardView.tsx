@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useAudit } from '../../context/AuditContext';
 import { SECTORS, DEPARTMENTS, SECTOR_DEPARTMENTS, IOT_SENSORS, STANDARDS } from '../../data';
@@ -10,9 +12,14 @@ export const DashboardView: React.FC = () => {
     isAr,
     currentSector,
     setCurrentSector,
+    setActiveTab,
     startAudit,
     archivedAudits,
     ncrs,
+    suppliers,
+    capas,
+    trainings,
+    calibrations,
     iotTelemetry,
     isTelemetrySimulating,
     toggleTelemetrySimulation,
@@ -176,6 +183,101 @@ export const DashboardView: React.FC = () => {
         />
       </div>
 
+      {/* Mission Modules Control Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+        {/* 1. Suppliers AVL */}
+        <div
+          onClick={() => setActiveTab('suppliers')}
+          className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-indigo-500 hover:shadow-md cursor-pointer transition-all group flex items-center justify-between"
+        >
+          <div className="space-y-0.5">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block uppercase">
+              {isAr ? 'الموردين المعتمدين (AVL)' : 'Approved Vendors'}
+            </span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-xl font-black font-mono text-indigo-600 dark:text-indigo-400">
+                {suppliers.filter(s => s.status === 'APPROVED').length}
+              </span>
+              <span className="text-[10px] text-slate-400 font-medium">
+                {isAr ? `من أصل ${suppliers.length}` : `of ${suppliers.length}`}
+              </span>
+            </div>
+          </div>
+          <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i className="fa-solid fa-truck-field text-base"></i>
+          </div>
+        </div>
+
+        {/* 2. CAPA Master Tracker */}
+        <div
+          onClick={() => setActiveTab('capa')}
+          className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-rose-500 hover:shadow-md cursor-pointer transition-all group flex items-center justify-between"
+        >
+          <div className="space-y-0.5">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block uppercase">
+              {isAr ? 'مسار تصحيح CAPA' : 'Active CAPAs'}
+            </span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-xl font-black font-mono text-rose-600 dark:text-rose-400">
+                {capas.filter(c => c.status !== 'CLOSED').length}
+              </span>
+              <span className="text-[10px] text-slate-400 font-medium">
+                {isAr ? `من إجمالي ${capas.length}` : `of ${capas.length}`}
+              </span>
+            </div>
+          </div>
+          <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i className="fa-solid fa-arrows-spin text-base"></i>
+          </div>
+        </div>
+
+        {/* 3. Training Matrix */}
+        <div
+          onClick={() => setActiveTab('training')}
+          className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 hover:shadow-md cursor-pointer transition-all group flex items-center justify-between"
+        >
+          <div className="space-y-0.5">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block uppercase">
+              {isAr ? 'كفاءة وتدريب الطاقم' : 'Certified Staff'}
+            </span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-xl font-black font-mono text-emerald-600 dark:text-emerald-400">
+                {trainings.filter(t => t.status === 'VALID').length}
+              </span>
+              <span className="text-[10px] text-slate-400 font-medium">
+                {isAr ? `من ${trainings.length} موظف` : `of ${trainings.length}`}
+              </span>
+            </div>
+          </div>
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i className="fa-solid fa-graduation-cap text-base"></i>
+          </div>
+        </div>
+
+        {/* 4. Calibration Log */}
+        <div
+          onClick={() => setActiveTab('calibration')}
+          className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-sky-500 hover:shadow-md cursor-pointer transition-all group flex items-center justify-between"
+        >
+          <div className="space-y-0.5">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block uppercase">
+              {isAr ? 'معايرة الأجهزة والمجسات' : 'Calibrated Sensors'}
+            </span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-xl font-black font-mono text-sky-600 dark:text-sky-400">
+                {calibrations.filter(c => c.status === 'VALID').length}
+              </span>
+              <span className="text-[10px] text-slate-400 font-medium">
+                {isAr ? `من ${calibrations.length} جهاز` : `of ${calibrations.length}`}
+              </span>
+            </div>
+          </div>
+          <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i className="fa-solid fa-scale-balanced text-base"></i>
+          </div>
+        </div>
+      </div>
+
       {/* Standards Framework Widget & Live Telemetry Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Live IoT Telemetry Monitoring Bar (8 cols) */}
@@ -199,20 +301,32 @@ export const DashboardView: React.FC = () => {
               </h4>
             </div>
 
-            <button
-              type="button"
-              onClick={toggleTelemetrySimulation}
-              className="text-[11px] font-bold text-slate-500 hover:text-sky-500 flex items-center gap-1.5"
-            >
-              <i className={`fa-solid ${isTelemetrySimulating ? 'fa-pause' : 'fa-play'}`}></i>
-              {isAr
-                ? isTelemetrySimulating
-                  ? 'إيقاف مؤقت للمحاكاة'
-                  : 'استئناف المحاكاة'
-                : isTelemetrySimulating
-                ? 'Pause Simulator'
-                : 'Resume Simulator'}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setActiveTab('iot')}
+                className="text-[11px] font-bold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1"
+              >
+                <span>{isAr ? 'محطة المراقبة الكاملة' : 'Full Stream Station'}</span>
+                <i className="fa-solid fa-arrow-left text-[9px] rtl:inline ltr:hidden"></i>
+                <i className="fa-solid fa-arrow-right text-[9px] ltr:inline rtl:hidden"></i>
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleTelemetrySimulation}
+                className="text-[11px] font-bold text-slate-500 hover:text-sky-500 flex items-center gap-1.5"
+              >
+                <i className={`fa-solid ${isTelemetrySimulating ? 'fa-pause' : 'fa-play'}`}></i>
+                {isAr
+                  ? isTelemetrySimulating
+                    ? 'إيقاف'
+                    : 'تشغيل'
+                  : isTelemetrySimulating
+                  ? 'Pause'
+                  : 'Play'}
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">

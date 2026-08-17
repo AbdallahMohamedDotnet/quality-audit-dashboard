@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useAudit } from '../../context/AuditContext';
 import { SECTOR_DEPARTMENTS, DEPARTMENTS } from '../../data';
@@ -13,6 +15,8 @@ export const NcrView: React.FC = () => {
     addNcr,
     closeNcr,
     deleteNcr,
+    escalateToCapa,
+    setActiveTab,
     dispatchWhatsApp,
     showToast,
   } = useAudit();
@@ -273,14 +277,38 @@ export const NcrView: React.FC = () => {
                 </div>
 
                 {isOpen && (
-                  <button
-                    type="button"
-                    onClick={() => closeNcr(ncr.id)}
-                    className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md transition-all flex items-center gap-1.5"
-                  >
-                    <i className="fa-solid fa-check-double"></i>
-                    <span>{isAr ? 'إغلاق واعتماد CAPA' : 'Verify & Close CAPA'}</span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        escalateToCapa(
+                          'NCR',
+                          ncr.id,
+                          ncr.desc,
+                          ncr.deptName,
+                          ncr.desc,
+                          isAr ? 'عزل الحالة والالتزام بالمعيار الفوري' : 'Contain non-conformance immediately',
+                          isAr ? 'تدريب الفريق ومراجعة الإجراءات' : 'Retrain crew and review standard SOP',
+                          ncr.type === 'CRITICAL' ? 'CRITICAL' : 'HIGH'
+                        );
+                        setActiveTab('capa');
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
+                      title={isAr ? 'تصعيد وفتح مسار في CAPA Tracker' : 'Escalate to CAPA Tracker'}
+                    >
+                      <i className="fa-solid fa-arrows-spin"></i>
+                      <span>{isAr ? 'تصعيد إلى CAPA' : 'Escalate to CAPA'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => closeNcr(ncr.id)}
+                      className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md transition-all flex items-center gap-1.5"
+                    >
+                      <i className="fa-solid fa-check-double"></i>
+                      <span>{isAr ? 'إغلاق واعتماد' : 'Verify & Close'}</span>
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
