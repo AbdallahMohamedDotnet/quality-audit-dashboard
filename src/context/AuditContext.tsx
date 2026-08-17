@@ -1,4 +1,7 @@
+'use client';
+
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import confetti from 'canvas-confetti';
 import {
   Language,
@@ -10,7 +13,12 @@ import {
   VisitorRecord,
   ComplaintForm,
   CommunicationSettings,
+  SupplierRecord,
+  CapaRecord,
+  TrainingRecord,
+  CalibrationRecord,
 } from '../types';
+import { PATH_TO_TAB, TAB_TO_PATH } from '../utils/routes';
 import {
   getStoredItem,
   setStoredItem,
@@ -22,6 +30,10 @@ import {
   IOT_SENSORS,
   RECALL_ITEMS,
   EMERGENCY_PROTOCOLS,
+  INITIAL_SUPPLIERS,
+  INITIAL_CAPAS,
+  INITIAL_TRAININGS,
+  INITIAL_CALIBRATIONS,
 } from '../data';
 import { formatLiveClocks, LiveClocks } from '../utils/date';
 import { sendWhatsAppMessage, sendEmailClient, triggerPrintReport } from '../utils/export';
@@ -125,6 +137,32 @@ interface AuditContextType {
   isTelemetrySimulating: boolean;
   toggleTelemetrySimulation: () => void;
 
+  // Suppliers & Vendor Quality
+  suppliers: SupplierRecord[];
+  addSupplier: (supplier: Omit<SupplierRecord, 'id'>) => void;
+  updateSupplier: (id: string, updates: Partial<SupplierRecord>) => void;
+  deleteSupplier: (id: string) => void;
+
+  // CAPA Master Tracker
+  capas: CapaRecord[];
+  addCapa: (capa: Omit<CapaRecord, 'id' | 'createdAt'>) => void;
+  updateCapaStatus: (id: string, status: CapaRecord['status'], extra?: { verifiedBy?: string; closedAt?: string; effectivenessRating?: number }) => void;
+  updateCapa: (id: string, updates: Partial<CapaRecord>) => void;
+  deleteCapa: (id: string) => void;
+  escalateToCapa: (source: string, sourceRefId: string, title: string, dept: string, rootCause?: string, immediateAction?: string, preventiveAction?: string, priority?: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW') => string;
+
+  // Training & Competency Matrix
+  trainings: TrainingRecord[];
+  addTrainingRecord: (rec: Omit<TrainingRecord, 'id'>) => void;
+  updateTrainingRecord: (id: string, updates: Partial<TrainingRecord>) => void;
+  deleteTrainingRecord: (id: string) => void;
+
+  // Calibration & Equipment Maintenance Log
+  calibrations: CalibrationRecord[];
+  addCalibrationRecord: (cal: Omit<CalibrationRecord, 'id'>) => void;
+  updateCalibrationRecord: (id: string, updates: Partial<CalibrationRecord>) => void;
+  deleteCalibrationRecord: (id: string) => void;
+
   // Global Actions
   dispatchWhatsApp: (message: string, phone?: string) => void;
   dispatchEmail: (subject: string, body: string, recipient?: string) => void;
@@ -156,13 +194,54 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setTheme(next);
   }, [theme, setTheme]);
 
+  // Synchronize documentElement theme and direction in real-time
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      }
+      document.documentElement.setAttribute('lang', language);
+      document.documentElement.setAttribute('dir', dir);
+    }
+  }, [theme, language, dir]);
+
   // Auth & Roles
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => getStoredItem('audit_is_logged_in', false));
   const [currentRole, setCurrentRole] = useState<string>(() => getStoredItem('audit_current_role', 'ceo'));
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-  // Navigation
-  const [activeTab, setActiveTab] = useState<TabKey>('dashboard');
+  // Navigation with Next.js Router & URL Sync
+  const router = useRouter();
+  const pathname = usePathname();
+  const [activeTab, setActiveTabState] = useState<TabKey>(() => {
+    if (typeof window !== 'undefined' && pathname && PATH_TO_TAB[pathname]) {
+      return PATH_TO_TAB[pathname];
+    }
+    return 'dashboard';
+  });
+
+  useEffect(() => {
+    if (pathname && PATH_TO_TAB[pathname]) {
+      const tabForPath = PATH_TO_TAB[pathname];
+      setActiveTabState(tabForPath);
+    }
+  }, [pathname]);
+
+  const setActiveTab = useCallback(
+    (tab: TabKey) => {
+      setActiveTabState(tab);
+      const targetPath = TAB_TO_PATH[tab] || '/';
+      if (pathname !== targetPath) {
+        router.push(targetPath);
+      }
+    },
+    [pathname, router]
+  );
+
   const [currentSector, setCurrentSectorState] = useState<string>(() => getStoredItem('audit_current_sector', 'hotels'));
   const [selectedDept, setSelectedDept] = useState<string>('');
 
@@ -274,6 +353,26 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     ])
   );
 
+  // Suppliers & Vendor Quality State
+  const [suppliers, setSuppliers] = useState<SupplierRecord[]>(() =>
+    getStoredItem('audit_suppliers', INITIAL_SUPPLIERS)
+  );
+
+  // CAPA Master Tracker State
+  const [capas, setCapas] = useState<CapaRecord[]>(() =>
+    getStoredItem('audit_capas', INITIAL_CAPAS)
+  );
+
+  // Training & Competency Matrix State
+  const [trainings, setTrainings] = useState<TrainingRecord[]>(() =>
+    getStoredItem('audit_trainings', INITIAL_TRAININGS)
+  );
+
+  // Calibration & Equipment Maintenance State
+  const [calibrations, setCalibrations] = useState<CalibrationRecord[]>(() =>
+    getStoredItem('audit_calibrations', INITIAL_CALIBRATIONS)
+  );
+
   // Save changes to localStorage
   useEffect(() => {
     setStoredItem('audit_archives', archivedAudits);
@@ -286,6 +385,22 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   useEffect(() => {
     setStoredItem('audit_visitors', visitors);
   }, [visitors]);
+
+  useEffect(() => {
+    setStoredItem('audit_suppliers', suppliers);
+  }, [suppliers]);
+
+  useEffect(() => {
+    setStoredItem('audit_capas', capas);
+  }, [capas]);
+
+  useEffect(() => {
+    setStoredItem('audit_trainings', trainings);
+  }, [trainings]);
+
+  useEffect(() => {
+    setStoredItem('audit_calibrations', calibrations);
+  }, [calibrations]);
 
   // AI Complaint State
   const [complaint, setComplaint] = useState<ComplaintForm>({
@@ -426,7 +541,7 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       );
       return false;
     },
-    [isAr, showToast]
+    [isAr, showToast, setActiveTab]
   );
 
   const logout = useCallback(() => {
@@ -446,12 +561,12 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setActiveTab('audit_form');
       showToast(
         isAr
-          ? `تم بدء جلسة تدقيق لقسم: ${DEPARTMENTS[deptKey]?.[isAr ? 'ar' : 'en'] || deptKey}`
+          ? `بدء جولة التدقيق لقسم: ${DEPARTMENTS[deptKey]?.[isAr ? 'ar' : 'en'] || deptKey}`
           : `Started audit session for: ${DEPARTMENTS[deptKey]?.[isAr ? 'ar' : 'en'] || deptKey}`,
         'info'
       );
     },
-    [isAr, showToast]
+    [isAr, showToast, setActiveTab, setSelectedDept, setAuditAnswers]
   );
 
   const setAuditAnswerValue = useCallback(
@@ -624,6 +739,7 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       isAr,
       selectedDept,
       showToast,
+      setActiveTab,
     ]
   );
 
@@ -757,6 +873,199 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }, 1200);
   }, [complaint.dept, complaint.text, isAr, showToast]);
 
+  // Suppliers Actions
+  const addSupplier = useCallback(
+    (sup: Omit<SupplierRecord, 'id'>) => {
+      const newSup: SupplierRecord = {
+        id: `SUP-${Date.now().toString().slice(-4)}`,
+        ...sup,
+      };
+      setSuppliers(prev => [newSup, ...prev]);
+      showToast(
+        isAr ? 'تمت إضافة المورد لقائمة الموردين المعتمدين (AVL)' : 'Supplier added to Approved Vendor List (AVL)',
+        'success'
+      );
+    },
+    [isAr, showToast]
+  );
+
+  const updateSupplier = useCallback(
+    (id: string, updates: Partial<SupplierRecord>) => {
+      setSuppliers(prev => prev.map(s => (s.id === id ? { ...s, ...updates } : s)));
+      showToast(
+        isAr ? 'تم تحديث بيانات المورد والتقييم السنوي' : 'Supplier data and evaluation updated',
+        'info'
+      );
+    },
+    [isAr, showToast]
+  );
+
+  const deleteSupplier = useCallback((id: string) => {
+    setSuppliers(prev => prev.filter(s => s.id !== id));
+  }, []);
+
+  // CAPA Master Tracker Actions
+  const addCapa = useCallback(
+    (capaData: Omit<CapaRecord, 'id' | 'createdAt'>) => {
+      const newCapa: CapaRecord = {
+        id: `CAPA-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`,
+        createdAt: clocks.gregorianDate,
+        ...capaData,
+      };
+      setCapas(prev => [newCapa, ...prev]);
+      showToast(
+        isAr ? 'تم فتح ملف الإجراء التصحيحي والوقائي (CAPA) وتعيين المسؤول' : 'CAPA action opened and owner assigned',
+        'success'
+      );
+    },
+    [clocks.gregorianDate, isAr, showToast]
+  );
+
+  const updateCapaStatus = useCallback(
+    (
+      id: string,
+      status: CapaRecord['status'],
+      extra?: { verifiedBy?: string; closedAt?: string; effectivenessRating?: number }
+    ) => {
+      setCapas(prev =>
+        prev.map(c => {
+          if (c.id === id) {
+            return {
+              ...c,
+              status,
+              ...(status === 'CLOSED' ? { closedAt: clocks.gregorianDate } : {}),
+              ...extra,
+            };
+          }
+          return c;
+        })
+      );
+      showToast(
+        isAr ? `تم تحديث مسار CAPA إلى حالة: ${status}` : `CAPA updated to status: ${status}`,
+        'success'
+      );
+    },
+    [clocks.gregorianDate, isAr, showToast]
+  );
+
+  const updateCapa = useCallback(
+    (id: string, updates: Partial<CapaRecord>) => {
+      setCapas(prev => prev.map(c => (c.id === id ? { ...c, ...updates } : c)));
+      showToast(
+        isAr ? 'تم حفظ تعديلات سجل الإجراء التصحيحي' : 'CAPA record changes saved',
+        'info'
+      );
+    },
+    [isAr, showToast]
+  );
+
+  const deleteCapa = useCallback((id: string) => {
+    setCapas(prev => prev.filter(c => c.id !== id));
+  }, []);
+
+  const escalateToCapa = useCallback(
+    (
+      source: string,
+      sourceRefId: string,
+      title: string,
+      dept: string,
+      rootCause = '',
+      immediateAction = '',
+      preventiveAction = '',
+      priority: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' = 'HIGH'
+    ) => {
+      const newId = `CAPA-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`;
+      const targetDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      const newCapa: CapaRecord = {
+        id: newId,
+        source,
+        sourceRefId,
+        title,
+        dept,
+        assignedTo: isAr ? 'رئيس قسم الجودة والسلامة' : 'Head of QA & Safety',
+        priority,
+        rootCause: rootCause || (isAr ? 'قيد التحقيق وتطبيق نموذج 5-Whys' : 'Under 5-Whys root cause investigation'),
+        correctiveAction: immediateAction || (isAr ? 'تنفيذ الإجراء الاحتوائي الفوري' : 'Execute immediate containment'),
+        preventiveAction: preventiveAction || (isAr ? 'مراجعة إجراءات التشغيل القياسية وتدريب الفريق' : 'Review SOP and retrain personnel'),
+        targetDate,
+        status: 'OPEN',
+        createdAt: clocks.gregorianDate,
+      };
+
+      setCapas(prev => [newCapa, ...prev]);
+      showToast(
+        isAr
+          ? `تم تصعيد الحالة بنجاح إلى سجل CAPA برقم (${newId})`
+          : `Escalated successfully to CAPA Tracker as (${newId})`,
+        'success'
+      );
+      return newId;
+    },
+    [clocks.gregorianDate, isAr, showToast]
+  );
+
+  // Training & Competency Actions
+  const addTrainingRecord = useCallback(
+    (rec: Omit<TrainingRecord, 'id'>) => {
+      const newRec: TrainingRecord = {
+        id: `TRN-${Date.now().toString().slice(-4)}`,
+        ...rec,
+      };
+      setTrainings(prev => [newRec, ...prev]);
+      showToast(
+        isAr ? 'تم تسجيل الدورة التدريبية واعتماد الكفاءة' : 'Training record logged and competency verified',
+        'success'
+      );
+    },
+    [isAr, showToast]
+  );
+
+  const updateTrainingRecord = useCallback(
+    (id: string, updates: Partial<TrainingRecord>) => {
+      setTrainings(prev => prev.map(t => (t.id === id ? { ...t, ...updates } : t)));
+      showToast(
+        isAr ? 'تم تحديث سجل التدريب' : 'Training record updated',
+        'info'
+      );
+    },
+    [isAr, showToast]
+  );
+
+  const deleteTrainingRecord = useCallback((id: string) => {
+    setTrainings(prev => prev.filter(t => t.id !== id));
+  }, []);
+
+  // Calibration & Maintenance Actions
+  const addCalibrationRecord = useCallback(
+    (cal: Omit<CalibrationRecord, 'id'>) => {
+      const newCal: CalibrationRecord = {
+        id: `CAL-${Date.now().toString().slice(-4)}`,
+        ...cal,
+      };
+      setCalibrations(prev => [newCal, ...prev]);
+      showToast(
+        isAr ? 'تم قيد جهاز المعايرة وتحديث جدول الصيانة' : 'Calibration record logged and maintenance schedule updated',
+        'success'
+      );
+    },
+    [isAr, showToast]
+  );
+
+  const updateCalibrationRecord = useCallback(
+    (id: string, updates: Partial<CalibrationRecord>) => {
+      setCalibrations(prev => prev.map(c => (c.id === id ? { ...c, ...updates } : c)));
+      showToast(
+        isAr ? 'تم تحديث سجل المعايرة والشهادة' : 'Calibration certificate and status updated',
+        'info'
+      );
+    },
+    [isAr, showToast]
+  );
+
+  const deleteCalibrationRecord = useCallback((id: string) => {
+    setCalibrations(prev => prev.filter(c => c.id !== id));
+  }, []);
+
   // Global Dispatches
   const dispatchWhatsApp = useCallback(
     (message: string, phone?: string) => {
@@ -852,6 +1161,24 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         iotTelemetry,
         isTelemetrySimulating,
         toggleTelemetrySimulation,
+        suppliers,
+        addSupplier,
+        updateSupplier,
+        deleteSupplier,
+        capas,
+        addCapa,
+        updateCapaStatus,
+        updateCapa,
+        deleteCapa,
+        escalateToCapa,
+        trainings,
+        addTrainingRecord,
+        updateTrainingRecord,
+        deleteTrainingRecord,
+        calibrations,
+        addCalibrationRecord,
+        updateCalibrationRecord,
+        deleteCalibrationRecord,
         dispatchWhatsApp,
         dispatchEmail,
         printReport,

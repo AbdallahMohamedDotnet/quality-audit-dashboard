@@ -8,3 +8,4 @@ export * from './recalls';
 export * from './emergencies';
 export * from './containmentTemplates';
 export * from './colorThemes';
+export * from './seedData';

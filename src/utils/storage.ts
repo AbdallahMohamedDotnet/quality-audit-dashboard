@@ -1,4 +1,7 @@
 export function getStoredItem<T>(key: string, defaultValue: T): T {
+  if (typeof window === 'undefined') {
+    return defaultValue;
+  }
   try {
     const item = localStorage.getItem(key);
     if (item === null) return defaultValue;
@@ -10,6 +13,9 @@ export function getStoredItem<T>(key: string, defaultValue: T): T {
 }
 
 export function setStoredItem<T>(key: string, value: T): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
@@ -18,6 +24,9 @@ export function setStoredItem<T>(key: string, value: T): void {
 }
 
 export function removeStoredItem(key: string): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
   try {
     localStorage.removeItem(key);
   } catch (error) {
