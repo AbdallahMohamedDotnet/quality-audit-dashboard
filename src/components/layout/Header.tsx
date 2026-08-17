@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useAudit } from '../../context/AuditContext';
 import { SECTORS, ROLES } from '../../data';
@@ -17,6 +19,11 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
     setIsLoginModalOpen,
     logout,
   } = useAudit();
+
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const currentSectorObj = SECTORS.find(s => s.val === currentSector);
   const currentRoleObj = ROLES.find(r => r.val === currentRole);
@@ -38,48 +45,40 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
               className="md:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
               aria-label="Open Menu"
             >
-              <i className="fa-solid fa-bars text-base"></i>
+              <i className="fa-solid fa-bars text-lg"></i>
             </button>
 
-            {/* Custom SVG Logo with Editor Modal Trigger */}
+            {/* Logo Clickable for Customization */}
             <div
               onClick={() => setIsLogoModalOpen(true)}
-              className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-tr from-sky-600 to-emerald-500 flex items-center justify-center shadow-md cursor-pointer hover:scale-105 transition-transform shrink-0"
+              className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-600 to-indigo-700 flex items-center justify-center cursor-pointer shadow-md hover:scale-105 transition-transform"
+              title={isAr ? 'انقر لتغيير الشعار والبيانات' : 'Click to customize logo'}
               dangerouslySetInnerHTML={{ __html: logoSvg }}
-              title={isAr ? 'تعديل الشعار (SVG)' : 'Edit Logo (SVG)'}
             />
 
-            {/* Platform Title */}
-            <div className="min-w-0">
-              <h1 className="text-xs sm:text-sm font-black text-sky-600 dark:text-sky-400 tracking-tight leading-none truncate">
-                {isAr ? 'لوحة التدقيق الرقمية (v9.8)' : 'Digital Quality Audit Panel (v9.8)'}
-              </h1>
-              {isLoggedIn ? (
-                <span className="text-[9px] sm:text-[10px] text-amber-600 dark:text-amber-500 font-bold block truncate">
-                  {currentRoleObj ? (isAr ? currentRoleObj.ar : currentRoleObj.en) : currentRole} |{' '}
-                  {currentSectorObj ? (isAr ? currentSectorObj.ar : currentSectorObj.en) : currentSector}
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs sm:text-sm font-black tracking-tight text-slate-900 dark:text-white">
+                  {isAr ? 'منصة التدقيق الرقمية' : 'Digital Audit Platform'}
                 </span>
-              ) : (
-                <span className="text-[9px] sm:text-[10px] text-slate-500 font-bold">
-                  {isAr ? 'بوابة تسجيل الدخول للتنفيذيين' : 'Executive Login Portal'}
+                <span className="text-[10px] font-black px-1.5 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20 font-mono">
+                  v9.8 PRO
                 </span>
-              )}
+              </div>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 hidden sm:block font-medium">
+                {isAr
+                  ? `${currentSectorObj ? currentSectorObj.ar : 'القطاع'} • نظام إدارة الامتثال والجودة`
+                  : `${currentSectorObj ? currentSectorObj.en : 'Sector'} • Quality & Compliance`}
+              </p>
             </div>
           </div>
 
           {/* Quick Language Toggle on Mobile */}
-          <div className="md:hidden flex items-center gap-1">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs"
-            >
-              <i className={`fa-solid ${isDark ? 'fa-sun text-amber-400' : 'fa-moon text-slate-600'}`}></i>
-            </button>
+          <div className="flex items-center gap-1 md:hidden">
             <button
               type="button"
               onClick={() => setLanguage(isAr ? 'en' : 'ar')}
-              className="px-2 py-1 text-[11px] font-black rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800"
+              className="px-2.5 py-1 rounded-lg text-xs font-black border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200"
             >
               {isAr ? 'EN' : 'عربي'}
             </button>
@@ -90,31 +89,32 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
         <div className="flex items-center gap-1.5 sm:gap-3 text-[9px] sm:text-[10px] md:text-xs font-bold w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
           {/* Live Clocks & Dates */}
           <div
+            suppressHydrationWarning
             className={`flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border shadow-inner whitespace-nowrap shrink-0 ${
               isDark ? 'bg-slate-900 border-slate-700' : 'bg-slate-100 border-slate-200'
             }`}
           >
             {/* Live Time */}
-            <span className="text-sky-600 dark:text-sky-400 flex items-center gap-1">
-              <i className="fa-regular fa-clock"></i> {clocks.time}
+            <span suppressHydrationWarning className="text-sky-600 dark:text-sky-400 flex items-center gap-1">
+              <i className="fa-regular fa-clock"></i> {mounted ? clocks.time : ''}
             </span>
             <span className="opacity-40">|</span>
 
             {/* Gregorian Date */}
-            <span className="text-slate-600 dark:text-slate-300 flex items-center gap-1">
-              <i className="fa-regular fa-calendar"></i> {clocks.gregorianDate}
+            <span suppressHydrationWarning className="text-slate-600 dark:text-slate-300 flex items-center gap-1">
+              <i className="fa-regular fa-calendar"></i> {mounted ? clocks.gregorianDate : ''}
             </span>
             <span className="opacity-40 hidden sm:inline">|</span>
 
             {/* Hijri Date */}
-            <span className="text-emerald-600 dark:text-emerald-400 hidden sm:flex items-center gap-1">
-              <i className="fa-solid fa-moon"></i> {clocks.hijriDate}
+            <span suppressHydrationWarning className="text-emerald-600 dark:text-emerald-400 hidden sm:flex items-center gap-1">
+              <i className="fa-solid fa-moon"></i> {mounted ? clocks.hijriDate : ''}
             </span>
             <span className="opacity-40 hidden lg:inline">|</span>
 
             {/* Coptic Date */}
-            <span className="text-purple-600 dark:text-purple-400 hidden lg:flex items-center gap-1">
-              <i className="fa-solid fa-cross"></i> {clocks.copticDate}
+            <span suppressHydrationWarning className="text-purple-600 dark:text-purple-400 hidden lg:flex items-center gap-1">
+              <i className="fa-solid fa-cross"></i> {mounted ? clocks.copticDate : ''}
             </span>
           </div>
 

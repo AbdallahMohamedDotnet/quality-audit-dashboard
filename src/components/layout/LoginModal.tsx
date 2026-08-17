@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useAudit } from '../../context/AuditContext';
 import { ROLES } from '../../data';

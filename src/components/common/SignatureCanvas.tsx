@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
 import { useAudit } from '../../context/AuditContext';
 
@@ -30,6 +32,9 @@ export const SignatureCanvas = forwardRef<SignatureCanvasHandle, SignatureCanvas
       const width = rect.width;
       const height = 140;
 
+      // Preserve existing drawing before dimension reset if already signed
+      const prevDataUrl = canvas.width > 0 && canvas.height > 0 ? canvas.toDataURL() : null;
+
       canvas.width = width * dpr;
       canvas.height = height * dpr;
 
@@ -38,8 +43,16 @@ export const SignatureCanvas = forwardRef<SignatureCanvasHandle, SignatureCanvas
         ctx.scale(dpr, dpr);
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
+
+        if (prevDataUrl && hasSigned) {
+          const img = new Image();
+          img.onload = () => {
+            ctx.drawImage(img, 0, 0, width, height);
+          };
+          img.src = prevDataUrl;
+        }
       }
-    }, []);
+    }, [hasSigned]);
 
     useEffect(() => {
       setupCanvasResolution();

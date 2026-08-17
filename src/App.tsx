@@ -11,12 +11,19 @@ import { DashboardView } from './components/views/DashboardView';
 import { AuditFormView } from './components/views/AuditFormView';
 import { KpiStandardsView } from './components/views/KpiStandardsView';
 import { NcrView } from './components/views/NcrView';
-import { AiAssistantView } from './components/views/AiAssistantView';
+import { CapaTrackerView } from './components/views/CapaTrackerView';
+import { SuppliersView } from './components/views/SuppliersView';
+import { TrainingView } from './components/views/TrainingView';
+import { CalibrationView } from './components/views/CalibrationView';
+import { IotTelemetryView } from './components/views/IotTelemetryView';
 import { HaccpView } from './components/views/HaccpView';
+import { RecallView } from './components/views/RecallView';
+import { AiAssistantView } from './components/views/AiAssistantView';
 import { VisitorsView } from './components/views/VisitorsView';
 import { SustainabilityView } from './components/views/SustainabilityView';
 import { EmergencyView } from './components/views/EmergencyView';
 import { ArchiveView } from './components/views/ArchiveView';
+import { SettingsView } from './components/views/SettingsView';
 import { PrintReportTemplate } from './components/views/PrintReportTemplate';
 
 const MainLayout: React.FC = () => {
@@ -43,12 +50,19 @@ const MainLayout: React.FC = () => {
           {activeTab === 'audit_form' && <AuditFormView />}
           {activeTab === 'kpi' && <KpiStandardsView />}
           {activeTab === 'ncr' && <NcrView />}
-          {activeTab === 'ai' && <AiAssistantView />}
+          {activeTab === 'capa' && <CapaTrackerView />}
+          {activeTab === 'suppliers' && <SuppliersView />}
+          {activeTab === 'training' && <TrainingView />}
+          {activeTab === 'calibration' && <CalibrationView />}
+          {activeTab === 'iot' && <IotTelemetryView />}
           {activeTab === 'haccp' && <HaccpView />}
+          {activeTab === 'recall' && <RecallView />}
+          {activeTab === 'ai' && <AiAssistantView />}
           {activeTab === 'visitors' && <VisitorsView />}
           {activeTab === 'sustainability' && <SustainabilityView />}
           {activeTab === 'emergency' && <EmergencyView />}
           {activeTab === 'archive' && <ArchiveView />}
+          {activeTab === 'settings' && <SettingsView />}
         </main>
       </div>
 

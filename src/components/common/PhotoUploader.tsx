@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useRef } from 'react';
 import { useAudit } from '../../context/AuditContext';
 
@@ -19,6 +21,7 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({
     if (e.target.files && e.target.files[0]) {
       onUpload(e.target.files[0]);
     }
+    e.target.value = '';
   };
 
   return (
