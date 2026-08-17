@@ -70,11 +70,13 @@ A production-ready, enterprise-grade Digital Quality Audit, Incident Response, a
 
 ## 🛠 Technology Stack
 
-- **Framework**: React 18 / Vite 6 / TypeScript
+- **Framework**: Next.js 14 (App Router) / React 18 / TypeScript
+- **Rendering**: Hybrid Server-Side Rendering (SSR) & Static Optimization
+- **Routing**: Next.js File-Based URL Routing (`/audit`, `/capa`, `/suppliers`, `/ncr`, `/iot`, `/haccp`, etc.)
 - **Styling**: Tailwind CSS with custom responsive tokens and dark/light modes
 - **Icons**: Font Awesome 6.5.2 & Lucide React
 - **Typography**: Google Fonts (Tajawal, Cairo, Inter)
-- **State & Storage**: React Context + `localStorage` persistence
+- **State & Storage**: React Context + SSR-safe `localStorage` synchronization
 
 ---
 
@@ -89,15 +91,16 @@ npm install
 ```bash
 npm run dev
 ```
+Open [http://localhost:3000](http://localhost:3000) with your browser.
 
 ### 3. Build for Production
 ```bash
 npm run build
 ```
 
-### 4. Preview Production Build
+### 4. Start Production Server
 ```bash
-npm run preview
+npm run start
 ```
 
 ---
