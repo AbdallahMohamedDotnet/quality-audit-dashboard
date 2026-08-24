@@ -28,12 +28,12 @@ export const Toast: React.FC = () => {
   }[toast.type || 'info'];
 
   return (
-    <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[100] no-print pointer-events-none transition-all duration-300 animate-fadeIn">
+    <div className="fixed top-24 sm:top-20 left-1/2 -translate-x-1/2 z-[100] no-print pointer-events-none transition-all duration-300 animate-fadeIn max-w-[calc(100vw-2rem)] w-auto">
       <div
-        className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl shadow-2xl border font-bold text-xs sm:text-sm ${typeConfig.bg}`}
+        className={`flex items-center gap-2.5 px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl shadow-2xl border font-bold text-xs sm:text-sm ${typeConfig.bg}`}
       >
         <i className={`fa-solid ${typeConfig.icon} text-base shrink-0`}></i>
-        <span>{toast.message}</span>
+        <span className="leading-snug">{toast.message}</span>
       </div>
     </div>
   );

@@ -32,7 +32,7 @@ export const LoginModal: React.FC = () => {
   return (
     <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn">
       <div
-        className={`w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl border transition-colors relative overflow-hidden ${
+        className={`w-full max-w-md rounded-3xl p-5 sm:p-8 shadow-2xl border transition-colors relative overflow-y-auto max-h-[90vh] ${
           isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
         }`}
       >
@@ -141,7 +141,7 @@ export const LoginModal: React.FC = () => {
           <p className="text-center text-[10px] font-bold text-slate-500 mb-3 uppercase tracking-widest">
             {isAr ? 'الدخول السريع للأدوار التجريبية' : 'Quick Demo Access Roles'}
           </p>
-          <div className="grid grid-cols-2 gap-2 max-h-[140px] overflow-y-auto pr-1">
+          <div className="grid grid-cols-2 gap-2 max-h-[140px] overflow-y-auto pe-1">
             {ROLES.map(role => (
               <button
                 key={role.val}

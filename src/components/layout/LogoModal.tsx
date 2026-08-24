@@ -30,7 +30,7 @@ export const LogoModal: React.FC = () => {
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn">
       <div
-        className={`w-full max-w-lg rounded-3xl p-6 shadow-2xl border transition-colors ${
+        className={`w-full max-w-lg rounded-3xl p-5 sm:p-6 shadow-2xl border transition-colors max-h-[90vh] overflow-y-auto ${
           isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
         }`}
       >
@@ -77,11 +77,11 @@ export const LogoModal: React.FC = () => {
             />
           </div>
 
-          <div className="flex items-center justify-between gap-3 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
             <button
               type="button"
               onClick={handleReset}
-              className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-center"
             >
               {isAr ? 'استعادة الافتراضي' : 'Reset to Default'}
             </button>
@@ -90,13 +90,13 @@ export const LogoModal: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsLogoModalOpen(false)}
-                className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-center"
               >
                 {isAr ? 'إلغاء' : 'Cancel'}
               </button>
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-black shadow-md transition-colors"
+                className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-black shadow-md transition-colors text-center"
               >
                 {isAr ? 'حفظ وتطبيق' : 'Save & Apply'}
               </button>
