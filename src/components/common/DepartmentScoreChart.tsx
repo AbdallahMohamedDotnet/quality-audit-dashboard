@@ -39,21 +39,29 @@ export const DepartmentScoreChart: React.FC<DepartmentScoreChartProps> = ({
           <div
             key={item.deptKey || index}
             onClick={() => onSelectDept?.(item.deptKey)}
-            className={`flex items-center gap-2 sm:gap-3 p-1.5 rounded-xl transition-all ${
+            className={`flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 p-1.5 rounded-xl transition-all ${
               onSelectDept ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/60' : ''
             }`}
           >
-            <span
-              className={`w-28 sm:w-40 md:w-52 shrink-0 text-[11px] sm:text-xs font-bold truncate ${
-                isDark ? 'text-slate-300' : 'text-slate-700'
-              }`}
-              title={item.name}
-            >
-              {item.name}
-            </span>
+            <div className="flex items-center justify-between sm:justify-start sm:w-36 md:w-48 lg:w-52 shrink-0">
+              <span
+                className={`text-[11px] sm:text-xs font-bold truncate ${
+                  isDark ? 'text-slate-300' : 'text-slate-700'
+                }`}
+                title={item.name}
+              >
+                {item.name}
+              </span>
+              <span
+                className="sm:hidden text-xs font-mono font-black shrink-0"
+                style={{ color }}
+              >
+                {hasScore ? `${item.score}%` : '—'}
+              </span>
+            </div>
 
             <div
-              className={`relative flex-1 h-5 sm:h-6 rounded-full overflow-hidden shadow-inner ${
+              className={`relative flex-1 h-3.5 sm:h-5 rounded-full overflow-hidden shadow-inner ${
                 isDark ? 'bg-slate-800' : 'bg-slate-100'
               }`}
             >
@@ -70,7 +78,7 @@ export const DepartmentScoreChart: React.FC<DepartmentScoreChartProps> = ({
             </div>
 
             <span
-              className="w-10 sm:w-12 shrink-0 text-end text-xs font-mono font-black"
+              className="hidden sm:inline-block w-10 sm:w-12 shrink-0 text-end text-xs font-mono font-black"
               style={{ color }}
             >
               {hasScore ? `${item.score}%` : '—'}

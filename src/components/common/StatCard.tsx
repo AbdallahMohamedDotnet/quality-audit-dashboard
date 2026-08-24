@@ -62,35 +62,35 @@ export const StatCard: React.FC<StatCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`relative overflow-hidden rounded-2xl p-5 border transition-all duration-300 ${
+      className={`relative overflow-hidden rounded-2xl p-4 sm:p-5 border transition-all duration-300 ${
         onClick ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]' : ''
       } bg-white dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 shadow-md backdrop-blur-sm group`}
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-2.5 sm:gap-3">
         <div className="space-y-1 min-w-0">
-          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">
+          <p className="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">
             {title}
           </p>
-          <div className="flex items-baseline gap-2">
-            <h3 className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-slate-900 dark:text-white truncate">
+          <div className="flex items-baseline gap-1.5 sm:gap-2">
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-black font-mono tracking-tight text-slate-900 dark:text-white truncate">
               {value}
             </h3>
             {trend && (
-              <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5">
-                <i className="fa-solid fa-arrow-trend-up text-[10px]"></i>
+              <span className="text-[10px] sm:text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5 shrink-0">
+                <i className="fa-solid fa-arrow-trend-up text-[9px] sm:text-[10px]"></i>
                 {trend}
               </span>
             )}
           </div>
           {subtitle && (
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate font-medium">
+            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 truncate font-medium">
               {subtitle}
             </p>
           )}
         </div>
 
         <div
-          className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lg shrink-0 ${variantStyles.iconBg} group-hover:scale-110 transition-transform duration-300`}
+          className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg shrink-0 ${variantStyles.iconBg} group-hover:scale-110 transition-transform duration-300`}
         >
           {icon}
         </div>
