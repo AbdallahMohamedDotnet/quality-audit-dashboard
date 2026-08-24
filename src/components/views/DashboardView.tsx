@@ -184,7 +184,7 @@ export const DashboardView: React.FC = () => {
       </div>
 
       {/* Mission Modules Control Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* 1. Suppliers AVL */}
         <div
           onClick={() => setActiveTab('suppliers')}
@@ -329,7 +329,7 @@ export const DashboardView: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             {sensors.map(sensor => {
               const val = iotTelemetry[sensor.id];
               const isWarning = val === 'WARNING';
@@ -436,7 +436,7 @@ export const DashboardView: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[420px] overflow-y-auto pr-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[420px] overflow-y-auto pe-1">
             {sectorDeptKeys.map(key => {
               const deptInfo = DEPARTMENTS[key];
               const name = deptInfo ? (isAr ? deptInfo.ar : deptInfo.en) : key;

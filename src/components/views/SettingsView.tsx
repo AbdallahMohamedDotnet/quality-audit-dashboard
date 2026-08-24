@@ -115,7 +115,7 @@ export const SettingsView: React.FC = () => {
       </div>
 
       {/* System Metrics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title={isAr ? 'إصدار النظام' : 'Platform Version'}
           value="v9.8.0 PRO"

@@ -350,8 +350,133 @@ export const SuppliersView: React.FC = () => {
         </div>
       </div>
 
-      {/* Suppliers Table */}
-      <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden backdrop-blur-sm">
+      {/* Mobile Card List (< md) */}
+      <div className="block md:hidden space-y-3.5">
+        {filteredSuppliers.length === 0 ? (
+          <div className="bg-white dark:bg-slate-800/80 rounded-2xl p-8 text-center text-slate-400 border border-slate-200/80 dark:border-slate-700/80">
+            <i className="fa-solid fa-box-open text-3xl opacity-40 mb-2 block"></i>
+            <p className="text-xs">{isAr ? 'لا توجد بيانات موردين مطابقة لبحثك' : 'No suppliers match your filter criteria'}</p>
+          </div>
+        ) : (
+          filteredSuppliers.map(sup => {
+            const expiring = isCertExpiringSoon(sup.certExpiry);
+            return (
+              <div
+                key={sup.id}
+                className="bg-white dark:bg-slate-800/80 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-bold text-slate-900 dark:text-white text-sm">{sup.name}</span>
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                        {sup.id}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">{sup.category}</p>
+                  </div>
+                  <Badge
+                    variant={
+                      sup.status === 'APPROVED'
+                        ? 'emerald'
+                        : sup.status === 'CONDITIONAL'
+                        ? 'amber'
+                        : sup.status === 'SUSPENDED'
+                        ? 'purple'
+                        : 'rose'
+                    }
+                    size="sm"
+                  >
+                    {sup.status}
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                  <div>
+                    <span className="text-[10px] text-slate-400 block">{isAr ? 'المسؤول:' : 'Contact:'}</span>
+                    <span className="font-bold text-slate-700 dark:text-slate-200 truncate block">{sup.contactPerson}</span>
+                    <span className="text-[10px] font-mono text-slate-500 truncate block">{sup.phone}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 block">{isAr ? 'التقييم / الرفض:' : 'Score / Reject:'}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-black font-mono text-emerald-600 dark:text-emerald-400">{sup.rating}%</span>
+                      <span className="text-[10px] text-slate-400">({sup.rejectionRate}% {isAr ? 'رفض' : 'rej'})</span>
+                    </div>
+                    <span className={`text-[10px] font-bold uppercase ${
+                      sup.riskLevel === 'LOW' ? 'text-emerald-500' : sup.riskLevel === 'MEDIUM' ? 'text-amber-500' : 'text-rose-500'
+                    }`}>
+                      {sup.riskLevel} RISK
+                    </span>
+                  </div>
+                </div>
+
+                {sup.isoCerts && sup.isoCerts.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-1">
+                    {sup.isoCerts.map((cert, idx) => (
+                      <span key={idx} className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">
+                        {cert}
+                      </span>
+                    ))}
+                    {expiring && (
+                      <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold text-[10px]">
+                        {isAr ? 'صلاحية قريبة' : 'Expiring'}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                  <button
+                    onClick={() => handleContactWhatsApp(sup)}
+                    className="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs font-bold flex items-center gap-1"
+                  >
+                    <i className="fa-brands fa-whatsapp"></i>
+                    <span>{isAr ? 'واتساب' : 'WhatsApp'}</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEvalSupplier(sup);
+                      setEvalScores({
+                        qualityCompliance: sup.rating,
+                        deliveryTimeliness: sup.rating,
+                        documentation: 90,
+                        packagingSafety: 95,
+                        pricingResponse: 85,
+                      });
+                    }}
+                    className="px-2.5 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 text-xs font-bold flex items-center gap-1"
+                  >
+                    <i className="fa-solid fa-chart-pie"></i>
+                    <span>{isAr ? 'تقييم' : 'Eval'}</span>
+                  </button>
+                  <button
+                    onClick={() => setEditingSupplier(sup)}
+                    className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
+                    title={isAr ? 'تعديل' : 'Edit'}
+                  >
+                    <i className="fa-solid fa-pen-to-square text-xs"></i>
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm(isAr ? 'هل أنت متأكد من حذف هذا المورد؟' : 'Delete this supplier?')) {
+                        deleteSupplier(sup.id);
+                      }
+                    }}
+                    className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400"
+                    title={isAr ? 'حذف' : 'Delete'}
+                  >
+                    <i className="fa-solid fa-trash text-xs"></i>
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Suppliers Table (>= md) */}
+      <div className="hidden md:block bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden backdrop-blur-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-start text-xs border-collapse">
             <thead>

@@ -121,8 +121,86 @@ export const ArchiveView: React.FC = () => {
         <i className="fa-solid fa-magnifying-glass absolute top-3.5 ltr:left-3 rtl:right-3 text-xs text-slate-400"></i>
       </div>
 
-      {/* Audit Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+      {/* Mobile Card List (< md) */}
+      <div className="block md:hidden space-y-3.5">
+        {filteredAudits.map(audit => {
+          const scoreNum = parseInt(audit.score, 10);
+          const isPassed = !isNaN(scoreNum) && scoreNum >= 80;
+          return (
+            <div
+              key={audit.id}
+              className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="space-y-0.5">
+                  <div className="font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                    <i className="fa-solid fa-clipboard-check text-sky-500 text-xs"></i>
+                    <span className="text-sm">{audit.dept}</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400">REF #{audit.id}</span>
+                </div>
+
+                <span
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-mono font-black shadow-sm ${
+                    isPassed
+                      ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/30'
+                      : 'bg-rose-500/10 text-rose-600 border border-rose-500/30'
+                  }`}
+                >
+                  <i className={`fa-solid ${isPassed ? 'fa-circle-check' : 'fa-triangle-exclamation'} text-[10px]`}></i>
+                  {audit.score}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                <div>
+                  <span className="text-[10px] text-slate-400 block">{isAr ? 'المدقق المعتمد:' : 'Auditor:'}</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">{audit.user}</span>
+                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                    <i className="fa-solid fa-signature text-[9px]"></i>
+                    <span>{isAr ? 'موقّع' : 'Signed'}</span>
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-400 block">{isAr ? 'التاريخ والوقت:' : 'Timestamp:'}</span>
+                  <span className="font-mono text-slate-900 dark:text-white block">{audit.date}</span>
+                  <span className="font-mono text-[10px] text-slate-400 block">{audit.time}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setSelectedAuditModal(audit)}
+                  className="px-3 py-1.5 rounded-xl bg-sky-500/10 hover:bg-sky-500 text-sky-600 hover:text-white text-xs font-bold transition-all flex items-center gap-1"
+                >
+                  <i className="fa-solid fa-eye"></i>
+                  <span>{isAr ? 'معاينة' : 'View'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleShareAuditWhatsApp(audit)}
+                  className="p-1.5 rounded-xl text-[#25D366] bg-emerald-50 dark:bg-emerald-950/30"
+                  title={isAr ? 'واتساب' : 'WhatsApp'}
+                >
+                  <i className="fa-brands fa-whatsapp text-sm"></i>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => deleteArchivedAudit(audit.id)}
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-rose-500"
+                  title={isAr ? 'حذف' : 'Delete'}
+                >
+                  <i className="fa-solid fa-trash text-xs"></i>
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop Audit Table (>= md) */}
+      <div className="hidden md:block bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-start">
             <thead className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase font-black text-[10px] tracking-wider">
@@ -186,7 +264,7 @@ export const ArchiveView: React.FC = () => {
                           className="px-2.5 py-1.5 rounded-xl bg-sky-500/10 hover:bg-sky-500 text-sky-600 hover:text-white text-[11px] font-bold transition-all"
                           title={isAr ? 'عرض التقرير' : 'View Certificate'}
                         >
-                          <i className="fa-solid fa-eye mr-1 ml-1"></i>
+                          <i className="fa-solid fa-eye mx-1"></i>
                           <span>{isAr ? 'معاينة' : 'View'}</span>
                         </button>
 
@@ -230,7 +308,7 @@ export const ArchiveView: React.FC = () => {
       {selectedAuditModal && (
         <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn">
           <div
-            className={`w-full max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl border transition-colors ${
+            className={`w-full max-w-lg rounded-3xl p-5 sm:p-8 shadow-2xl border transition-colors max-h-[90vh] overflow-y-auto ${
               isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
             }`}
           >

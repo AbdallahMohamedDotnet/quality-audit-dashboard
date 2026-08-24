@@ -163,7 +163,7 @@ export const AiAssistantView: React.FC = () => {
           </h3>
 
           <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 block mb-1">
                   {isAr ? 'اسم العميل / النزيل' : 'Customer Name'}

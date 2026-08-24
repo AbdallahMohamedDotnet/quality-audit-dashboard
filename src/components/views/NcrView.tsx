@@ -141,11 +141,11 @@ export const NcrView: React.FC = () => {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2 overflow-x-auto scrollbar-none">
         <button
           type="button"
           onClick={() => setFilterStatus('ALL')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
             filterStatus === 'ALL'
               ? 'bg-sky-600 text-white'
               : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -157,7 +157,7 @@ export const NcrView: React.FC = () => {
         <button
           type="button"
           onClick={() => setFilterStatus('OPEN')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
             filterStatus === 'OPEN'
               ? 'bg-rose-600 text-white'
               : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -174,7 +174,7 @@ export const NcrView: React.FC = () => {
         <button
           type="button"
           onClick={() => setFilterStatus('CLOSED')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
             filterStatus === 'CLOSED'
               ? 'bg-emerald-600 text-white'
               : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -329,7 +329,7 @@ export const NcrView: React.FC = () => {
       {isCreateModalOpen && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn">
           <div
-            className={`w-full max-w-lg rounded-3xl p-6 shadow-2xl border transition-colors ${
+            className={`w-full max-w-lg rounded-3xl p-5 sm:p-6 shadow-2xl border transition-colors max-h-[90vh] overflow-y-auto ${
               isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
             }`}
           >
@@ -352,7 +352,7 @@ export const NcrView: React.FC = () => {
             </div>
 
             <form onSubmit={handleCreateSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
                     {isAr ? 'تصنيف الحيود' : 'Severity'}

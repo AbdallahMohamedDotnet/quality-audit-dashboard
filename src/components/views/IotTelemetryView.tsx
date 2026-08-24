@@ -171,7 +171,7 @@ export const IotTelemetryView: React.FC = () => {
       </div>
 
       {/* Sensor KPI Statistics */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title={isAr ? 'إجمالي المجسات النشطة' : 'Total Active Sensors'}
           value={sensorStatusList.length.toString()}
@@ -206,11 +206,11 @@ export const IotTelemetryView: React.FC = () => {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         <button
           type="button"
           onClick={() => setSelectedSensorFilter('ALL')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
             selectedSensorFilter === 'ALL'
               ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm'
               : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400'
@@ -222,7 +222,7 @@ export const IotTelemetryView: React.FC = () => {
         <button
           type="button"
           onClick={() => setSelectedSensorFilter('OPTIMAL')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
             selectedSensorFilter === 'OPTIMAL'
               ? 'bg-emerald-600 text-white shadow-sm'
               : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400'

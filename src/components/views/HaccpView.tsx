@@ -126,7 +126,7 @@ export const HaccpView: React.FC = () => {
       </div>
 
       {/* HACCP KPI Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title={isAr ? 'إجمالي مراحل التدفق' : 'Total Process Steps'}
           value={flowSteps.length.toString()}

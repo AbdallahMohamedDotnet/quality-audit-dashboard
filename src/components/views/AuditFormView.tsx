@@ -131,7 +131,7 @@ export const AuditFormView: React.FC = () => {
         </div>
 
         {/* Department Switcher Dropdown */}
-        <div className="w-full md:w-80">
+        <div className="w-full md:w-96">
           <label className="text-[11px] font-bold text-slate-500 block mb-1">
             {isAr ? 'القسم محل الفحص:' : 'Audited Department:'}
           </label>
@@ -162,7 +162,7 @@ export const AuditFormView: React.FC = () => {
 
       {/* Live Compliance Score Tracker Sticky Bar */}
       {selectedDept && (
-        <div className="sticky top-[65px] z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-xl space-y-3">
+        <div className="sticky top-0 md:top-[var(--header-height,65px)] z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 border border-slate-200 dark:border-slate-800 shadow-xl space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-sky-600 flex items-center justify-center text-white font-black text-sm shadow-md shrink-0">

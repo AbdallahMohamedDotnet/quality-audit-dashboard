@@ -293,8 +293,123 @@ export const TrainingView: React.FC = () => {
         </div>
       </div>
 
-      {/* Trainings Table */}
-      <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden backdrop-blur-sm">
+      {/* Mobile Card List (< md) */}
+      <div className="block md:hidden space-y-3.5">
+        {filteredTrainings.length === 0 ? (
+          <div className="bg-white dark:bg-slate-800/80 rounded-2xl p-8 text-center text-slate-400 border border-slate-200/80 dark:border-slate-700/80">
+            <i className="fa-solid fa-user-graduate text-3xl opacity-40 mb-2 block"></i>
+            <p className="text-xs">{isAr ? 'لا توجد سجلات تدريب مطابقة لبحثك' : 'No training records found'}</p>
+          </div>
+        ) : (
+          filteredTrainings.map(rec => {
+            const isExpired = rec.status === 'EXPIRED';
+            const isExpiring = rec.status === 'EXPIRING_SOON';
+            return (
+              <div
+                key={rec.id}
+                className="bg-white dark:bg-slate-800/80 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-0.5">
+                    <span className="font-bold text-slate-900 dark:text-white text-sm block">{rec.employeeName}</span>
+                    <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">{rec.employeeId}</span>
+                  </div>
+                  <Badge
+                    variant={
+                      rec.status === 'VALID'
+                        ? 'emerald'
+                        : rec.status === 'EXPIRING_SOON'
+                        ? 'amber'
+                        : 'rose'
+                    }
+                    size="sm"
+                  >
+                    {rec.status}
+                  </Badge>
+                </div>
+
+                <div className="space-y-1">
+                  <p className="font-bold text-xs text-slate-800 dark:text-slate-200">{rec.courseName}</p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                      {rec.dept}
+                    </span>
+                    <Badge
+                      variant={
+                        rec.courseType === 'HACCP'
+                          ? 'emerald'
+                          : rec.courseType === 'OSHA'
+                          ? 'amber'
+                          : rec.courseType === 'FIRE_SAFETY'
+                          ? 'rose'
+                          : 'sky'
+                      }
+                      size="sm"
+                    >
+                      {rec.courseType}
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                  <div>
+                    <span className="text-[10px] text-slate-400 block">{isAr ? 'الدرجة / التقييم:' : 'Score:'}</span>
+                    <span className="font-black font-mono text-emerald-600 dark:text-emerald-400">{rec.score}%</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 block">{isAr ? 'تاريخ الصلاحية:' : 'Expiry:'}</span>
+                    <span className={`font-bold font-mono ${
+                      isExpired ? 'text-rose-500' : isExpiring ? 'text-amber-500' : 'text-slate-700 dark:text-slate-300'
+                    }`}>
+                      {rec.expiryDate}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                  <button
+                    onClick={() => setPreviewPassRecord(rec)}
+                    className="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center gap-1"
+                  >
+                    <i className="fa-solid fa-id-badge"></i>
+                    <span>{isAr ? 'البطاقة' : 'Pass'}</span>
+                  </button>
+                  <button
+                    onClick={() => handleRenewCertification(rec)}
+                    className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
+                    title={isAr ? 'تجديد' : 'Renew'}
+                  >
+                    <i className="fa-solid fa-rotate-right text-xs"></i>
+                  </button>
+                  {(isExpired || isExpiring) && (
+                    <button
+                      onClick={() => handleShareWhatsAppReminder(rec)}
+                      className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
+                      title={isAr ? 'تنبيه واتساب' : 'WhatsApp'}
+                    >
+                      <i className="fa-brands fa-whatsapp text-xs"></i>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      if (confirm(isAr ? 'هل أنت متأكد من حذف هذا السجل التدريبي؟' : 'Delete this record?')) {
+                        deleteTrainingRecord(rec.id);
+                      }
+                    }}
+                    className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400"
+                    title={isAr ? 'حذف' : 'Delete'}
+                  >
+                    <i className="fa-solid fa-trash text-xs"></i>
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Trainings Table (>= md) */}
+      <div className="hidden md:block bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden backdrop-blur-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-start text-xs border-collapse">
             <thead>

@@ -415,7 +415,7 @@ export const CapaTrackerView: React.FC = () => {
 
                 {/* Lifecycle Stepper */}
                 <div className="py-2">
-                  <div className="grid grid-cols-5 gap-2 relative">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 relative">
                     {[
                       { key: 'OPEN', labelAr: '1. فتح التذكرة', labelEn: '1. Open' },
                       { key: 'INVESTIGATION', labelAr: '2. تحليل الأسباب (5-Whys)', labelEn: '2. Root Cause' },
