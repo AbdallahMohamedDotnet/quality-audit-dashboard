@@ -172,9 +172,9 @@ interface AuditContextType {
 const AuditContext = createContext<AuditContextType | undefined>(undefined);
 
 export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  // Localization & Theme
-  const [language, setLanguageState] = useState<Language>(() => getStoredItem('audit_lang', 'ar'));
-  const [theme, setThemeState] = useState<Theme>(() => getStoredItem('audit_theme', 'dark'));
+  // Localization & Theme (Initialize with SSR-safe constants)
+  const [language, setLanguageState] = useState<Language>('ar');
+  const [theme, setThemeState] = useState<Theme>('dark');
   const isAr = language === 'ar';
   const isDark = theme === 'dark';
   const dir = isAr ? 'rtl' : 'ltr';
@@ -210,19 +210,14 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [theme, language, dir]);
 
   // Auth & Roles
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => getStoredItem('audit_is_logged_in', false));
-  const [currentRole, setCurrentRole] = useState<string>(() => getStoredItem('audit_current_role', 'ceo'));
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [currentRole, setCurrentRole] = useState<string>('ceo');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   // Navigation with Next.js Router & URL Sync
   const router = useRouter();
   const pathname = usePathname();
-  const [activeTab, setActiveTabState] = useState<TabKey>(() => {
-    if (typeof window !== 'undefined' && pathname && PATH_TO_TAB[pathname]) {
-      return PATH_TO_TAB[pathname];
-    }
-    return 'dashboard';
-  });
+  const [activeTab, setActiveTabState] = useState<TabKey>('dashboard');
 
   useEffect(() => {
     if (pathname && PATH_TO_TAB[pathname]) {
@@ -242,7 +237,7 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     [pathname, router]
   );
 
-  const [currentSector, setCurrentSectorState] = useState<string>(() => getStoredItem('audit_current_sector', 'hotels'));
+  const [currentSector, setCurrentSectorState] = useState<string>('hotels');
   const [selectedDept, setSelectedDept] = useState<string>('');
 
   const setCurrentSector = useCallback((sector: string) => {
@@ -251,7 +246,7 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, []);
 
   // Branding & Toast
-  const [logoSvg, setLogoSvgState] = useState<string>(() => getStoredItem('audit_logo_svg', DEFAULT_LOGO_SVG));
+  const [logoSvg, setLogoSvgState] = useState<string>(DEFAULT_LOGO_SVG);
   const [isLogoModalOpen, setIsLogoModalOpen] = useState(false);
   const [toast, setToast] = useState<ToastInfo | null>(null);
 
@@ -289,118 +284,75 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   // Audit Execution & State
   const [auditAnswers, setAuditAnswers] = useState<Record<string, AuditAnswer>>({});
-  const [archivedAudits, setArchivedAudits] = useState<AuditRecord[]>(() =>
-    getStoredItem('audit_archives', [
-      {
-        id: 1722256000000,
-        type: 'AUDIT',
-        date: new Date().toLocaleDateString('en-GB'),
-        time: '10:30 AM',
-        dept: 'المكاتب الأمامية والاستقبال',
-        deptKey: 'front_office',
-        score: '92%',
-        user: 'الرئيس التنفيذي (CEO)',
-      },
-      {
-        id: 1722256100000,
-        type: 'AUDIT',
-        date: new Date().toLocaleDateString('en-GB'),
-        time: '11:45 AM',
-        dept: 'المطبخ الرئيسي',
-        deptKey: 'main_kitchen',
-        score: '85%',
-        user: 'مدير الجودة (QA Manager)',
-      },
-    ])
-  );
+  const [archivedAudits, setArchivedAudits] = useState<AuditRecord[]>([
+    {
+      id: 1722256000000,
+      type: 'AUDIT',
+      date: new Date().toLocaleDateString('en-GB'),
+      time: '10:30 AM',
+      dept: 'المكاتب الأمامية والاستقبال',
+      deptKey: 'front_office',
+      score: '92%',
+      user: 'الرئيس التنفيذي (CEO)',
+    },
+    {
+      id: 1722256100000,
+      type: 'AUDIT',
+      date: new Date().toLocaleDateString('en-GB'),
+      time: '11:45 AM',
+      dept: 'المطبخ الرئيسي',
+      deptKey: 'main_kitchen',
+      score: '85%',
+      user: 'مدير الجودة (QA Manager)',
+    },
+  ]);
 
-  const [ncrs, setNcrs] = useState<NcrRecord[]>(() =>
-    getStoredItem('audit_ncrs', [
-      {
-        id: 'NCR-1001',
-        type: 'CRITICAL',
-        deptName: 'المطبخ الرئيسي',
-        std: 'HACCP-CC01',
-        desc: 'درجة حرارة ثلاجة اللحوم 7 درجات مئوية متجاوزة الحد الحرج (4 درجات).',
-        date: new Date().toLocaleDateString('en-GB'),
-        status: 'OPEN',
-      },
-      {
-        id: 'NCR-1002',
-        type: 'TECHNICAL',
-        deptName: 'الهندسة والصيانة',
-        std: 'OSHA-LOTO',
-        desc: 'عدم وجود أقفال السلامة LOTO في لوحة التوزيع الفرعية.',
-        date: new Date().toLocaleDateString('en-GB'),
-        status: 'CLOSED',
-      },
-    ])
-  );
+  const [ncrs, setNcrs] = useState<NcrRecord[]>([
+    {
+      id: 'NCR-1001',
+      type: 'CRITICAL',
+      deptName: 'المطبخ الرئيسي',
+      std: 'HACCP-CC01',
+      desc: 'درجة حرارة ثلاجة اللحوم 7 درجات مئوية متجاوزة الحد الحرج (4 درجات).',
+      date: new Date().toLocaleDateString('en-GB'),
+      status: 'OPEN',
+    },
+    {
+      id: 'NCR-1002',
+      type: 'TECHNICAL',
+      deptName: 'الهندسة والصيانة',
+      std: 'OSHA-LOTO',
+      desc: 'عدم وجود أقفال السلامة LOTO في لوحة التوزيع الفرعية.',
+      date: new Date().toLocaleDateString('en-GB'),
+      status: 'CLOSED',
+    },
+  ]);
 
-  const [visitors, setVisitors] = useState<VisitorRecord[]>(() =>
-    getStoredItem('audit_visitors', [
-      {
-        id: 1,
-        name: 'م. أحمد خالد',
-        company: 'شركة الصيانة الهندسية',
-        purpose: 'صيانة دورية للمصاعد والمولدات',
-        host: 'م. سامي (رئيس الصيانة)',
-        ppeIssued: true,
-        healthDeclared: true,
-        timeIn: '09:15 AM',
-        timeOut: null,
-      },
-    ])
-  );
+  const [visitors, setVisitors] = useState<VisitorRecord[]>([
+    {
+      id: 1,
+      name: 'م. أحمد خالد',
+      company: 'شركة الصيانة الهندسية',
+      purpose: 'صيانة دورية للمصاعد والمولدات',
+      host: 'م. سامي (رئيس الصيانة)',
+      ppeIssued: true,
+      healthDeclared: true,
+      timeIn: '09:15 AM',
+      timeOut: null,
+    },
+  ]);
 
   // Suppliers & Vendor Quality State
-  const [suppliers, setSuppliers] = useState<SupplierRecord[]>(() =>
-    getStoredItem('audit_suppliers', INITIAL_SUPPLIERS)
-  );
+  const [suppliers, setSuppliers] = useState<SupplierRecord[]>(INITIAL_SUPPLIERS);
 
   // CAPA Master Tracker State
-  const [capas, setCapas] = useState<CapaRecord[]>(() =>
-    getStoredItem('audit_capas', INITIAL_CAPAS)
-  );
+  const [capas, setCapas] = useState<CapaRecord[]>(INITIAL_CAPAS);
 
   // Training & Competency Matrix State
-  const [trainings, setTrainings] = useState<TrainingRecord[]>(() =>
-    getStoredItem('audit_trainings', INITIAL_TRAININGS)
-  );
+  const [trainings, setTrainings] = useState<TrainingRecord[]>(INITIAL_TRAININGS);
 
   // Calibration & Equipment Maintenance State
-  const [calibrations, setCalibrations] = useState<CalibrationRecord[]>(() =>
-    getStoredItem('audit_calibrations', INITIAL_CALIBRATIONS)
-  );
-
-  // Save changes to localStorage
-  useEffect(() => {
-    setStoredItem('audit_archives', archivedAudits);
-  }, [archivedAudits]);
-
-  useEffect(() => {
-    setStoredItem('audit_ncrs', ncrs);
-  }, [ncrs]);
-
-  useEffect(() => {
-    setStoredItem('audit_visitors', visitors);
-  }, [visitors]);
-
-  useEffect(() => {
-    setStoredItem('audit_suppliers', suppliers);
-  }, [suppliers]);
-
-  useEffect(() => {
-    setStoredItem('audit_capas', capas);
-  }, [capas]);
-
-  useEffect(() => {
-    setStoredItem('audit_trainings', trainings);
-  }, [trainings]);
-
-  useEffect(() => {
-    setStoredItem('audit_calibrations', calibrations);
-  }, [calibrations]);
+  const [calibrations, setCalibrations] = useState<CalibrationRecord[]>(INITIAL_CALIBRATIONS);
 
   // AI Complaint State
   const [complaint, setComplaint] = useState<ComplaintForm>({
@@ -412,22 +364,122 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   });
 
   // Communication Settings
-  const [commSettings, setCommSettings] = useState<CommunicationSettings>(() =>
-    getStoredItem('audit_comm_settings', {
+  const [commSettings, setCommSettings] = useState<CommunicationSettings>({
+    deptHeadEmail: '',
+    gmEmail: '',
+    ownerEmail: '',
+    gmWhatsapp: '',
+  });
+
+  // Sustainability State
+  const [utilities, setUtilities] = useState<{ elec: number; water: number; waste: number }>({
+    elec: 1250,
+    water: 85,
+    waste: 180,
+  });
+
+  // Hydration Guard & Initial LocalStorage Loader
+  const isHydratedRef = React.useRef(false);
+
+  useEffect(() => {
+    // Load persisted values from localStorage once mounted on client
+    const storedLang = getStoredItem<Language>('audit_lang', 'ar');
+    if (storedLang && storedLang !== 'ar') setLanguageState(storedLang);
+
+    const storedTheme = getStoredItem<Theme>('audit_theme', 'dark');
+    if (storedTheme && storedTheme !== 'dark') setThemeState(storedTheme);
+
+    const storedSector = getStoredItem<string>('audit_current_sector', 'hotels');
+    if (storedSector && storedSector !== 'hotels') setCurrentSectorState(storedSector);
+
+    const storedLogo = getStoredItem<string>('audit_logo_svg', DEFAULT_LOGO_SVG);
+    if (storedLogo && storedLogo !== DEFAULT_LOGO_SVG) setLogoSvgState(storedLogo);
+
+    const storedLoggedIn = getStoredItem<boolean>('audit_is_logged_in', false);
+    if (storedLoggedIn) setIsLoggedIn(storedLoggedIn);
+
+    const storedRole = getStoredItem<string>('audit_current_role', 'ceo');
+    if (storedRole && storedRole !== 'ceo') setCurrentRole(storedRole);
+
+    const storedArchives = getStoredItem<AuditRecord[]>('audit_archives', []);
+    if (storedArchives && storedArchives.length > 0) setArchivedAudits(storedArchives);
+
+    const storedNcrs = getStoredItem<NcrRecord[]>('audit_ncrs', []);
+    if (storedNcrs && storedNcrs.length > 0) setNcrs(storedNcrs);
+
+    const storedVisitors = getStoredItem<VisitorRecord[]>('audit_visitors', []);
+    if (storedVisitors && storedVisitors.length > 0) setVisitors(storedVisitors);
+
+    const storedSuppliers = getStoredItem<SupplierRecord[]>('audit_suppliers', INITIAL_SUPPLIERS);
+    if (storedSuppliers) setSuppliers(storedSuppliers);
+
+    const storedCapas = getStoredItem<CapaRecord[]>('audit_capas', INITIAL_CAPAS);
+    if (storedCapas) setCapas(storedCapas);
+
+    const storedTrainings = getStoredItem<TrainingRecord[]>('audit_trainings', INITIAL_TRAININGS);
+    if (storedTrainings) setTrainings(storedTrainings);
+
+    const storedCalibrations = getStoredItem<CalibrationRecord[]>('audit_calibrations', INITIAL_CALIBRATIONS);
+    if (storedCalibrations) setCalibrations(storedCalibrations);
+
+    const storedComm = getStoredItem<CommunicationSettings>('audit_comm_settings', {
       deptHeadEmail: '',
       gmEmail: '',
       ownerEmail: '',
       gmWhatsapp: '',
-    })
-  );
+    });
+    if (storedComm) setCommSettings(storedComm);
+
+    const storedUtils = getStoredItem<{ elec: number; water: number; waste: number }>('audit_utilities', {
+      elec: 1250,
+      water: 85,
+      waste: 180,
+    });
+    if (storedUtils) setUtilities(storedUtils);
+
+    isHydratedRef.current = true;
+  }, []);
+
+  // Save changes to localStorage only after client hydration is complete
+  useEffect(() => {
+    if (isHydratedRef.current) setStoredItem('audit_archives', archivedAudits);
+  }, [archivedAudits]);
 
   useEffect(() => {
-    setStoredItem('audit_comm_settings', commSettings);
+    if (isHydratedRef.current) setStoredItem('audit_ncrs', ncrs);
+  }, [ncrs]);
+
+  useEffect(() => {
+    if (isHydratedRef.current) setStoredItem('audit_visitors', visitors);
+  }, [visitors]);
+
+  useEffect(() => {
+    if (isHydratedRef.current) setStoredItem('audit_suppliers', suppliers);
+  }, [suppliers]);
+
+  useEffect(() => {
+    if (isHydratedRef.current) setStoredItem('audit_capas', capas);
+  }, [capas]);
+
+  useEffect(() => {
+    if (isHydratedRef.current) setStoredItem('audit_trainings', trainings);
+  }, [trainings]);
+
+  useEffect(() => {
+    if (isHydratedRef.current) setStoredItem('audit_calibrations', calibrations);
+  }, [calibrations]);
+
+  useEffect(() => {
+    if (isHydratedRef.current) setStoredItem('audit_comm_settings', commSettings);
   }, [commSettings]);
+
+  useEffect(() => {
+    if (isHydratedRef.current) setStoredItem('audit_utilities', utilities);
+  }, [utilities]);
 
   // HACCP & Recall State
   const [recallRisk, setRecallRisk] = useState<{ item: string; severity: number; probability: number }>(() => {
-    const items = RECALL_ITEMS[currentSector] || RECALL_ITEMS._food || [];
+    const items = RECALL_ITEMS.hotels || RECALL_ITEMS._food || [];
     return {
       item: items.length > 0 ? items[0].val : 'poultry',
       severity: 5,
@@ -442,19 +494,6 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setRecallRisk(prev => ({ ...prev, item: items[0].val }));
     }
   }, [currentSector, recallRisk.item]);
-
-  // Sustainability State
-  const [utilities, setUtilities] = useState<{ elec: number; water: number; waste: number }>(() =>
-    getStoredItem('audit_utilities', {
-      elec: 1250,
-      water: 85,
-      waste: 180,
-    })
-  );
-
-  useEffect(() => {
-    setStoredItem('audit_utilities', utilities);
-  }, [utilities]);
 
   // Emergency State
   const [emergency, setEmergency] = useState<{ type: string; food: string; lot: string; action: string }>(() => {
