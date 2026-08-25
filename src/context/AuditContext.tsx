@@ -172,12 +172,20 @@ interface AuditContextType {
 const AuditContext = createContext<AuditContextType | undefined>(undefined);
 
 export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  // Localization & Theme (Initialize with SSR-safe constants)
+  // Localization & Theme (Initialize with SSR-safe constants; hydrate from localStorage on mount)
   const [language, setLanguageState] = useState<Language>('ar');
   const [theme, setThemeState] = useState<Theme>('dark');
   const isAr = language === 'ar';
   const isDark = theme === 'dark';
   const dir = isAr ? 'rtl' : 'ltr';
+
+  // Hydrate persisted preferences from localStorage after mount (avoids SSR mismatch)
+  useEffect(() => {
+    const savedTheme = getStoredItem<Theme>('audit_theme', 'dark');
+    const savedLang = getStoredItem<Language>('audit_lang', 'ar');
+    setThemeState(savedTheme);
+    setLanguageState(savedLang);
+  }, []);
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
