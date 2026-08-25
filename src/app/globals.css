@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --header-height: 56px;
-    --sidebar-width: 264px;
+    --sidebar-width: 270px;
   }
 
   @media (max-width: 767px) {
@@ -30,6 +30,7 @@
     border-radius: 9999px;
   }
   html {
+    scroll-behavior: smooth;
     overflow-x: hidden;
     max-width: 100vw;
   }
@@ -38,6 +39,18 @@
     max-width: 100vw;
     padding-left: env(safe-area-inset-left, 0);
     padding-right: env(safe-area-inset-right, 0);
+  }
+  :focus-visible {
+    outline: 2px solid #0ea5e9;
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
@@ -49,6 +62,30 @@
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
+  .sidebar-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+  }
+  .sidebar-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+  .sidebar-scroll::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+  .sidebar-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.2);
+    border-radius: 9999px;
+  }
+  .sidebar-scroll:hover::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.45);
+  }
   .touch-pan-x {
     touch-action: pan-x;
   }
@@ -58,6 +95,40 @@
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(6px); }
     to   { opacity: 1; transform: translateY(0);   }
+  }
+
+  .animate-scaleUp {
+    animation: scaleUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes scaleUp {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .animate-slideInRight {
+    animation: slideInRight 0.25s ease-out both;
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .animate-slideInLeft {
+    animation: slideInLeft 0.25s ease-out both;
+  }
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
   }
 
   /* ── Theme switcher emoji animations ───────────────────────── */

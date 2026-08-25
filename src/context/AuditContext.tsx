@@ -55,6 +55,9 @@ interface AuditContextType {
   isAr: boolean;
   isDark: boolean;
   dir: 'rtl' | 'ltr';
+  isSidebarCollapsed: boolean;
+  setIsSidebarCollapsed: (collapsed: boolean) => void;
+  toggleSidebarCollapse: () => void;
 
   // Authentication & Role
   isLoggedIn: boolean;
@@ -177,12 +180,29 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const isDark = theme === 'dark';
   const dir = isAr ? 'rtl' : 'ltr';
 
+  const [isSidebarCollapsed, setIsSidebarCollapsedState] = useState<boolean>(false);
+
   // Hydrate persisted preferences from localStorage after mount (avoids SSR mismatch)
   useEffect(() => {
     const savedTheme = getStoredItem<Theme>('audit_theme', 'dark');
     const savedLang = getStoredItem<Language>('audit_lang', 'ar');
+    const savedCollapsed = getStoredItem<boolean>('audit_sidebar_collapsed', false);
     setThemeState(savedTheme);
     setLanguageState(savedLang);
+    setIsSidebarCollapsedState(savedCollapsed);
+  }, []);
+
+  const setIsSidebarCollapsed = useCallback((collapsed: boolean) => {
+    setIsSidebarCollapsedState(collapsed);
+    setStoredItem('audit_sidebar_collapsed', collapsed);
+  }, []);
+
+  const toggleSidebarCollapse = useCallback(() => {
+    setIsSidebarCollapsedState(prev => {
+      const next = !prev;
+      setStoredItem('audit_sidebar_collapsed', next);
+      return next;
+    });
   }, []);
 
   const setLanguage = useCallback((lang: Language) => {
@@ -1155,6 +1175,9 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         isAr,
         isDark,
         dir,
+        isSidebarCollapsed,
+        setIsSidebarCollapsed,
+        toggleSidebarCollapse,
         isLoggedIn,
         currentRole,
         login,

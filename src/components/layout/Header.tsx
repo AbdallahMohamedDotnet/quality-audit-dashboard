@@ -2,8 +2,10 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { SECTORS } from '../../data';
+import { useScrollProgress } from '../../hooks/useScrollProgress';
 
 export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobileMenu }) => {
   const router = useRouter();
@@ -17,9 +19,12 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
     currentSector,
     logoSvg,
     setIsLogoModalOpen,
+    isSidebarCollapsed,
+    toggleSidebarCollapse,
     logout,
   } = useAudit();
 
+  const { isScrolled } = useScrollProgress(10);
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => { setMounted(true); }, []);
 
@@ -28,7 +33,7 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
   /* ─── Shared class atoms ─────────────────────────────────────── */
   const pillBase =
     'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold ' +
-    'transition-all duration-150 cursor-pointer select-none shrink-0';
+    'transition-all duration-150 cursor-pointer select-none shrink-0 active:scale-95';
 
   const pillMuted = isDark
     ? 'bg-slate-900 border-slate-700/60 text-slate-300 hover:bg-slate-800 hover:border-slate-600 hover:text-white'
@@ -37,10 +42,14 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
   const divider = `hidden md:block w-px h-4 shrink-0 ${isDark ? 'bg-slate-700/60' : 'bg-slate-200'}`;
 
   return (
-    <header
-      className={`sticky top-0 z-40 no-print transition-colors ${
+    <motion.header
+      className={`sticky top-0 z-40 no-print transition-all duration-200 ${
         isDark
-          ? 'bg-slate-950/95 border-b border-slate-800/80 backdrop-blur-sm'
+          ? isScrolled
+            ? 'bg-slate-950/90 border-b border-slate-800 backdrop-blur-md shadow-lg shadow-black/20'
+            : 'bg-slate-950/95 border-b border-slate-800/80 backdrop-blur-sm'
+          : isScrolled
+          ? 'bg-white/90 border-b border-slate-200 backdrop-blur-md shadow-md shadow-slate-200/50'
           : 'bg-white/95 border-b border-slate-200 backdrop-blur-sm'
       }`}
     >
@@ -50,8 +59,9 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
         {/* ── LEFT / START: Brand ─────────────────────────────────── */}
         <div className="flex items-center gap-2.5 min-w-0">
 
-          {/* Mobile hamburger */}
-          <button
+          {/* Mobile hamburger (< lg) */}
+          <motion.button
+            whileTap={{ scale: 0.9 }}
             type="button"
             onClick={onOpenMobileMenu}
             className={`lg:hidden p-2 rounded-lg transition-colors shrink-0 ${
@@ -62,14 +72,53 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
             aria-label={isAr ? 'القائمة' : 'Open Menu'}
           >
             <i className="fa-solid fa-bars text-sm" />
-          </button>
+          </motion.button>
+
+          {/* Desktop Sidebar Toggle Button (>= lg) */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            type="button"
+            onClick={toggleSidebarCollapse}
+            className={`hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shrink-0 ${
+              isSidebarCollapsed
+                ? 'bg-sky-500/15 border-sky-500/50 text-sky-400 shadow-sm shadow-sky-500/20'
+                : isDark
+                ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800'
+                : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+            }`}
+            title={
+              isSidebarCollapsed
+                ? (isAr ? 'إظهار القائمة الجانبية' : 'Show Sidebar')
+                : (isAr ? 'إخفاء القائمة الجانبية' : 'Hide Sidebar')
+            }
+            aria-label={isSidebarCollapsed ? 'Show Sidebar' : 'Hide Sidebar'}
+          >
+            <span className="text-xs">{isSidebarCollapsed ? '📂' : '📁'}</span>
+            <span className="text-[11px]">
+              {isSidebarCollapsed
+                ? (isAr ? 'إظهار القائمة' : 'Show Menu')
+                : (isAr ? 'القائمة' : 'Menu')}
+            </span>
+            <i
+              className={`fa-solid ${
+                isSidebarCollapsed
+                  ? isAr
+                    ? 'fa-angles-left'
+                    : 'fa-angles-right'
+                  : 'fa-bars'
+              } text-[10px] opacity-70`}
+            />
+          </motion.button>
 
           {/* Logo */}
-          <div
+          <motion.div
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.94 }}
             onClick={() => setIsLogoModalOpen(true)}
             className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600
               flex items-center justify-center cursor-pointer shadow-md
-              hover:shadow-sky-500/30 hover:scale-105 transition-all duration-200 shrink-0"
+              hover:shadow-sky-500/30 transition-all shrink-0"
             title={isAr ? 'انقر لتغيير الشعار' : 'Customize logo'}
             dangerouslySetInnerHTML={{ __html: logoSvg }}
           />
@@ -112,13 +161,13 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
           <div
             suppressHydrationWarning
             className={`hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border
-              text-[10px] font-semibold shrink-0 ${
+              text-[10px] font-semibold shrink-0 transition-colors ${
                 isDark
                   ? 'bg-slate-900 border-slate-700/60 text-slate-400'
                   : 'bg-slate-50 border-slate-200 text-slate-500'
               }`}
           >
-            <span suppressHydrationWarning className="flex items-center gap-1 text-sky-500">
+            <span suppressHydrationWarning className="flex items-center gap-1 text-sky-500 font-mono">
               <i className="fa-regular fa-clock text-[9px]" />
               {mounted ? clocks.time : ''}
             </span>
@@ -150,7 +199,7 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
               ? (isAr ? 'الوضع الفاتح' : 'Light Mode')
               : (isAr ? 'الوضع الداكن' : 'Dark Mode')}
             className={`group relative flex items-center shrink-0 w-[52px] h-7 rounded-lg border
-              transition-colors duration-200
+              transition-colors duration-200 active:scale-95
               focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1
               ${isDark
                 ? 'bg-slate-900 border-slate-700/70 hover:border-slate-600'
@@ -245,6 +294,6 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
           )}
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 };
