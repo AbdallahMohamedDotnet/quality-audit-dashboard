@@ -59,6 +59,34 @@
     from { opacity: 0; transform: translateY(6px); }
     to   { opacity: 1; transform: translateY(0);   }
   }
+
+  /* ── Theme switcher emoji animations ───────────────────────── */
+  /* Sun: slow continuous spin when Light mode is active */
+  .theme-sun-active {
+    animation: sun-spin 10s linear infinite;
+  }
+  @keyframes sun-spin {
+    from { transform: rotate(0deg)   scale(1.15); }
+    to   { transform: rotate(360deg) scale(1.15); }
+  }
+
+  /* Moon: gentle bob when Dark mode is active */
+  .theme-moon-active {
+    animation: moon-bob 2.4s ease-in-out infinite;
+  }
+  @keyframes moon-bob {
+    0%,100% { transform: translateY(0)    scale(1.15); }
+    50%      { transform: translateY(-2px) scale(1.15); }
+  }
+
+  /* Both emoji: quick pop on the click that just activated them */
+  .theme-emoji-pop {
+    animation: emoji-pop 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes emoji-pop {
+    0%   { transform: scale(0.7); }
+    100% { transform: scale(1.15); }
+  }
 }
 
 @media print {
