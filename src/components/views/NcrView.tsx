@@ -1,10 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { SECTOR_DEPARTMENTS, DEPARTMENTS } from '../../data';
 import { Badge } from '../common/Badge';
+import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
+import { AnimatedModal } from '../common/AnimatedModal';
 import { exportToCsv } from '../../utils/export';
+import { staggerChild } from '../../utils/animations';
 
 export const NcrView: React.FC = () => {
   const {
@@ -100,9 +104,9 @@ export const NcrView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <AnimatedPage>
       {/* Header Actions */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center">
@@ -120,23 +124,27 @@ export const NcrView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             type="button"
             onClick={handleExportCsv}
             className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
           >
             <i className="fa-solid fa-file-excel text-emerald-500"></i>
             <span>{isAr ? 'تصدير CSV' : 'Export CSV'}</span>
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             type="button"
             onClick={() => setIsCreateModalOpen(true)}
             className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black shadow-md shadow-rose-600/30 transition-all flex items-center justify-center gap-1.5"
           >
             <i className="fa-solid fa-plus"></i>
             <span>{isAr ? 'قيد مذكرة جديدة' : 'Log New NCR'}</span>
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -190,12 +198,13 @@ export const NcrView: React.FC = () => {
       </div>
 
       {/* NCR Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredNcrs.map(ncr => {
           const isOpen = ncr.status === 'OPEN';
           return (
-            <div
+            <motion.div
               key={ncr.id}
+              variants={staggerChild}
               className={`bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border-2 transition-all shadow-sm flex flex-col justify-between ${
                 isOpen
                   ? 'border-rose-500/40 bg-rose-500/5'
@@ -256,7 +265,8 @@ export const NcrView: React.FC = () => {
               {/* Action Buttons */}
               <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-200/80 dark:border-slate-800/80 gap-2">
                 <div className="flex items-center gap-1.5">
-                  <button
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
                     type="button"
                     onClick={() => handleShareNcrWhatsApp(ncr)}
                     className="px-3 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1"
@@ -264,21 +274,24 @@ export const NcrView: React.FC = () => {
                   >
                     <i className="fa-brands fa-whatsapp"></i>
                     <span className="hidden sm:inline">{isAr ? 'إشعار واتساب' : 'WhatsApp'}</span>
-                  </button>
+                  </motion.button>
 
-                  <button
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
                     type="button"
                     onClick={() => deleteNcr(ncr.id)}
                     className="p-2 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
                     title={isAr ? 'حذف المذكرة' : 'Delete ticket'}
                   >
                     <i className="fa-solid fa-trash-can text-xs"></i>
-                  </button>
+                  </motion.button>
                 </div>
 
                 {isOpen && (
                   <div className="flex items-center gap-2">
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.95 }}
                       type="button"
                       onClick={() => {
                         escalateToCapa(
@@ -298,23 +311,25 @@ export const NcrView: React.FC = () => {
                     >
                       <i className="fa-solid fa-arrows-spin"></i>
                       <span>{isAr ? 'تصعيد إلى CAPA' : 'Escalate to CAPA'}</span>
-                    </button>
+                    </motion.button>
 
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.95 }}
                       type="button"
                       onClick={() => closeNcr(ncr.id)}
                       className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md transition-all flex items-center gap-1.5"
                     >
                       <i className="fa-solid fa-check-double"></i>
                       <span>{isAr ? 'إغلاق واعتماد' : 'Verify & Close'}</span>
-                    </button>
+                    </motion.button>
                   </div>
                 )}
               </div>
-            </div>
+            </motion.div>
           );
         })}
-      </div>
+      </StaggerGrid>
 
       {filteredNcrs.length === 0 && (
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-12 text-center border border-dashed border-slate-300 dark:border-slate-800">
@@ -325,125 +340,123 @@ export const NcrView: React.FC = () => {
         </div>
       )}
 
-      {/* Log New NCR Modal */}
-      {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn">
-          <div
-            className={`w-full max-w-lg rounded-3xl p-5 sm:p-6 shadow-2xl border transition-colors max-h-[90vh] overflow-y-auto ${
-              isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
-            }`}
-          >
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-rose-600 flex items-center justify-center text-white">
-                  <i className="fa-solid fa-plus text-sm"></i>
-                </div>
-                <h3 className="text-base font-black">
-                  {isAr ? 'قيد مذكرة حيود وعدم مطابقة جديدة' : 'Log New Non-Conformance Report'}
-                </h3>
+      {/* Log New NCR Modal with AnimatedModal */}
+      <AnimatedModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} className="max-w-lg">
+        <div className={`w-full rounded-3xl p-5 sm:p-6 shadow-2xl border transition-colors ${
+          isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
+        }`}>
+          <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-rose-600 flex items-center justify-center text-white">
+                <i className="fa-solid fa-plus text-sm"></i>
               </div>
-              <button
-                type="button"
-                onClick={() => setIsCreateModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-              >
-                <i className="fa-solid fa-xmark text-lg"></i>
-              </button>
+              <h3 className="text-base font-black">
+                {isAr ? 'قيد مذكرة حيود وعدم مطابقة جديدة' : 'Log New Non-Conformance Report'}
+              </h3>
             </div>
+            <button
+              type="button"
+              onClick={() => setIsCreateModalOpen(false)}
+              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            >
+              <i className="fa-solid fa-xmark text-lg"></i>
+            </button>
+          </div>
 
-            <form onSubmit={handleCreateSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                    {isAr ? 'تصنيف الحيود' : 'Severity'}
-                  </label>
-                  <select
-                    value={newNcr.type}
-                    onChange={e => setNewNcr({ ...newNcr, type: e.target.value })}
-                    className={`w-full p-2.5 rounded-xl border text-xs font-bold outline-none focus:border-sky-500 ${
-                      isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
-                    }`}
-                  >
-                    <option value="TECHNICAL">{isAr ? 'حيود فني (Technical)' : 'Technical'}</option>
-                    <option value="CRITICAL">{isAr ? 'حيود حرج (Critical CCP)' : 'Critical CCP'}</option>
-                    <option value="OBSERVATION">{isAr ? 'ملاحظة تحسين (Observation)' : 'Observation'}</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                    {isAr ? 'القسم المعني' : 'Department'}
-                  </label>
-                  <select
-                    value={newNcr.deptKey}
-                    onChange={e => setNewNcr({ ...newNcr, deptKey: e.target.value })}
-                    className={`w-full p-2.5 rounded-xl border text-xs font-bold outline-none focus:border-sky-500 ${
-                      isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
-                    }`}
-                  >
-                    <option value="">{isAr ? '-- اختر القسم --' : '-- Select Dept --'}</option>
-                    {sectorDeptKeys.map(key => (
-                      <option key={key} value={key}>
-                        {DEPARTMENTS[key]?.[isAr ? 'ar' : 'en'] || key}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
+          <form onSubmit={handleCreateSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                  {isAr ? 'كود المعيار أو رقم الأيزو (اختياري)' : 'Standard / ISO Ref (Optional)'}
+                  {isAr ? 'تصنيف الحيود' : 'Severity'}
                 </label>
-                <input
-                  type="text"
-                  value={newNcr.std}
-                  onChange={e => setNewNcr({ ...newNcr, std: e.target.value })}
-                  placeholder="e.g. ISO 9001 / HACCP-CC01 / OSHA 1910"
+                <select
+                  value={newNcr.type}
+                  onChange={e => setNewNcr({ ...newNcr, type: e.target.value })}
                   className={`w-full p-2.5 rounded-xl border text-xs font-bold outline-none focus:border-sky-500 ${
                     isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                   }`}
-                />
+                >
+                  <option value="TECHNICAL">{isAr ? 'حيود فني (Technical)' : 'Technical'}</option>
+                  <option value="CRITICAL">{isAr ? 'حيود حرج (Critical CCP)' : 'Critical CCP'}</option>
+                  <option value="OBSERVATION">{isAr ? 'ملاحظة تحسين (Observation)' : 'Observation'}</option>
+                </select>
               </div>
 
               <div>
                 <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                  {isAr ? 'وصف الحيود والملاحظة بالتفصيل' : 'Detailed Deviation Description'}
+                  {isAr ? 'القسم المعني' : 'Department'}
                 </label>
-                <textarea
-                  rows={3}
-                  value={newNcr.desc}
-                  onChange={e => setNewNcr({ ...newNcr, desc: e.target.value })}
-                  placeholder={
-                    isAr
-                      ? 'صف المشكلة المرصودة وموقعها والأثر المترتب عليها...'
-                      : 'Describe observed non-conformance, location, and potential impact...'
-                  }
-                  className={`w-full p-3 rounded-xl border text-xs font-bold outline-none focus:border-sky-500 ${
+                <select
+                  value={newNcr.deptKey}
+                  onChange={e => setNewNcr({ ...newNcr, deptKey: e.target.value })}
+                  className={`w-full p-2.5 rounded-xl border text-xs font-bold outline-none focus:border-sky-500 ${
                     isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                   }`}
-                />
+                >
+                  <option value="">{isAr ? '-- اختر القسم --' : '-- Select Dept --'}</option>
+                  {sectorDeptKeys.map(key => (
+                    <option key={key} value={key}>
+                      {DEPARTMENTS[key]?.[isAr ? 'ar' : 'en'] || key}
+                    </option>
+                  ))}
+                </select>
               </div>
+            </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
-                >
-                  {isAr ? 'إلغاء' : 'Cancel'}
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black shadow-md"
-                >
-                  {isAr ? 'تسجيل المذكرة' : 'Save NCR'}
-                </button>
-              </div>
-            </form>
-          </div>
+            <div>
+              <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
+                {isAr ? 'كود المعيار أو رقم الأيزو (اختياري)' : 'Standard / ISO Ref (Optional)'}
+              </label>
+              <input
+                type="text"
+                value={newNcr.std}
+                onChange={e => setNewNcr({ ...newNcr, std: e.target.value })}
+                placeholder="e.g. ISO 9001 / HACCP-CC01 / OSHA 1910"
+                className={`w-full p-2.5 rounded-xl border text-xs font-bold outline-none focus:border-sky-500 ${
+                  isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
+                }`}
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
+                {isAr ? 'وصف الحيود والملاحظة بالتفصيل' : 'Detailed Deviation Description'}
+              </label>
+              <textarea
+                rows={3}
+                value={newNcr.desc}
+                onChange={e => setNewNcr({ ...newNcr, desc: e.target.value })}
+                placeholder={
+                  isAr
+                    ? 'صف المشكلة المرصودة وموقعها والأثر المترتب عليها...'
+                    : 'Describe observed non-conformance, location, and potential impact...'
+                }
+                className={`w-full p-3 rounded-xl border text-xs font-bold outline-none focus:border-sky-500 ${
+                  isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
+                }`}
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsCreateModalOpen(false)}
+                className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                {isAr ? 'إلغاء' : 'Cancel'}
+              </button>
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.96 }}
+                type="submit"
+                className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black shadow-md"
+              >
+                {isAr ? 'تسجيل المذكرة' : 'Save NCR'}
+              </motion.button>
+            </div>
+          </form>
         </div>
-      )}
-    </div>
+      </AnimatedModal>
+    </AnimatedPage>
   );
 };

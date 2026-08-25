@@ -1,11 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { SupplierRecord } from '../../types';
 import { StatCard } from '../common/StatCard';
 import { Badge } from '../common/Badge';
+import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
+import { AnimatedModal } from '../common/AnimatedModal';
 import { exportToCsv } from '../../utils/export';
+import { staggerChild } from '../../utils/animations';
 
 export const SuppliersView: React.FC = () => {
   const {
@@ -102,8 +106,8 @@ export const SuppliersView: React.FC = () => {
       certExpiry: newSup.certExpiry,
       status: newSup.status,
       rejectionRate: Number(newSup.rejectionRate) || 0,
-      lastAuditDate: new Date().toISOString().split('T')[0],
       notes: newSup.notes,
+      lastAuditDate: new Date().toISOString().split('T')[0],
     });
 
     setIsAddModalOpen(false);
@@ -121,33 +125,24 @@ export const SuppliersView: React.FC = () => {
       rejectionRate: 0.5,
       notes: '',
     });
+
+    showToast(isAr ? 'تمت إضافة المورد إلى القائمة بنجاح' : 'Vendor registered successfully', 'success');
   };
 
   const handleUpdateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingSupplier) return;
 
-    updateSupplier(editingSupplier.id, {
-      name: editingSupplier.name,
-      category: editingSupplier.category,
-      contactPerson: editingSupplier.contactPerson,
-      phone: editingSupplier.phone,
-      email: editingSupplier.email,
-      rating: editingSupplier.rating,
-      riskLevel: editingSupplier.riskLevel,
-      status: editingSupplier.status,
-      certExpiry: editingSupplier.certExpiry,
-      rejectionRate: editingSupplier.rejectionRate,
-      notes: editingSupplier.notes,
-    });
-
+    updateSupplier(editingSupplier.id, editingSupplier);
     setEditingSupplier(null);
+    showToast(isAr ? 'تم تحديث بيانات المورد بنجاح' : 'Vendor updated successfully', 'success');
   };
 
   const handleEvaluationSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!evalSupplier) return;
 
+    // Weighted evaluation calculation
     const weightedScore = Math.round(
       evalScores.qualityCompliance * 0.35 +
         evalScores.deliveryTimeliness * 0.25 +
@@ -156,42 +151,38 @@ export const SuppliersView: React.FC = () => {
         evalScores.pricingResponse * 0.1
     );
 
-    let calculatedStatus = evalSupplier.status;
-    let calculatedRisk = evalSupplier.riskLevel;
+    let newStatus: SupplierRecord['status'] = 'APPROVED';
+    let newRisk: SupplierRecord['riskLevel'] = 'LOW';
 
-    if (weightedScore >= 88) {
-      calculatedStatus = 'APPROVED';
-      calculatedRisk = 'LOW';
-    } else if (weightedScore >= 75) {
-      calculatedStatus = 'CONDITIONAL';
-      calculatedRisk = 'MEDIUM';
-    } else {
-      calculatedStatus = 'SUSPENDED';
-      calculatedRisk = 'HIGH';
+    if (weightedScore < 75) {
+      newStatus = 'SUSPENDED';
+      newRisk = 'HIGH';
+    } else if (weightedScore < 88) {
+      newStatus = 'CONDITIONAL';
+      newRisk = 'MEDIUM';
     }
 
     updateSupplier(evalSupplier.id, {
       rating: weightedScore,
-      status: calculatedStatus,
-      riskLevel: calculatedRisk,
+      status: newStatus,
+      riskLevel: newRisk,
       lastAuditDate: new Date().toISOString().split('T')[0],
     });
 
+    setEvalSupplier(null);
     showToast(
       isAr
-        ? `تم اعتماد تقييم المورد بنجاح (النتيجة: ${weightedScore}%) والحالة (${calculatedStatus})`
-        : `Supplier evaluated successfully (Score: ${weightedScore}%) - Status: ${calculatedStatus}`,
+        ? `تم اعتماد تقييم المورد [${evalSupplier.name}] بنسبة ${weightedScore}% (${newStatus})`
+        : `Evaluation committed: ${weightedScore}% for [${evalSupplier.name}]`,
       'success'
     );
-    setEvalSupplier(null);
   };
 
   const handleContactWhatsApp = (sup: SupplierRecord) => {
     const msg = isAr
-      ? `*إشعار رسمي من إدارة الجودة والاعتماد*\nعزيزي المورد: ${sup.name}\nنحيطكم علماً بأن تصنيفكم الحالي بقائمة الموردين المعتمدين هو (${sup.status}) ومعدل الأداء (${sup.rating}%).\nيرجى موافاتنا بأحدث شهادات الجودة سارية المفعول لتجديد الملف السنوي.`
-      : `*Official Notice from Quality & Vendor Management*\nDear Vendor: ${sup.name}\nYour AVL status is (${sup.status}) with performance rating (${sup.rating}%).\nPlease submit your renewed ISO certificates.`;
-
-    dispatchWhatsApp(msg, sup.phone);
+      ? `*إشعار رسمي من إدارة الجودة وسلاسل الإمداد*\nإلى السادة: ${sup.name}\nالموضوع: متابعة الامتثال الفني وشهادات الجودة (AVL)\nالتقييم الحالي: ${sup.rating}%\nحالة الاعتماد: ${sup.status}\nيرجى تزويدنا بشهادات التحليل والفحص المحدثة.`
+      : `*Official Quality & Supply Chain Notice*\nTo: ${sup.name}\nSubject: Quality Audit & AVL Compliance\nCurrent Score: ${sup.rating}%\nStatus: ${sup.status}\nPlease share updated COA and inspection certificates.`;
+    dispatchWhatsApp(msg);
   };
 
   const handleExportCsv = () => {
@@ -235,9 +226,9 @@ export const SuppliersView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <AnimatedPage>
       {/* Header & Quick Action Buttons */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm backdrop-blur-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm backdrop-blur-sm transition-colors">
         <div>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md">
@@ -257,26 +248,30 @@ export const SuppliersView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             onClick={handleExportCsv}
             className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
           >
             <i className="fa-solid fa-file-csv text-emerald-500"></i>
             {isAr ? 'تصدير CSV' : 'Export CSV'}
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             onClick={() => setIsAddModalOpen(true)}
-            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-indigo-500/20 active:scale-95"
+            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-indigo-500/20"
           >
             <i className="fa-solid fa-plus"></i>
             {isAr ? 'إضافة مورد معتمد' : 'Add Vendor'}
-          </button>
+          </motion.button>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title={isAr ? 'إجمالي الموردين المعتمدين' : 'Total Approved Vendors'}
           value={totalApproved}
@@ -305,10 +300,10 @@ export const SuppliersView: React.FC = () => {
           icon={<i className="fa-solid fa-ban text-xl"></i>}
           variant={Number(avgRejection) > 2 ? 'rose' : 'sky'}
         />
-      </div>
+      </StaggerGrid>
 
       {/* Search & Filter Bar */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm transition-colors">
         <div className="relative flex-1">
           <i className="fa-solid fa-magnifying-glass absolute top-3.5 left-3.5 rtl:left-auto rtl:right-3.5 text-slate-400 text-sm"></i>
           <input
@@ -324,11 +319,11 @@ export const SuppliersView: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           <select
             value={filterStatus}
             onChange={e => setFilterStatus(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-500"
+            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
           >
             <option value="ALL">{isAr ? 'جميع الحالات' : 'All Statuses'}</option>
             <option value="APPROVED">{isAr ? 'معتمد (Approved)' : 'Approved'}</option>
@@ -340,7 +335,7 @@ export const SuppliersView: React.FC = () => {
           <select
             value={filterRisk}
             onChange={e => setFilterRisk(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-500"
+            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
           >
             <option value="ALL">{isAr ? 'جميع مستويات المخاطر' : 'All Risk Levels'}</option>
             <option value="LOW">{isAr ? 'مخاطر منخفضة (Low)' : 'Low Risk'}</option>
@@ -358,125 +353,132 @@ export const SuppliersView: React.FC = () => {
             <p className="text-xs">{isAr ? 'لا توجد بيانات موردين مطابقة لبحثك' : 'No suppliers match your filter criteria'}</p>
           </div>
         ) : (
-          filteredSuppliers.map(sup => {
-            const expiring = isCertExpiringSoon(sup.certExpiry);
-            return (
-              <div
-                key={sup.id}
-                className="bg-white dark:bg-slate-800/80 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="space-y-0.5">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-bold text-slate-900 dark:text-white text-sm">{sup.name}</span>
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                        {sup.id}
-                      </span>
+          <StaggerGrid className="space-y-3.5">
+            {filteredSuppliers.map(sup => {
+              const expiring = isCertExpiringSoon(sup.certExpiry);
+              return (
+                <motion.div
+                  key={sup.id}
+                  variants={staggerChild}
+                  className="bg-white dark:bg-slate-800/80 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-bold text-slate-900 dark:text-white text-sm">{sup.name}</span>
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                          {sup.id}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">{sup.category}</p>
                     </div>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400">{sup.category}</p>
-                  </div>
-                  <Badge
-                    variant={
-                      sup.status === 'APPROVED'
-                        ? 'emerald'
-                        : sup.status === 'CONDITIONAL'
-                        ? 'amber'
-                        : sup.status === 'SUSPENDED'
-                        ? 'purple'
-                        : 'rose'
-                    }
-                    size="sm"
-                  >
-                    {sup.status}
-                  </Badge>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">{isAr ? 'المسؤول:' : 'Contact:'}</span>
-                    <span className="font-bold text-slate-700 dark:text-slate-200 truncate block">{sup.contactPerson}</span>
-                    <span className="text-[10px] font-mono text-slate-500 truncate block">{sup.phone}</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">{isAr ? 'التقييم / الرفض:' : 'Score / Reject:'}</span>
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-black font-mono text-emerald-600 dark:text-emerald-400">{sup.rating}%</span>
-                      <span className="text-[10px] text-slate-400">({sup.rejectionRate}% {isAr ? 'رفض' : 'rej'})</span>
-                    </div>
-                    <span className={`text-[10px] font-bold uppercase ${
-                      sup.riskLevel === 'LOW' ? 'text-emerald-500' : sup.riskLevel === 'MEDIUM' ? 'text-amber-500' : 'text-rose-500'
-                    }`}>
-                      {sup.riskLevel} RISK
-                    </span>
-                  </div>
-                </div>
-
-                {sup.isoCerts && sup.isoCerts.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-1">
-                    {sup.isoCerts.map((cert, idx) => (
-                      <span key={idx} className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">
-                        {cert}
-                      </span>
-                    ))}
-                    {expiring && (
-                      <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold text-[10px]">
-                        {isAr ? 'صلاحية قريبة' : 'Expiring'}
-                      </span>
-                    )}
-                  </div>
-                )}
-
-                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
-                  <button
-                    onClick={() => handleContactWhatsApp(sup)}
-                    className="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs font-bold flex items-center gap-1"
-                  >
-                    <i className="fa-brands fa-whatsapp"></i>
-                    <span>{isAr ? 'واتساب' : 'WhatsApp'}</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setEvalSupplier(sup);
-                      setEvalScores({
-                        qualityCompliance: sup.rating,
-                        deliveryTimeliness: sup.rating,
-                        documentation: 90,
-                        packagingSafety: 95,
-                        pricingResponse: 85,
-                      });
-                    }}
-                    className="px-2.5 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 text-xs font-bold flex items-center gap-1"
-                  >
-                    <i className="fa-solid fa-chart-pie"></i>
-                    <span>{isAr ? 'تقييم' : 'Eval'}</span>
-                  </button>
-                  <button
-                    onClick={() => setEditingSupplier(sup)}
-                    className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
-                    title={isAr ? 'تعديل' : 'Edit'}
-                  >
-                    <i className="fa-solid fa-pen-to-square text-xs"></i>
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (confirm(isAr ? 'هل أنت متأكد من حذف هذا المورد؟' : 'Delete this supplier?')) {
-                        deleteSupplier(sup.id);
+                    <Badge
+                      variant={
+                        sup.status === 'APPROVED'
+                          ? 'emerald'
+                          : sup.status === 'CONDITIONAL'
+                          ? 'amber'
+                          : sup.status === 'SUSPENDED'
+                          ? 'purple'
+                          : 'rose'
                       }
-                    }}
-                    className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400"
-                    title={isAr ? 'حذف' : 'Delete'}
-                  >
-                    <i className="fa-solid fa-trash text-xs"></i>
-                  </button>
-                </div>
-              </div>
-            );
-          })
+                      size="sm"
+                    >
+                      {sup.status}
+                    </Badge>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">{isAr ? 'المسؤول:' : 'Contact:'}</span>
+                      <span className="font-bold text-slate-700 dark:text-slate-200 truncate block">{sup.contactPerson}</span>
+                      <span className="text-[10px] font-mono text-slate-500 truncate block">{sup.phone}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">{isAr ? 'التقييم / الرفض:' : 'Score / Reject:'}</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-black font-mono text-emerald-600 dark:text-emerald-400">{sup.rating}%</span>
+                        <span className="text-[10px] text-slate-400">({sup.rejectionRate}% {isAr ? 'رفض' : 'rej'})</span>
+                      </div>
+                      <span className={`text-[10px] font-bold uppercase ${
+                        sup.riskLevel === 'LOW' ? 'text-emerald-500' : sup.riskLevel === 'MEDIUM' ? 'text-amber-500' : 'text-rose-500'
+                      }`}>
+                        {sup.riskLevel} RISK
+                      </span>
+                    </div>
+                  </div>
+
+                  {sup.isoCerts && sup.isoCerts.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-1">
+                      {sup.isoCerts.map((cert, idx) => (
+                        <span key={idx} className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">
+                          {cert}
+                        </span>
+                      ))}
+                      {expiring && (
+                        <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold text-[10px]">
+                          {isAr ? 'صلاحية قريبة' : 'Expiring'}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleContactWhatsApp(sup)}
+                      className="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs font-bold flex items-center gap-1"
+                    >
+                      <i className="fa-brands fa-whatsapp"></i>
+                      <span>{isAr ? 'واتساب' : 'WhatsApp'}</span>
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        setEvalSupplier(sup);
+                        setEvalScores({
+                          qualityCompliance: sup.rating,
+                          deliveryTimeliness: sup.rating,
+                          documentation: 90,
+                          packagingSafety: 95,
+                          pricingResponse: 85,
+                        });
+                      }}
+                      className="px-2.5 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 text-xs font-bold flex items-center gap-1"
+                    >
+                      <i className="fa-solid fa-chart-pie"></i>
+                      <span>{isAr ? 'تقييم' : 'Eval'}</span>
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setEditingSupplier(sup)}
+                      className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
+                      title={isAr ? 'تعديل' : 'Edit'}
+                    >
+                      <i className="fa-solid fa-pen-to-square text-xs"></i>
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        if (confirm(isAr ? 'هل أنت متأكد من حذف هذا المورد؟' : 'Delete this supplier?')) {
+                          deleteSupplier(sup.id);
+                        }
+                      }}
+                      className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400"
+                      title={isAr ? 'حذف' : 'Delete'}
+                    >
+                      <i className="fa-solid fa-trash text-xs"></i>
+                    </motion.button>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </StaggerGrid>
         )}
       </div>
 
       {/* Desktop Suppliers Table (>= md) */}
-      <div className="hidden md:block bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden backdrop-blur-sm">
+      <div className="hidden md:block bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden backdrop-blur-sm transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-start text-xs border-collapse">
             <thead>
@@ -646,15 +648,19 @@ export const SuppliersView: React.FC = () => {
                       {/* Actions */}
                       <td className="py-4 px-4 text-center">
                         <div className="flex items-center justify-center gap-1.5">
-                          <button
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={() => handleContactWhatsApp(sup)}
                             title={isAr ? 'تواصل عبر واتساب' : 'WhatsApp Contact'}
                             className="w-7 h-7 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all shadow-sm"
                           >
                             <i className="fa-brands fa-whatsapp text-xs"></i>
-                          </button>
+                          </motion.button>
 
-                          <button
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={() => {
                               setEvalSupplier(sup);
                               setEvalScores({
@@ -669,17 +675,21 @@ export const SuppliersView: React.FC = () => {
                             className="w-7 h-7 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center transition-all shadow-sm"
                           >
                             <i className="fa-solid fa-chart-pie text-xs"></i>
-                          </button>
+                          </motion.button>
 
-                          <button
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={() => setEditingSupplier(sup)}
                             title={isAr ? 'تعديل البيانات' : 'Edit Supplier'}
                             className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 flex items-center justify-center transition-all shadow-sm"
                           >
                             <i className="fa-solid fa-pen-to-square text-xs"></i>
-                          </button>
+                          </motion.button>
 
-                          <button
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={() => {
                               if (confirm(isAr ? 'هل أنت متأكد من حذف هذا المورد؟' : 'Delete this supplier?')) {
                                 deleteSupplier(sup.id);
@@ -689,7 +699,7 @@ export const SuppliersView: React.FC = () => {
                             className="w-7 h-7 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-900/30 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center transition-all shadow-sm"
                           >
                             <i className="fa-solid fa-trash text-xs"></i>
-                          </button>
+                          </motion.button>
                         </div>
                       </td>
                     </tr>
@@ -701,183 +711,183 @@ export const SuppliersView: React.FC = () => {
         </div>
       </div>
 
-      {/* Add Supplier Modal */}
-      {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 max-w-2xl w-full p-6 shadow-2xl space-y-5 animate-scaleUp">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md">
-                  <i className="fa-solid fa-truck-field"></i>
-                </div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  {isAr ? 'إضافة مورد جديد إلى قائمة الموردين المعتمدين (AVL)' : 'Add New Approved Vendor (AVL)'}
-                </h3>
+      {/* Add Supplier Modal with AnimatedModal */}
+      <AnimatedModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} className="max-w-2xl">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-6 shadow-2xl space-y-5">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md">
+                <i className="fa-solid fa-truck-field"></i>
               </div>
-              <button
-                onClick={() => setIsAddModalOpen(false)}
-                className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors"
-              >
-                <i className="fa-solid fa-xmark text-sm"></i>
-              </button>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                {isAr ? 'إضافة مورد جديد إلى قائمة الموردين المعتمدين (AVL)' : 'Add New Approved Vendor (AVL)'}
+              </h3>
             </div>
+            <button
+              onClick={() => setIsAddModalOpen(false)}
+              className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors"
+            >
+              <i className="fa-solid fa-xmark text-sm"></i>
+            </button>
+          </div>
 
-            <form onSubmit={handleAddSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'اسم الشركة / المورد *' : 'Company / Supplier Name *'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={newSup.name}
-                    onChange={e => setNewSup({ ...newSup, name: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
-                    placeholder={isAr ? 'مثال: شركة الأغذية المتطورة' : 'e.g. Advanced Foods Co.'}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'التصنيف ونوع التوريد *' : 'Category / Supply Type *'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={newSup.category}
-                    onChange={e => setNewSup({ ...newSup, category: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
-                    placeholder={isAr ? 'مثال: مواد خام غذائية / كيماويات / تغليف' : 'e.g. Raw Materials / Chemicals'}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'مسؤول الاتصال' : 'Contact Person'}
-                  </label>
-                  <input
-                    type="text"
-                    value={newSup.contactPerson}
-                    onChange={e => setNewSup({ ...newSup, contactPerson: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'رقم الهاتف / الواتساب' : 'Phone / WhatsApp'}
-                  </label>
-                  <input
-                    type="text"
-                    value={newSup.phone}
-                    onChange={e => setNewSup({ ...newSup, phone: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
-                    placeholder="+966500000000"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'شهادات الجودة (مفصولة بفواصل)' : 'ISO Certifications (comma separated)'}
-                  </label>
-                  <input
-                    type="text"
-                    value={newSup.isoCerts}
-                    onChange={e => setNewSup({ ...newSup, isoCerts: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
-                    placeholder="ISO 22000, HACCP, ISO 9001"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'تاريخ انتهاء الشهادة' : 'Cert Expiry Date'}
-                  </label>
-                  <input
-                    type="date"
-                    value={newSup.certExpiry}
-                    onChange={e => setNewSup({ ...newSup, certExpiry: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'مستوى المخاطر' : 'Risk Level'}
-                  </label>
-                  <select
-                    value={newSup.riskLevel}
-                    onChange={e => setNewSup({ ...newSup, riskLevel: e.target.value as any })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="LOW">{isAr ? 'منخفض (Low Risk)' : 'Low Risk'}</option>
-                    <option value="MEDIUM">{isAr ? 'متوسط (Medium Risk)' : 'Medium Risk'}</option>
-                    <option value="HIGH">{isAr ? 'عالي (High Risk)' : 'High Risk'}</option>
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'حالة الاعتماد' : 'AVL Status'}
-                  </label>
-                  <select
-                    value={newSup.status}
-                    onChange={e => setNewSup({ ...newSup, status: e.target.value as any })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="APPROVED">{isAr ? 'معتمد (Approved)' : 'Approved'}</option>
-                    <option value="CONDITIONAL">{isAr ? 'مشروط (Conditional)' : 'Conditional'}</option>
-                    <option value="SUSPENDED">{isAr ? 'موقوف مؤقتاً (Suspended)' : 'Suspended'}</option>
-                    <option value="BLACKLISTED">{isAr ? 'محظور (Blacklisted)' : 'Blacklisted'}</option>
-                  </select>
-                </div>
+          <form onSubmit={handleAddSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'اسم الشركة / المورد *' : 'Company / Supplier Name *'}
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newSup.name}
+                  onChange={e => setNewSup({ ...newSup, name: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder={isAr ? 'مثال: شركة الأغذية المتطورة' : 'e.g. Advanced Foods Co.'}
+                />
               </div>
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'ملاحظات تدقيق الجودة والامتثال' : 'Quality Audit & Compliance Notes'}
+                  {isAr ? 'التصنيف ونوع التوريد *' : 'Category / Supply Type *'}
                 </label>
-                <textarea
-                  rows={2}
-                  value={newSup.notes}
-                  onChange={e => setNewSup({ ...newSup, notes: e.target.value })}
+                <input
+                  type="text"
+                  required
+                  value={newSup.category}
+                  onChange={e => setNewSup({ ...newSup, category: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder={isAr ? 'شروط خاصة، سجل التوريد، تقارير الفحص...' : 'Special requirements, inspection records...'}
+                  placeholder={isAr ? 'مثال: مواد خام غذائية / كيماويات / تغليف' : 'e.g. Raw Materials / Chemicals'}
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
-                <button
-                  type="button"
-                  onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700"
-                >
-                  {isAr ? 'إلغاء' : 'Cancel'}
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-500/20"
-                >
-                  {isAr ? 'حفظ واعتماد المورد' : 'Save & Approve Vendor'}
-                </button>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'مسؤول الاتصال' : 'Contact Person'}
+                </label>
+                <input
+                  type="text"
+                  value={newSup.contactPerson}
+                  onChange={e => setNewSup({ ...newSup, contactPerson: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
+                />
               </div>
-            </form>
-          </div>
-        </div>
-      )}
 
-      {/* Edit Supplier Modal */}
-      {editingSupplier && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 max-w-2xl w-full p-6 shadow-2xl space-y-5 animate-scaleUp">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'رقم الهاتف / الواتساب' : 'Phone / WhatsApp'}
+                </label>
+                <input
+                  type="text"
+                  value={newSup.phone}
+                  onChange={e => setNewSup({ ...newSup, phone: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="+966500000000"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'شهادات الجودة (مفصولة بفواصل)' : 'ISO Certifications (comma separated)'}
+                </label>
+                <input
+                  type="text"
+                  value={newSup.isoCerts}
+                  onChange={e => setNewSup({ ...newSup, isoCerts: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="ISO 22000, HACCP, ISO 9001"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'تاريخ انتهاء الشهادة' : 'Cert Expiry Date'}
+                </label>
+                <input
+                  type="date"
+                  value={newSup.certExpiry}
+                  onChange={e => setNewSup({ ...newSup, certExpiry: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'مستوى المخاطر' : 'Risk Level'}
+                </label>
+                <select
+                  value={newSup.riskLevel}
+                  onChange={e => setNewSup({ ...newSup, riskLevel: e.target.value as any })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="LOW">{isAr ? 'منخفض (Low Risk)' : 'Low Risk'}</option>
+                  <option value="MEDIUM">{isAr ? 'متوسط (Medium Risk)' : 'Medium Risk'}</option>
+                  <option value="HIGH">{isAr ? 'عالي (High Risk)' : 'High Risk'}</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'حالة الاعتماد' : 'AVL Status'}
+                </label>
+                <select
+                  value={newSup.status}
+                  onChange={e => setNewSup({ ...newSup, status: e.target.value as any })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="APPROVED">{isAr ? 'معتمد (Approved)' : 'Approved'}</option>
+                  <option value="CONDITIONAL">{isAr ? 'مشروط (Conditional)' : 'Conditional'}</option>
+                  <option value="SUSPENDED">{isAr ? 'موقوف مؤقتاً (Suspended)' : 'Suspended'}</option>
+                  <option value="BLACKLISTED">{isAr ? 'محظور (Blacklisted)' : 'Blacklisted'}</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                {isAr ? 'ملاحظات تدقيق الجودة والامتثال' : 'Quality Audit & Compliance Notes'}
+              </label>
+              <textarea
+                rows={2}
+                value={newSup.notes}
+                onChange={e => setNewSup({ ...newSup, notes: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder={isAr ? 'شروط خاصة، سجل التوريد، تقارير الفحص...' : 'Special requirements, inspection records...'}
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+              <button
+                type="button"
+                onClick={() => setIsAddModalOpen(false)}
+                className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              >
+                {isAr ? 'إلغاء' : 'Cancel'}
+              </button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                type="submit"
+                className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-500/20"
+              >
+                {isAr ? 'حفظ واعتماد المورد' : 'Save & Approve Vendor'}
+              </motion.button>
+            </div>
+          </form>
+        </div>
+      </AnimatedModal>
+
+      {/* Edit Supplier Modal with AnimatedModal */}
+      <AnimatedModal isOpen={!!editingSupplier} onClose={() => setEditingSupplier(null)} className="max-w-2xl">
+        {editingSupplier && (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-6 shadow-2xl space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 {isAr ? `تعديل بيانات المورد (${editingSupplier.id})` : `Edit Supplier (${editingSupplier.id})`}
               </h3>
               <button
                 onClick={() => setEditingSupplier(null)}
-                className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors"
               >
                 <i className="fa-solid fa-xmark text-sm"></i>
               </button>
@@ -985,22 +995,24 @@ export const SuppliersView: React.FC = () => {
                 >
                   {isAr ? 'إلغاء' : 'Cancel'}
                 </button>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold"
                 >
                   {isAr ? 'حفظ التعديلات' : 'Save Changes'}
-                </button>
+                </motion.button>
               </div>
             </form>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatedModal>
 
-      {/* Supplier Evaluation Scorecard Modal */}
-      {evalSupplier && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 max-w-xl w-full p-6 shadow-2xl space-y-5 animate-scaleUp">
+      {/* Supplier Evaluation Scorecard Modal with AnimatedModal */}
+      <AnimatedModal isOpen={!!evalSupplier} onClose={() => setEvalSupplier(null)} className="max-w-xl">
+        {evalSupplier && (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-6 shadow-2xl space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
@@ -1012,7 +1024,7 @@ export const SuppliersView: React.FC = () => {
               </div>
               <button
                 onClick={() => setEvalSupplier(null)}
-                className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors"
               >
                 <i className="fa-solid fa-xmark text-sm"></i>
               </button>
@@ -1032,7 +1044,7 @@ export const SuppliersView: React.FC = () => {
                     max="100"
                     value={evalScores.qualityCompliance}
                     onChange={e => setEvalScores({ ...evalScores, qualityCompliance: Number(e.target.value) })}
-                    className="w-full accent-indigo-600"
+                    className="w-full accent-indigo-600 cursor-pointer"
                   />
                 </div>
 
@@ -1048,7 +1060,7 @@ export const SuppliersView: React.FC = () => {
                     max="100"
                     value={evalScores.deliveryTimeliness}
                     onChange={e => setEvalScores({ ...evalScores, deliveryTimeliness: Number(e.target.value) })}
-                    className="w-full accent-indigo-600"
+                    className="w-full accent-indigo-600 cursor-pointer"
                   />
                 </div>
 
@@ -1064,7 +1076,7 @@ export const SuppliersView: React.FC = () => {
                     max="100"
                     value={evalScores.packagingSafety}
                     onChange={e => setEvalScores({ ...evalScores, packagingSafety: Number(e.target.value) })}
-                    className="w-full accent-indigo-600"
+                    className="w-full accent-indigo-600 cursor-pointer"
                   />
                 </div>
 
@@ -1080,7 +1092,7 @@ export const SuppliersView: React.FC = () => {
                     max="100"
                     value={evalScores.documentation}
                     onChange={e => setEvalScores({ ...evalScores, documentation: Number(e.target.value) })}
-                    className="w-full accent-indigo-600"
+                    className="w-full accent-indigo-600 cursor-pointer"
                   />
                 </div>
 
@@ -1096,7 +1108,7 @@ export const SuppliersView: React.FC = () => {
                     max="100"
                     value={evalScores.pricingResponse}
                     onChange={e => setEvalScores({ ...evalScores, pricingResponse: Number(e.target.value) })}
-                    className="w-full accent-indigo-600"
+                    className="w-full accent-indigo-600 cursor-pointer"
                   />
                 </div>
               </div>
@@ -1153,17 +1165,19 @@ export const SuppliersView: React.FC = () => {
                 >
                   {isAr ? 'إلغاء' : 'Cancel'}
                 </button>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold shadow-md"
                 >
                   {isAr ? 'اعتماد التقييم وتحديث الرتبة' : 'Commit & Update Rating'}
-                </button>
+                </motion.button>
               </div>
             </form>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </AnimatedModal>
+    </AnimatedPage>
   );
 };

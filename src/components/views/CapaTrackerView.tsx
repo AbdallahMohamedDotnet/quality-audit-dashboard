@@ -1,12 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { CapaRecord } from '../../types';
 import { StatCard } from '../common/StatCard';
 import { Badge } from '../common/Badge';
+import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
+import { AnimatedModal } from '../common/AnimatedModal';
 import { SECTOR_DEPARTMENTS, DEPARTMENTS } from '../../data';
 import { exportToCsv } from '../../utils/export';
+import { staggerChild } from '../../utils/animations';
 
 export const CapaTrackerView: React.FC = () => {
   const {
@@ -105,70 +109,72 @@ export const CapaTrackerView: React.FC = () => {
       preventiveAction: '',
       targetDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     });
+
+    showToast(
+      isAr ? 'تم إنشاء قيد CAPA وإسناده للمسؤول بنجاح' : 'CAPA created and assigned successfully',
+      'success'
+    );
   };
 
   const handleVerifyAndClose = (e: React.FormEvent) => {
     e.preventDefault();
     if (!verifyModalCapa) return;
-
-    const auditor = verifierName.trim() || (isAr ? 'مدير الجودة والاعتماد' : 'Quality & Audit Director');
+    if (!verifierName.trim()) {
+      showToast(isAr ? 'يرجى كتابة اسم المعتمد المسؤول' : 'Verifier name required', 'warning');
+      return;
+    }
 
     updateCapaStatus(verifyModalCapa.id, 'CLOSED', {
-      verifiedBy: auditor,
+      verifiedBy: verifierName,
       effectivenessRating: verifyRating,
+      closedAt: new Date().toISOString().split('T')[0],
     });
-
     setVerifyModalCapa(null);
     setVerifierName('');
+    setVerifyRating(5);
+    showToast(
+      isAr ? `تم إغلاق وتوثيق الفعالية للإجراء [${verifyModalCapa.id}]` : `Verified & closed [${verifyModalCapa.id}]`,
+      'success'
+    );
   };
 
   const handleShareWhatsApp = (capa: CapaRecord) => {
     const msg = isAr
-      ? `*سجل الإجراء التصحيحي والوقائي (CAPA)*\nرقم التذكرة: ${capa.id}\nالمصدر: ${capa.source} (${capa.sourceRefId || 'N/A'})\nالقسم: ${capa.dept}\nالمسؤول: ${capa.assignedTo}\nالأولوية: ${capa.priority}\nالعنوان: ${capa.title}\nالسبب الجذري: ${capa.rootCause}\nالإجراء التصحيحي: ${capa.correctiveAction}\nالإجراء الوقائي: ${capa.preventiveAction}\nالموعد المستهدف: ${capa.targetDate}\nالحالة الحالية: ${capa.status}`
-      : `*CAPA Action Notice*\nID: ${capa.id}\nSource: ${capa.source} (${capa.sourceRefId || 'N/A'})\nDept: ${capa.dept}\nAssigned: ${capa.assignedTo}\nPriority: ${capa.priority}\nTitle: ${capa.title}\nRoot Cause: ${capa.rootCause}\nCorrective: ${capa.correctiveAction}\nPreventive: ${capa.preventiveAction}\nDeadline: ${capa.targetDate}\nStatus: ${capa.status}`;
-
+      ? `*إجراء تصحيحي وقائي (CAPA Master)*\nالكود: ${capa.id}\nالعنوان: ${capa.title}\nالقسم: ${capa.dept}\nالأولوية: ${capa.priority}\nالحالة: ${capa.status}\nالمسؤول: ${capa.assignedTo}\nتاريخ الإنجاز: ${capa.targetDate}\nالسبب الجذري: ${capa.rootCause}\nالإجراء المتخذ: ${capa.correctiveAction}\nيرجى المتابعة وتحديث المرحلة.`
+      : `*CAPA Action Notice*\nID: ${capa.id}\nTitle: ${capa.title}\nDept: ${capa.dept}\nPriority: ${capa.priority}\nStatus: ${capa.status}\nOwner: ${capa.assignedTo}\nDue Date: ${capa.targetDate}\nRoot Cause: ${capa.rootCause}\nAction: ${capa.correctiveAction}\nPlease review and update progress.`;
     dispatchWhatsApp(msg);
   };
 
   const handleExportCsv = () => {
     const headers = [
-      isAr ? 'رقم CAPA' : 'CAPA ID',
-      isAr ? 'المصدر' : 'Source',
-      isAr ? 'المرجع' : 'Reference ID',
+      isAr ? 'كود CAPA' : 'CAPA ID',
       isAr ? 'العنوان' : 'Title',
+      isAr ? 'المصدر' : 'Source',
+      isAr ? 'المرجع' : 'Source Ref',
       isAr ? 'القسم' : 'Department',
-      isAr ? 'المسؤول' : 'Assigned To',
+      isAr ? 'المسؤول' : 'Owner',
       isAr ? 'الأولوية' : 'Priority',
       isAr ? 'الحالة' : 'Status',
+      isAr ? 'تاريخ الهدف' : 'Target Date',
       isAr ? 'السبب الجذري' : 'Root Cause',
       isAr ? 'الإجراء التصحيحي' : 'Corrective Action',
       isAr ? 'الإجراء الوقائي' : 'Preventive Action',
-      isAr ? 'تاريخ الإنشاء' : 'Created Date',
-      isAr ? 'الموعد المستهدف' : 'Target Date',
-      isAr ? 'تاريخ الإغلاق' : 'Closed Date',
-      isAr ? 'المحقق / المدقق' : 'Verified By',
     ];
-
     const rows = filteredCapas.map(c => [
       c.id,
-      c.source,
-      c.sourceRefId || '',
       c.title,
+      c.source,
+      c.sourceRefId || 'N/A',
       c.dept,
       c.assignedTo,
       c.priority,
       c.status,
+      c.targetDate,
       c.rootCause,
       c.correctiveAction,
       c.preventiveAction,
-      c.createdAt,
-      c.targetDate,
-      c.closedAt || '',
-      c.verifiedBy || '',
     ]);
-
-    exportToCsv(`CAPA_Master_Tracker_${Date.now()}`, headers, rows);
-    showToast(isAr ? 'تم تصدير سجل CAPA بنجاح' : 'Exported CAPA Tracker to CSV', 'success');
+    exportToCsv(`CAPA_Master_Tracker_${new Date().toISOString().split('T')[0]}`, headers, rows);
   };
 
   const getStatusStageIndex = (status: CapaRecord['status']) => {
@@ -189,12 +195,12 @@ export const CapaTrackerView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
-      {/* Header & Actions */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm backdrop-blur-sm">
+    <AnimatedPage>
+      {/* Header Banner */}
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-amber-600 flex items-center justify-center text-white shadow-md">
-            <i className="fa-solid fa-arrows-spin text-lg"></i>
+          <div className="w-10 h-10 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center text-lg">
+            <i className="fa-solid fa-arrows-spin"></i>
           </div>
           <div>
             <h2 className="text-xl font-black text-slate-900 dark:text-white">
@@ -209,26 +215,30 @@ export const CapaTrackerView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             onClick={handleExportCsv}
             className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
           >
             <i className="fa-solid fa-file-csv text-emerald-500"></i>
             {isAr ? 'تصدير CSV' : 'Export CSV'}
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             onClick={() => setIsAddModalOpen(true)}
-            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-700 hover:to-amber-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-rose-500/20 active:scale-95"
+            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-700 hover:to-amber-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-rose-500/20"
           >
             <i className="fa-solid fa-plus"></i>
             {isAr ? 'فتح إجراء CAPA جديد' : 'New CAPA Ticket'}
-          </button>
+          </motion.button>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title={isAr ? 'قيد المعالجة والتحقيق' : 'Active / In-Progress'}
           value={totalOpen}
@@ -257,10 +267,10 @@ export const CapaTrackerView: React.FC = () => {
           icon={<i className="fa-solid fa-fire text-xl"></i>}
           variant={criticalCount > 0 ? 'rose' : 'indigo'}
         />
-      </div>
+      </StaggerGrid>
 
       {/* Search & Filtering Bar */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm transition-colors">
         <div className="relative flex-1">
           <i className="fa-solid fa-magnifying-glass absolute top-3.5 left-3.5 rtl:left-auto rtl:right-3.5 text-slate-400 text-sm"></i>
           <input
@@ -272,15 +282,15 @@ export const CapaTrackerView: React.FC = () => {
                 ? 'بحث برقم CAPA، العنوان، القسم، المسؤول، أو المرجع...'
                 : 'Search by CAPA ID, title, dept, owner, or source ref...'
             }
-            className="w-full pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none"
+            className="w-full pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition-colors"
           />
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           <select
             value={filterStatus}
             onChange={e => setFilterStatus(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none"
+            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none transition-colors"
           >
             <option value="ALL">{isAr ? 'جميع المراحل' : 'All Stages'}</option>
             <option value="OPEN">{isAr ? 'مفتوح (Open)' : 'Open'}</option>
@@ -293,7 +303,7 @@ export const CapaTrackerView: React.FC = () => {
           <select
             value={filterPriority}
             onChange={e => setFilterPriority(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none"
+            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none transition-colors"
           >
             <option value="ALL">{isAr ? 'جميع درجات الأولوية' : 'All Priorities'}</option>
             <option value="CRITICAL">{isAr ? 'حرجة جداً (Critical)' : 'Critical'}</option>
@@ -305,7 +315,7 @@ export const CapaTrackerView: React.FC = () => {
           <select
             value={filterSource}
             onChange={e => setFilterSource(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none"
+            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none transition-colors"
           >
             <option value="ALL">{isAr ? 'جميع المصادر' : 'All Sources'}</option>
             <option value="NCR">NCR</option>
@@ -326,453 +336,469 @@ export const CapaTrackerView: React.FC = () => {
             </p>
           </div>
         ) : (
-          filteredCapas.map(capa => {
-            const currentStageIdx = getStatusStageIndex(capa.status);
-            const isCritical = capa.priority === 'CRITICAL';
-            const isClosed = capa.status === 'CLOSED';
+          <StaggerGrid className="grid grid-cols-1 gap-4">
+            {filteredCapas.map(capa => {
+              const currentStageIdx = getStatusStageIndex(capa.status);
+              const isCritical = capa.priority === 'CRITICAL';
+              const isClosed = capa.status === 'CLOSED';
 
-            return (
-              <div
-                key={capa.id}
-                className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 p-5 shadow-sm hover:shadow-md transition-all space-y-4"
-              >
-                {/* Card Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-700">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-black text-slate-900 dark:text-white text-base">
-                        {capa.title}
-                      </span>
-                      <span className="font-mono text-xs px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold">
-                        {capa.id}
-                      </span>
+              return (
+                <motion.div
+                  key={capa.id}
+                  variants={staggerChild}
+                  className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 p-5 shadow-sm hover:shadow-md transition-all space-y-4"
+                >
+                  {/* Card Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-700">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-black text-slate-900 dark:text-white text-base">
+                          {capa.title}
+                        </span>
+                        <span className="font-mono text-xs px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold">
+                          {capa.id}
+                        </span>
+                        <Badge
+                          variant={
+                            capa.source === 'NCR'
+                              ? 'rose'
+                              : capa.source === 'COMPLAINT'
+                              ? 'purple'
+                              : 'sky'
+                          }
+                          size="sm"
+                        >
+                          {capa.source} {capa.sourceRefId ? `(${capa.sourceRefId})` : ''}
+                        </Badge>
+                      </div>
+
+                      <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
+                        <span>
+                          <i className="fa-solid fa-layer-group text-[10px] me-1 text-slate-400"></i>
+                          {capa.dept}
+                        </span>
+                        <span>•</span>
+                        <span>
+                          <i className="fa-solid fa-user-shield text-[10px] me-1 text-slate-400"></i>
+                          {capa.assignedTo}
+                        </span>
+                        <span>•</span>
+                        <span>
+                          <i className="fa-regular fa-clock text-[10px] me-1 text-slate-400"></i>
+                          {isAr ? 'المهلة:' : 'Target:'} {capa.targetDate}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 self-end sm:self-center">
                       <Badge
                         variant={
-                          capa.source === 'NCR'
+                          isCritical
                             ? 'rose'
-                            : capa.source === 'COMPLAINT'
-                            ? 'purple'
-                            : 'sky'
+                            : capa.priority === 'HIGH'
+                            ? 'amber'
+                            : capa.priority === 'MEDIUM'
+                            ? 'indigo'
+                            : 'slate'
                         }
-                        size="sm"
+                        size="md"
                       >
-                        {capa.source} {capa.sourceRefId ? `(${capa.sourceRefId})` : ''}
+                        {capa.priority} PRIORITY
+                      </Badge>
+
+                      <Badge
+                        variant={
+                          capa.status === 'CLOSED'
+                            ? 'emerald'
+                            : capa.status === 'VERIFIED'
+                            ? 'teal'
+                            : capa.status === 'IMPLEMENTED'
+                            ? 'sky'
+                            : capa.status === 'INVESTIGATION'
+                            ? 'amber'
+                            : 'rose'
+                        }
+                        size="md"
+                      >
+                        {capa.status}
                       </Badge>
                     </div>
+                  </div>
 
-                    <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
-                      <span>
-                        <i className="fa-solid fa-layer-group text-[10px] me-1 text-slate-400"></i>
-                        {capa.dept}
-                      </span>
-                      <span>•</span>
-                      <span>
-                        <i className="fa-solid fa-user-shield text-[10px] me-1 text-slate-400"></i>
-                        {capa.assignedTo}
-                      </span>
-                      <span>•</span>
-                      <span>
-                        <i className="fa-regular fa-clock text-[10px] me-1 text-slate-400"></i>
-                        {isAr ? 'المهلة:' : 'Target:'} {capa.targetDate}
-                      </span>
+                  {/* Lifecycle Stepper */}
+                  <div className="py-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 relative">
+                      {[
+                        { key: 'OPEN', labelAr: '1. فتح التذكرة', labelEn: '1. Open' },
+                        { key: 'INVESTIGATION', labelAr: '2. تحليل الأسباب (5-Whys)', labelEn: '2. Root Cause' },
+                        { key: 'IMPLEMENTED', labelAr: '3. تنفيذ الإجراء', labelEn: '3. Implemented' },
+                        { key: 'VERIFIED', labelAr: '4. التحقق والقياس', labelEn: '4. Verified' },
+                        { key: 'CLOSED', labelAr: '5. إغلاق نهائي', labelEn: '5. Closed' },
+                      ].map((step, idx) => {
+                        const isPassed = currentStageIdx >= idx;
+                        const isCurrent = currentStageIdx === idx;
+                        return (
+                          <div key={step.key} className="flex flex-col items-center text-center gap-1.5">
+                            <motion.div
+                              animate={isCurrent ? { scale: [1, 1.15, 1] } : {}}
+                              transition={{ repeat: Infinity, duration: 2 }}
+                              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                                isPassed
+                                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
+                                  : 'bg-slate-100 dark:bg-slate-700 text-slate-400'
+                              } ${isCurrent ? 'ring-4 ring-emerald-500/20 scale-110' : ''}`}
+                            >
+                              {isPassed ? <i className="fa-solid fa-check text-[10px]"></i> : idx + 1}
+                            </motion.div>
+                            <span
+                              className={`text-[10px] font-bold tracking-tight truncate max-w-full ${
+                                isPassed
+                                  ? 'text-slate-900 dark:text-white'
+                                  : 'text-slate-400 dark:text-slate-500'
+                              }`}
+                            >
+                              {isAr ? step.labelAr : step.labelEn}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 self-end sm:self-center">
-                    <Badge
-                      variant={
-                        isCritical
-                          ? 'rose'
-                          : capa.priority === 'HIGH'
-                          ? 'amber'
-                          : capa.priority === 'MEDIUM'
-                          ? 'indigo'
-                          : 'slate'
-                      }
-                      size="md"
-                    >
-                      {capa.priority} PRIORITY
-                    </Badge>
-
-                    <Badge
-                      variant={
-                        capa.status === 'CLOSED'
-                          ? 'emerald'
-                          : capa.status === 'VERIFIED'
-                          ? 'teal'
-                          : capa.status === 'IMPLEMENTED'
-                          ? 'sky'
-                          : capa.status === 'INVESTIGATION'
-                          ? 'amber'
-                          : 'rose'
-                      }
-                      size="md"
-                    >
-                      {capa.status}
-                    </Badge>
-                  </div>
-                </div>
-
-                {/* Lifecycle Stepper */}
-                <div className="py-2">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 relative">
-                    {[
-                      { key: 'OPEN', labelAr: '1. فتح التذكرة', labelEn: '1. Open' },
-                      { key: 'INVESTIGATION', labelAr: '2. تحليل الأسباب (5-Whys)', labelEn: '2. Root Cause' },
-                      { key: 'IMPLEMENTED', labelAr: '3. تنفيذ الإجراء', labelEn: '3. Implemented' },
-                      { key: 'VERIFIED', labelAr: '4. التحقق والقياس', labelEn: '4. Verified' },
-                      { key: 'CLOSED', labelAr: '5. إغلاق نهائي', labelEn: '5. Closed' },
-                    ].map((step, idx) => {
-                      const isPassed = currentStageIdx >= idx;
-                      const isCurrent = currentStageIdx === idx;
-                      return (
-                        <div key={step.key} className="flex flex-col items-center text-center gap-1.5">
-                          <div
-                            className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                              isPassed
-                                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
-                                : 'bg-slate-100 dark:bg-slate-700 text-slate-400'
-                            } ${isCurrent ? 'ring-4 ring-emerald-500/20 scale-110' : ''}`}
-                          >
-                            {isPassed ? <i className="fa-solid fa-check text-[10px]"></i> : idx + 1}
-                          </div>
-                          <span
-                            className={`text-[10px] font-bold tracking-tight truncate max-w-full ${
-                              isPassed
-                                ? 'text-slate-900 dark:text-white'
-                                : 'text-slate-400 dark:text-slate-500'
-                            }`}
-                          >
-                            {isAr ? step.labelAr : step.labelEn}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Details Section */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-50/80 dark:bg-slate-900/40 p-4 rounded-xl text-xs border border-slate-200/50 dark:border-slate-700/50">
-                  <div className="space-y-1">
-                    <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                      <i className="fa-solid fa-microscope text-amber-500 text-[11px]"></i>
-                      {isAr ? 'السبب الجذري (Root Cause):' : 'Root Cause (5-Whys):'}
-                    </span>
-                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
-                      {capa.rootCause}
-                    </p>
-                  </div>
-
-                  <div className="space-y-1">
-                    <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                      <i className="fa-solid fa-bolt text-rose-500 text-[11px]"></i>
-                      {isAr ? 'التصحيح الفوري (Corrective):' : 'Immediate Corrective:'}
-                    </span>
-                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
-                      {capa.correctiveAction}
-                    </p>
-                  </div>
-
-                  <div className="space-y-1">
-                    <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                      <i className="fa-solid fa-shield-halved text-emerald-500 text-[11px]"></i>
-                      {isAr ? 'الإجراء الوقائي طويل المدى (Preventive):' : 'Long-Term Preventive:'}
-                    </span>
-                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
-                      {capa.preventiveAction}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Card Footer / Status Workflow Buttons */}
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
-                  <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                    {capa.closedAt && (
-                      <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
-                        <i className="fa-solid fa-circle-check"></i>
-                        {isAr ? `أغلق في ${capa.closedAt} بواسطة (${capa.verifiedBy})` : `Closed on ${capa.closedAt} by ${capa.verifiedBy}`}
+                  {/* Details Section */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-50/80 dark:bg-slate-900/40 p-4 rounded-xl text-xs border border-slate-200/50 dark:border-slate-700/50">
+                    <div className="space-y-1">
+                      <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <i className="fa-solid fa-microscope text-amber-500 text-[11px]"></i>
+                        {isAr ? 'السبب الجذري (Root Cause):' : 'Root Cause (5-Whys):'}
                       </span>
-                    )}
-                    {capa.effectivenessRating && (
-                      <div className="flex items-center gap-0.5 text-amber-500 text-xs">
-                        {[...Array(capa.effectivenessRating)].map((_, i) => (
-                          <i key={i} className="fa-solid fa-star"></i>
-                        ))}
-                      </div>
-                    )}
+                      <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
+                        {capa.rootCause}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <i className="fa-solid fa-bolt text-rose-500 text-[11px]"></i>
+                        {isAr ? 'التصحيح الفوري (Corrective):' : 'Immediate Corrective:'}
+                      </span>
+                      <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
+                        {capa.correctiveAction}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <i className="fa-solid fa-shield-halved text-emerald-500 text-[11px]"></i>
+                        {isAr ? 'الإجراء الوقائي طويل المدى (Preventive):' : 'Long-Term Preventive:'}
+                      </span>
+                      <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
+                        {capa.preventiveAction}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-2 flex-wrap justify-end">
-                    <button
-                      onClick={() => handleShareWhatsApp(capa)}
-                      className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
-                    >
-                      <i className="fa-brands fa-whatsapp"></i>
-                      {isAr ? 'واتساب' : 'Share'}
-                    </button>
+                  {/* Card Footer / Status Workflow Buttons */}
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
+                    <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                      {capa.closedAt && (
+                        <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                          <i className="fa-solid fa-circle-check"></i>
+                          {isAr ? `أغلق في ${capa.closedAt} بواسطة (${capa.verifiedBy})` : `Closed on ${capa.closedAt} by ${capa.verifiedBy}`}
+                        </span>
+                      )}
+                      {capa.effectivenessRating && (
+                        <div className="flex items-center gap-0.5 text-amber-500 text-xs">
+                          {[...Array(capa.effectivenessRating)].map((_, i) => (
+                            <i key={i} className="fa-solid fa-star"></i>
+                          ))}
+                        </div>
+                      )}
+                    </div>
 
-                    {/* Progress Workflow Buttons */}
-                    {capa.status === 'OPEN' && (
-                      <button
-                        onClick={() => updateCapaStatus(capa.id, 'INVESTIGATION')}
-                        className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                    <div className="flex items-center gap-2 flex-wrap justify-end">
+                      <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleShareWhatsApp(capa)}
+                        className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
                       >
-                        <i className="fa-solid fa-arrow-right rtl:rotate-180"></i>
-                        {isAr ? 'بدء التحقيق (5-Whys)' : 'Start Investigation'}
-                      </button>
-                    )}
+                        <i className="fa-brands fa-whatsapp"></i>
+                        {isAr ? 'واتساب' : 'Share'}
+                      </motion.button>
 
-                    {capa.status === 'INVESTIGATION' && (
-                      <button
-                        onClick={() => updateCapaStatus(capa.id, 'IMPLEMENTED')}
-                        className="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                      {/* Progress Workflow Buttons */}
+                      {capa.status === 'OPEN' && (
+                        <motion.button
+                          whileHover={{ scale: 1.04 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => updateCapaStatus(capa.id, 'INVESTIGATION')}
+                          className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                        >
+                          <i className="fa-solid fa-arrow-right rtl:rotate-180"></i>
+                          {isAr ? 'بدء التحقيق (5-Whys)' : 'Start Investigation'}
+                        </motion.button>
+                      )}
+
+                      {capa.status === 'INVESTIGATION' && (
+                        <motion.button
+                          whileHover={{ scale: 1.04 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => updateCapaStatus(capa.id, 'IMPLEMENTED')}
+                          className="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                        >
+                          <i className="fa-solid fa-wrench"></i>
+                          {isAr ? 'تم تطبيق الإجراءات' : 'Mark Implemented'}
+                        </motion.button>
+                      )}
+
+                      {capa.status === 'IMPLEMENTED' && (
+                        <motion.button
+                          whileHover={{ scale: 1.04 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => setVerifyModalCapa(capa)}
+                          className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                        >
+                          <i className="fa-solid fa-check-double"></i>
+                          {isAr ? 'تدقيق الفعالية والإغلاق' : 'Verify & Close'}
+                        </motion.button>
+                      )}
+
+                      {capa.status === 'VERIFIED' && (
+                        <motion.button
+                          whileHover={{ scale: 1.04 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => updateCapaStatus(capa.id, 'CLOSED')}
+                          className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                        >
+                          <i className="fa-solid fa-lock"></i>
+                          {isAr ? 'إغلاق نهائي' : 'Final Close'}
+                        </motion.button>
+                      )}
+
+                      {isClosed && (
+                        <motion.button
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => updateCapaStatus(capa.id, 'OPEN')}
+                          className="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                        >
+                          <i className="fa-solid fa-rotate-left me-1"></i>
+                          {isAr ? 'إعادة فتح' : 'Re-Open'}
+                        </motion.button>
+                      )}
+
+                      <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          if (confirm(isAr ? 'هل أنت متأكد من حذف هذا السجل؟' : 'Delete this CAPA?')) {
+                            deleteCapa(capa.id);
+                          }
+                        }}
+                        className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-rose-50 dark:bg-slate-700 dark:hover:bg-rose-900/30 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-all"
                       >
-                        <i className="fa-solid fa-wrench"></i>
-                        {isAr ? 'تم تطبيق الإجراءات' : 'Mark Implemented'}
-                      </button>
-                    )}
-
-                    {capa.status === 'IMPLEMENTED' && (
-                      <button
-                        onClick={() => setVerifyModalCapa(capa)}
-                        className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
-                      >
-                        <i className="fa-solid fa-check-double"></i>
-                        {isAr ? 'تدقيق الفعالية والإغلاق' : 'Verify & Close'}
-                      </button>
-                    )}
-
-                    {capa.status === 'VERIFIED' && (
-                      <button
-                        onClick={() => updateCapaStatus(capa.id, 'CLOSED')}
-                        className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
-                      >
-                        <i className="fa-solid fa-lock"></i>
-                        {isAr ? 'إغلاق نهائي' : 'Final Close'}
-                      </button>
-                    )}
-
-                    {isClosed && (
-                      <button
-                        onClick={() => updateCapaStatus(capa.id, 'OPEN')}
-                        className="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700"
-                      >
-                        <i className="fa-solid fa-rotate-left me-1"></i>
-                        {isAr ? 'إعادة فتح' : 'Re-Open'}
-                      </button>
-                    )}
-
-                    <button
-                      onClick={() => {
-                        if (confirm(isAr ? 'هل أنت متأكد من حذف هذا السجل؟' : 'Delete this CAPA?')) {
-                          deleteCapa(capa.id);
-                        }
-                      }}
-                      className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-rose-50 dark:bg-slate-700 dark:hover:bg-rose-900/30 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-all"
-                    >
-                      <i className="fa-solid fa-trash text-xs"></i>
-                    </button>
+                        <i className="fa-solid fa-trash text-xs"></i>
+                      </motion.button>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          })
+                </motion.div>
+              );
+            })}
+          </StaggerGrid>
         )}
       </div>
 
-      {/* Add New CAPA Modal */}
-      {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 max-w-2xl w-full p-6 shadow-2xl space-y-5 animate-scaleUp">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-md">
-                  <i className="fa-solid fa-arrows-spin"></i>
-                </div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  {isAr ? 'فتح تذكرة إجراء تصحيحي ووقائي (CAPA Master Record)' : 'Create CAPA Master Record'}
-                </h3>
+      {/* Add New CAPA Modal with AnimatedModal */}
+      <AnimatedModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} className="max-w-2xl">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-6 shadow-2xl space-y-5">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-md">
+                <i className="fa-solid fa-arrows-spin"></i>
               </div>
-              <button
-                onClick={() => setIsAddModalOpen(false)}
-                className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
-              >
-                <i className="fa-solid fa-xmark text-sm"></i>
-              </button>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                {isAr ? 'فتح تذكرة إجراء تصحيحي ووقائي (CAPA Master Record)' : 'Create CAPA Master Record'}
+              </h3>
             </div>
+            <button
+              onClick={() => setIsAddModalOpen(false)}
+              className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors"
+            >
+              <i className="fa-solid fa-xmark text-sm"></i>
+            </button>
+          </div>
 
-            <form onSubmit={handleAddSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1 sm:col-span-2">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'عنوان الإجراء التصحيحي *' : 'CAPA Title / Summary *'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={newCapaForm.title}
-                    onChange={e => setNewCapaForm({ ...newCapaForm, title: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
-                    placeholder={isAr ? 'مثال: حيود في درجة حرارة ثلاجة التبريد' : 'e.g. Temperature deviation in chiller'}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'المصدر' : 'Source'}
-                  </label>
-                  <select
-                    value={newCapaForm.source}
-                    onChange={e => setNewCapaForm({ ...newCapaForm, source: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
-                  >
-                    <option value="NCR">NCR (مذكرة عدم مطابقة)</option>
-                    <option value="COMPLAINT">COMPLAINT (شكوى عميل / ذكاء اصطناعي)</option>
-                    <option value="AUDIT">AUDIT (تدقيق دوري)</option>
-                    <option value="INCIDENT">INCIDENT (حادث تشغيلي / طارئ)</option>
-                    <option value="INSPECTION">INSPECTION (تفتيش خارجي)</option>
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'رقم التذكرة المرجعية' : 'Source Reference ID'}
-                  </label>
-                  <input
-                    type="text"
-                    value={newCapaForm.sourceRefId}
-                    onChange={e => setNewCapaForm({ ...newCapaForm, sourceRefId: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
-                    placeholder="e.g. NCR-1001 / CMP-442"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'القسم المعني *' : 'Department *'}
-                  </label>
-                  <select
-                    required
-                    value={newCapaForm.deptKey}
-                    onChange={e => setNewCapaForm({ ...newCapaForm, deptKey: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
-                  >
-                    <option value="">{isAr ? '-- اختر القسم --' : '-- Select Dept --'}</option>
-                    {sectorDeptKeys.map(key => (
-                      <option key={key} value={key}>
-                        {DEPARTMENTS[key]?.[isAr ? 'ar' : 'en'] || key}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'المسؤول المكلف بالتنفيذ' : 'Assigned Owner'}
-                  </label>
-                  <input
-                    type="text"
-                    value={newCapaForm.assignedTo}
-                    onChange={e => setNewCapaForm({ ...newCapaForm, assignedTo: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
-                    placeholder={isAr ? 'اسم المهندس / المشرف' : 'Name of supervisor'}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'درجة الأولوية' : 'Priority Level'}
-                  </label>
-                  <select
-                    value={newCapaForm.priority}
-                    onChange={e => setNewCapaForm({ ...newCapaForm, priority: e.target.value as any })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
-                  >
-                    <option value="CRITICAL">{isAr ? 'حرجة للغاية (Critical 24-48h)' : 'Critical (24-48h)'}</option>
-                    <option value="HIGH">{isAr ? 'عالية (High 5-7 Days)' : 'High (5-7 Days)'}</option>
-                    <option value="MEDIUM">{isAr ? 'متوسطة (Medium 14 Days)' : 'Medium (14 Days)'}</option>
-                    <option value="LOW">{isAr ? 'منخفضة (Low 30 Days)' : 'Low (30 Days)'}</option>
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'الموعد المستهدف للإغلاق' : 'Target SLA Date'}
-                  </label>
-                  <input
-                    type="date"
-                    value={newCapaForm.targetDate}
-                    onChange={e => setNewCapaForm({ ...newCapaForm, targetDate: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
-                  />
-                </div>
+          <form onSubmit={handleAddSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1 sm:col-span-2">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'عنوان الإجراء التصحيحي *' : 'CAPA Title / Summary *'}
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newCapaForm.title}
+                  onChange={e => setNewCapaForm({ ...newCapaForm, title: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
+                  placeholder={isAr ? 'مثال: حيود في درجة حرارة ثلاجة التبريد' : 'e.g. Temperature deviation in chiller'}
+                />
               </div>
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'تحليل السبب الجذري (Root Cause Analysis / 5-Whys)' : 'Root Cause Analysis (5-Whys)'}
+                  {isAr ? 'المصدر' : 'Source'}
                 </label>
-                <textarea
-                  rows={2}
-                  value={newCapaForm.rootCause}
-                  onChange={e => setNewCapaForm({ ...newCapaForm, rootCause: e.target.value })}
+                <select
+                  value={newCapaForm.source}
+                  onChange={e => setNewCapaForm({ ...newCapaForm, source: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
-                  placeholder={isAr ? 'لماذا حدث الخلل؟ ما هو السبب الجذري الفعلي؟' : 'Why did it happen? What is the core root cause?'}
+                >
+                  <option value="NCR">NCR (مذكرة عدم مطابقة)</option>
+                  <option value="COMPLAINT">COMPLAINT (شكوى عميل / ذكاء اصطناعي)</option>
+                  <option value="AUDIT">AUDIT (تدقيق دوري)</option>
+                  <option value="INCIDENT">INCIDENT (حادث تشغيلي / طارئ)</option>
+                  <option value="INSPECTION">INSPECTION (تفتيش خارجي)</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'رقم التذكرة المرجعية' : 'Source Reference ID'}
+                </label>
+                <input
+                  type="text"
+                  value={newCapaForm.sourceRefId}
+                  onChange={e => setNewCapaForm({ ...newCapaForm, sourceRefId: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
+                  placeholder="e.g. NCR-1001 / CMP-442"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'الإجراء التصحيحي العاجل (Corrective)' : 'Immediate Corrective Action'}
-                  </label>
-                  <textarea
-                    rows={2}
-                    value={newCapaForm.correctiveAction}
-                    onChange={e => setNewCapaForm({ ...newCapaForm, correctiveAction: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
-                    placeholder={isAr ? 'الإجراء الفوري لاحتواء الموقف...' : 'Immediate containment...'}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'الإجراء الوقائي الدائم (Preventive)' : 'Permanent Preventive Action'}
-                  </label>
-                  <textarea
-                    rows={2}
-                    value={newCapaForm.preventiveAction}
-                    onChange={e => setNewCapaForm({ ...newCapaForm, preventiveAction: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
-                    placeholder={isAr ? 'تعديل سياسة التشغيل لمنع التكرار...' : 'Systemic fix to prevent recurrence...'}
-                  />
-                </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'القسم المعني *' : 'Department *'}
+                </label>
+                <select
+                  required
+                  value={newCapaForm.deptKey}
+                  onChange={e => setNewCapaForm({ ...newCapaForm, deptKey: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
+                >
+                  <option value="">{isAr ? '-- اختر القسم --' : '-- Select Dept --'}</option>
+                  {sectorDeptKeys.map(key => (
+                    <option key={key} value={key}>
+                      {DEPARTMENTS[key]?.[isAr ? 'ar' : 'en'] || key}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
-                <button
-                  type="button"
-                  onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold"
-                >
-                  {isAr ? 'إلغاء' : 'Cancel'}
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 text-white text-xs font-bold shadow-md shadow-rose-500/20"
-                >
-                  {isAr ? 'إنشاء وقيد ملف CAPA' : 'Create & Assign CAPA'}
-                </button>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'المسؤول المكلف بالتنفيذ' : 'Assigned Owner'}
+                </label>
+                <input
+                  type="text"
+                  value={newCapaForm.assignedTo}
+                  onChange={e => setNewCapaForm({ ...newCapaForm, assignedTo: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
+                  placeholder={isAr ? 'اسم المهندس / المشرف' : 'Name of supervisor'}
+                />
               </div>
-            </form>
-          </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'درجة الأولوية' : 'Priority Level'}
+                </label>
+                <select
+                  value={newCapaForm.priority}
+                  onChange={e => setNewCapaForm({ ...newCapaForm, priority: e.target.value as any })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
+                >
+                  <option value="CRITICAL">{isAr ? 'حرجة للغاية (Critical 24-48h)' : 'Critical (24-48h)'}</option>
+                  <option value="HIGH">{isAr ? 'عالية (High 5-7 Days)' : 'High (5-7 Days)'}</option>
+                  <option value="MEDIUM">{isAr ? 'متوسطة (Medium 14 Days)' : 'Medium (14 Days)'}</option>
+                  <option value="LOW">{isAr ? 'منخفضة (Low 30 Days)' : 'Low (30 Days)'}</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'الموعد المستهدف للإغلاق' : 'Target SLA Date'}
+                </label>
+                <input
+                  type="date"
+                  value={newCapaForm.targetDate}
+                  onChange={e => setNewCapaForm({ ...newCapaForm, targetDate: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                {isAr ? 'تحليل السبب الجذري (Root Cause Analysis / 5-Whys)' : 'Root Cause Analysis (5-Whys)'}
+              </label>
+              <textarea
+                rows={2}
+                value={newCapaForm.rootCause}
+                onChange={e => setNewCapaForm({ ...newCapaForm, rootCause: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
+                placeholder={isAr ? 'لماذا حدث الخلل؟ ما هو السبب الجذري الفعلي؟' : 'Why did it happen? What is the core root cause?'}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'الإجراء التصحيحي العاجل (Corrective)' : 'Immediate Corrective Action'}
+                </label>
+                <textarea
+                  rows={2}
+                  value={newCapaForm.correctiveAction}
+                  onChange={e => setNewCapaForm({ ...newCapaForm, correctiveAction: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
+                  placeholder={isAr ? 'الإجراء الفوري لاحتواء الموقف...' : 'Immediate containment...'}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'الإجراء الوقائي الدائم (Preventive)' : 'Permanent Preventive Action'}
+                </label>
+                <textarea
+                  rows={2}
+                  value={newCapaForm.preventiveAction}
+                  onChange={e => setNewCapaForm({ ...newCapaForm, preventiveAction: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
+                  placeholder={isAr ? 'تعديل سياسة التشغيل لمنع التكرار...' : 'Systemic fix to prevent recurrence...'}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+              <button
+                type="button"
+                onClick={() => setIsAddModalOpen(false)}
+                className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              >
+                {isAr ? 'إلغاء' : 'Cancel'}
+              </button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                type="submit"
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 text-white text-xs font-bold shadow-md shadow-rose-500/20"
+              >
+                {isAr ? 'إنشاء وقيد ملف CAPA' : 'Create & Assign CAPA'}
+              </motion.button>
+            </div>
+          </form>
         </div>
-      )}
+      </AnimatedModal>
 
-      {/* Verify & Close Modal */}
-      {verifyModalCapa && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 max-w-lg w-full p-6 shadow-2xl space-y-5 animate-scaleUp">
+      {/* Verify & Close Modal with AnimatedModal */}
+      <AnimatedModal isOpen={!!verifyModalCapa} onClose={() => setVerifyModalCapa(null)} className="max-w-lg">
+        {verifyModalCapa && (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-6 shadow-2xl space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center shadow-md">
@@ -784,7 +810,7 @@ export const CapaTrackerView: React.FC = () => {
               </div>
               <button
                 onClick={() => setVerifyModalCapa(null)}
-                className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors"
               >
                 <i className="fa-solid fa-xmark text-sm"></i>
               </button>
@@ -820,16 +846,18 @@ export const CapaTrackerView: React.FC = () => {
                 </label>
                 <div className="flex items-center justify-center gap-3 py-2 bg-slate-50 dark:bg-slate-900 rounded-xl">
                   {[1, 2, 3, 4, 5].map(star => (
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.25, rotate: 8 }}
+                      whileTap={{ scale: 0.9 }}
                       type="button"
                       key={star}
                       onClick={() => setVerifyRating(star)}
-                      className={`text-2xl transition-all ${
-                        star <= verifyRating ? 'text-amber-500 scale-110' : 'text-slate-300 dark:text-slate-600'
+                      className={`text-2xl transition-colors ${
+                        star <= verifyRating ? 'text-amber-500' : 'text-slate-300 dark:text-slate-600'
                       }`}
                     >
                       <i className="fa-solid fa-star"></i>
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
                 <p className="text-center text-[11px] text-slate-500 font-medium">
@@ -851,21 +879,23 @@ export const CapaTrackerView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setVerifyModalCapa(null)}
-                  className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold"
+                  className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                 >
                   {isAr ? 'إلغاء' : 'Cancel'}
                 </button>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.96 }}
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-500/20"
                 >
                   {isAr ? 'اعتماد الإغلاق النهائي وتوثيقه' : 'Confirm Closure'}
-                </button>
+                </motion.button>
               </div>
             </form>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </AnimatedModal>
+    </AnimatedPage>
   );
 };

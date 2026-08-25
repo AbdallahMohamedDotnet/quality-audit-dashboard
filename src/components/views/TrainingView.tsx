@@ -1,12 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { TrainingRecord } from '../../types';
 import { StatCard } from '../common/StatCard';
 import { Badge } from '../common/Badge';
+import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
+import { AnimatedModal } from '../common/AnimatedModal';
 import { SECTOR_DEPARTMENTS, DEPARTMENTS } from '../../data';
 import { exportToCsv } from '../../utils/export';
+import { staggerChild } from '../../utils/animations';
 
 export const TrainingView: React.FC = () => {
   const {
@@ -179,9 +183,9 @@ export const TrainingView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <AnimatedPage>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm backdrop-blur-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm backdrop-blur-sm transition-colors">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md">
             <i className="fa-solid fa-graduation-cap text-lg"></i>
@@ -199,26 +203,30 @@ export const TrainingView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             onClick={handleExportCsv}
             className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
           >
             <i className="fa-solid fa-file-csv text-emerald-500"></i>
             {isAr ? 'تصدير CSV' : 'Export CSV'}
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             onClick={() => setIsAddModalOpen(true)}
-            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20 active:scale-95"
+            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20"
           >
             <i className="fa-solid fa-user-plus"></i>
             {isAr ? 'تسجيل دورة تدريبية' : 'Log Training'}
-          </button>
+          </motion.button>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title={isAr ? 'نسبة الامتثال للتدريب' : 'Training Compliance'}
           value={`${complianceRate}%`}
@@ -247,10 +255,10 @@ export const TrainingView: React.FC = () => {
           icon={<i className="fa-solid fa-triangle-exclamation text-xl"></i>}
           variant={expiredCount > 0 ? 'rose' : 'sky'}
         />
-      </div>
+      </StaggerGrid>
 
       {/* Search & Filter Bar */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm transition-colors">
         <div className="relative flex-1">
           <i className="fa-solid fa-magnifying-glass absolute top-3.5 left-3.5 rtl:left-auto rtl:right-3.5 text-slate-400 text-sm"></i>
           <input
@@ -262,15 +270,15 @@ export const TrainingView: React.FC = () => {
                 ? 'بحث باسم الموظف، الرقم الوظيفي، اسم الدورة، القسم، أو المدرب...'
                 : 'Search by employee, ID, course, dept, or trainer...'
             }
-            className="w-full pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
+            className="w-full pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:ring-2 focus:ring-emerald-500 outline-none transition-colors"
           />
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           <select
             value={filterCourseType}
             onChange={e => setFilterCourseType(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none"
+            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none transition-colors"
           >
             <option value="ALL">{isAr ? 'جميع مسارات التدريب' : 'All Course Types'}</option>
             <option value="HACCP">HACCP (سلامة الغذاء)</option>
@@ -283,7 +291,7 @@ export const TrainingView: React.FC = () => {
           <select
             value={filterStatus}
             onChange={e => setFilterStatus(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none"
+            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none transition-colors"
           >
             <option value="ALL">{isAr ? 'جميع الحالات' : 'All Statuses'}</option>
             <option value="VALID">{isAr ? 'سارية المفعول (Valid)' : 'Valid'}</option>
@@ -301,131 +309,121 @@ export const TrainingView: React.FC = () => {
             <p className="text-xs">{isAr ? 'لا توجد سجلات تدريب مطابقة لبحثك' : 'No training records found'}</p>
           </div>
         ) : (
-          filteredTrainings.map(rec => {
-            const isExpired = rec.status === 'EXPIRED';
-            const isExpiring = rec.status === 'EXPIRING_SOON';
-            return (
-              <div
-                key={rec.id}
-                className="bg-white dark:bg-slate-800/80 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="space-y-0.5">
-                    <span className="font-bold text-slate-900 dark:text-white text-sm block">{rec.employeeName}</span>
-                    <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">{rec.employeeId}</span>
-                  </div>
-                  <Badge
-                    variant={
-                      rec.status === 'VALID'
-                        ? 'emerald'
-                        : rec.status === 'EXPIRING_SOON'
-                        ? 'amber'
-                        : 'rose'
-                    }
-                    size="sm"
-                  >
-                    {rec.status}
-                  </Badge>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="font-bold text-xs text-slate-800 dark:text-slate-200">{rec.courseName}</p>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                      {rec.dept}
-                    </span>
+          <StaggerGrid className="space-y-3.5">
+            {filteredTrainings.map(rec => {
+              const isExpired = rec.status === 'EXPIRED';
+              const isExpiring = rec.status === 'EXPIRING_SOON';
+              return (
+                <motion.div
+                  key={rec.id}
+                  variants={staggerChild}
+                  className="bg-white dark:bg-slate-800/80 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-bold text-slate-900 dark:text-white text-sm">{rec.employeeName}</span>
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                          {rec.employeeId}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">{rec.dept}</p>
+                    </div>
                     <Badge
                       variant={
-                        rec.courseType === 'HACCP'
+                        rec.status === 'VALID'
                           ? 'emerald'
-                          : rec.courseType === 'OSHA'
+                          : rec.status === 'EXPIRING_SOON'
                           ? 'amber'
-                          : rec.courseType === 'FIRE_SAFETY'
-                          ? 'rose'
-                          : 'sky'
+                          : 'rose'
                       }
                       size="sm"
                     >
-                      {rec.courseType}
+                      {rec.status}
                     </Badge>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">{isAr ? 'الدرجة / التقييم:' : 'Score:'}</span>
-                    <span className="font-black font-mono text-emerald-600 dark:text-emerald-400">{rec.score}%</span>
+                  <div className="bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50 space-y-1 text-xs">
+                    <div className="flex items-center justify-between font-bold">
+                      <span className="text-slate-800 dark:text-slate-200">{rec.courseName}</span>
+                      <span className="font-mono text-emerald-600 dark:text-emerald-400">{rec.score}%</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px] text-slate-500">
+                      <span>{isAr ? 'المدرب:' : 'Trainer:'} {rec.trainer}</span>
+                      <span className={`font-mono font-bold ${
+                        isExpired ? 'text-rose-500' : isExpiring ? 'text-amber-500' : 'text-emerald-500'
+                      }`}>
+                        EXP: {rec.expiryDate}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">{isAr ? 'تاريخ الصلاحية:' : 'Expiry:'}</span>
-                    <span className={`font-bold font-mono ${
-                      isExpired ? 'text-rose-500' : isExpiring ? 'text-amber-500' : 'text-slate-700 dark:text-slate-300'
-                    }`}>
-                      {rec.expiryDate}
-                    </span>
-                  </div>
-                </div>
 
-                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
-                  <button
-                    onClick={() => setPreviewPassRecord(rec)}
-                    className="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center gap-1"
-                  >
-                    <i className="fa-solid fa-id-badge"></i>
-                    <span>{isAr ? 'البطاقة' : 'Pass'}</span>
-                  </button>
-                  <button
-                    onClick={() => handleRenewCertification(rec)}
-                    className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
-                    title={isAr ? 'تجديد' : 'Renew'}
-                  >
-                    <i className="fa-solid fa-rotate-right text-xs"></i>
-                  </button>
-                  {(isExpired || isExpiring) && (
-                    <button
-                      onClick={() => handleShareWhatsAppReminder(rec)}
-                      className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
-                      title={isAr ? 'تنبيه واتساب' : 'WhatsApp'}
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setPreviewPassRecord(rec)}
+                      className="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs font-bold flex items-center gap-1"
                     >
-                      <i className="fa-brands fa-whatsapp text-xs"></i>
-                    </button>
-                  )}
-                  <button
-                    onClick={() => {
-                      if (confirm(isAr ? 'هل أنت متأكد من حذف هذا السجل التدريبي؟' : 'Delete this record?')) {
-                        deleteTrainingRecord(rec.id);
-                      }
-                    }}
-                    className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400"
-                    title={isAr ? 'حذف' : 'Delete'}
-                  >
-                    <i className="fa-solid fa-trash text-xs"></i>
-                  </button>
-                </div>
-              </div>
-            );
-          })
+                      <i className="fa-solid fa-id-badge"></i>
+                      <span>{isAr ? 'البطاقة' : 'Pass'}</span>
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleRenewCertification(rec)}
+                      className="p-1.5 rounded-lg bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400"
+                      title={isAr ? 'تجديد الشهادة' : 'Renew Cert'}
+                    >
+                      <i className="fa-solid fa-rotate-right text-xs"></i>
+                    </motion.button>
+                    {(isExpired || isExpiring) && (
+                      <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleShareWhatsAppReminder(rec)}
+                        className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
+                        title={isAr ? 'واتساب' : 'WhatsApp'}
+                      >
+                        <i className="fa-brands fa-whatsapp text-xs"></i>
+                      </motion.button>
+                    )}
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        if (confirm(isAr ? 'هل أنت متأكد من حذف هذا السجل؟' : 'Delete this record?')) {
+                          deleteTrainingRecord(rec.id);
+                        }
+                      }}
+                      className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400"
+                      title={isAr ? 'حذف' : 'Delete'}
+                    >
+                      <i className="fa-solid fa-trash text-xs"></i>
+                    </motion.button>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </StaggerGrid>
         )}
       </div>
 
-      {/* Desktop Trainings Table (>= md) */}
-      <div className="hidden md:block bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden backdrop-blur-sm">
+      {/* Desktop Training Table (>= md) */}
+      <div className="hidden md:block bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden backdrop-blur-sm transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-start text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-900/40 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
                 <th className="py-3.5 px-4 text-start">{isAr ? 'الموظف والرقم الوظيفي' : 'Employee & ID'}</th>
-                <th className="py-3.5 px-4 text-start">{isAr ? 'القسم والدورة التدريبية' : 'Department & Course'}</th>
-                <th className="py-3.5 px-4 text-center">{isAr ? 'الدرجة والتقييم' : 'Score'}</th>
-                <th className="py-3.5 px-4 text-start">{isAr ? 'صلاحية الشهادة' : 'Validity & Expiry'}</th>
+                <th className="py-3.5 px-4 text-start">{isAr ? 'القسم' : 'Department'}</th>
+                <th className="py-3.5 px-4 text-start">{isAr ? 'الدورة التدريبية ومسارها' : 'Course & Module'}</th>
+                <th className="py-3.5 px-4 text-center">{isAr ? 'الدرجة' : 'Score'}</th>
+                <th className="py-3.5 px-4 text-start">{isAr ? 'تاريخ الإتمام والانتهاء' : 'Dates & Expiry'}</th>
                 <th className="py-3.5 px-4 text-center">{isAr ? 'الحالة' : 'Status'}</th>
-                <th className="py-3.5 px-4 text-center">{isAr ? 'إجراءات وبطاقة الكفاءة' : 'Actions & Pass'}</th>
+                <th className="py-3.5 px-4 text-center">{isAr ? 'بطاقة الكفاءة وإجراءات' : 'Digital Pass & Actions'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60 font-medium">
               {filteredTrainings.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400">
+                  <td colSpan={7} className="py-12 text-center text-slate-400">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <i className="fa-solid fa-user-graduate text-3xl opacity-40"></i>
                       <p>{isAr ? 'لا توجد سجلات تدريب مطابقة لبحثك' : 'No training records found'}</p>
@@ -442,44 +440,41 @@ export const TrainingView: React.FC = () => {
                       key={rec.id}
                       className="hover:bg-slate-50/80 dark:hover:bg-slate-700/40 transition-colors"
                     >
-                      {/* Employee Info */}
+                      {/* Employee */}
                       <td className="py-4 px-4">
                         <div className="space-y-0.5">
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-slate-900 dark:text-white text-sm">
                               {rec.employeeName}
                             </span>
+                            <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800">
+                              {rec.employeeId}
+                            </span>
                           </div>
-                          <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                            {rec.employeeId}
+                          <p className="text-[10px] text-slate-400 font-mono">
+                            REF: {rec.id}
                           </p>
                         </div>
                       </td>
 
-                      {/* Course & Dept */}
+                      {/* Dept */}
                       <td className="py-4 px-4">
-                        <div className="space-y-1">
-                          <p className="font-bold text-slate-800 dark:text-slate-200">
+                        <span className="text-slate-800 dark:text-slate-200 font-semibold">
+                          {rec.dept}
+                        </span>
+                      </td>
+
+                      {/* Course */}
+                      <td className="py-4 px-4">
+                        <div className="space-y-0.5">
+                          <p className="font-bold text-slate-900 dark:text-white">
                             {rec.courseName}
                           </p>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                              {rec.dept}
-                            </span>
-                            <Badge
-                              variant={
-                                rec.courseType === 'HACCP'
-                                  ? 'emerald'
-                                  : rec.courseType === 'OSHA'
-                                  ? 'amber'
-                                  : rec.courseType === 'FIRE_SAFETY'
-                                  ? 'rose'
-                                  : 'sky'
-                              }
-                              size="sm"
-                            >
+                          <div className="flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400">
+                            <span className="px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-700 font-bold">
                               {rec.courseType}
-                            </Badge>
+                            </span>
+                            <span>{rec.trainer}</span>
                           </div>
                         </div>
                       </td>
@@ -487,27 +482,24 @@ export const TrainingView: React.FC = () => {
                       {/* Score */}
                       <td className="py-4 px-4 text-center">
                         <span
-                          className={`font-black font-mono text-sm ${
+                          className={`font-mono font-black text-xs px-2 py-0.5 rounded ${
                             rec.score >= 90
-                              ? 'text-emerald-600 dark:text-emerald-400'
-                              : rec.score >= 80
-                              ? 'text-sky-600 dark:text-sky-400'
-                              : 'text-amber-600 dark:text-amber-400'
+                              ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
+                              : 'bg-sky-50 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300'
                           }`}
                         >
                           {rec.score}%
                         </span>
                       </td>
 
-                      {/* Validity Dates */}
+                      {/* Dates */}
                       <td className="py-4 px-4">
                         <div className="space-y-0.5 text-[11px]">
-                          <p className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                            <span>{isAr ? 'الإتمام:' : 'Completed:'}</span>
-                            <span className="font-mono text-slate-700 dark:text-slate-300">{rec.completionDate}</span>
+                          <p className="text-slate-500 dark:text-slate-400">
+                            {isAr ? 'الإتمام:' : 'Passed:'} <span className="font-mono text-slate-700 dark:text-slate-300">{rec.completionDate}</span>
                           </p>
                           <p
-                            className={`font-bold flex items-center gap-1 ${
+                            className={`font-bold ${
                               isExpired
                                 ? 'text-rose-600 dark:text-rose-400'
                                 : isExpiring
@@ -515,8 +507,7 @@ export const TrainingView: React.FC = () => {
                                 : 'text-emerald-600 dark:text-emerald-400'
                             }`}
                           >
-                            <span>{isAr ? 'الانتهاء:' : 'Expires:'}</span>
-                            <span className="font-mono">{rec.expiryDate}</span>
+                            {isAr ? 'الانتهاء:' : 'Expiry:'} <span className="font-mono">{rec.expiryDate}</span>
                           </p>
                         </div>
                       </td>
@@ -537,46 +528,54 @@ export const TrainingView: React.FC = () => {
                         </Badge>
                       </td>
 
-                      {/* Actions & Digital Pass */}
+                      {/* Actions */}
                       <td className="py-4 px-4 text-center">
                         <div className="flex items-center justify-center gap-1.5">
-                          <button
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => setPreviewPassRecord(rec)}
-                            title={isAr ? 'عرض وطباعة بطاقة الكفاءة والصحة' : 'Digital Competency Pass'}
+                            title={isAr ? 'عرض وطباعة بطاقة الكفاءة الرقمية' : 'View Digital Competency Pass'}
                             className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all flex items-center gap-1 shadow-sm"
                           >
                             <i className="fa-solid fa-id-badge"></i>
                             <span>{isAr ? 'البطاقة' : 'Pass'}</span>
-                          </button>
+                          </motion.button>
 
-                          <button
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={() => handleRenewCertification(rec)}
-                            title={isAr ? 'تجديد الشهادة لعام إضافي' : 'Renew for 1 year'}
-                            className="w-7 h-7 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center transition-all shadow-sm"
+                            title={isAr ? 'تجديد الشهادة لعام إضافي' : 'Renew Certification'}
+                            className="w-7 h-7 rounded-lg bg-teal-50 hover:bg-teal-100 dark:bg-teal-900/30 dark:hover:bg-teal-900/50 text-teal-600 dark:text-teal-400 flex items-center justify-center transition-all shadow-sm"
                           >
                             <i className="fa-solid fa-rotate-right text-xs"></i>
-                          </button>
+                          </motion.button>
 
                           {(isExpired || isExpiring) && (
-                            <button
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
                               onClick={() => handleShareWhatsAppReminder(rec)}
-                              title={isAr ? 'إرسال تنبيه تجديد واتساب' : 'WhatsApp Reminder'}
+                              title={isAr ? 'إرسال تذكير واتساب للموظف' : 'WhatsApp Reminder'}
                               className="w-7 h-7 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/30 dark:hover:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center transition-all shadow-sm"
                             >
                               <i className="fa-brands fa-whatsapp text-xs"></i>
-                            </button>
+                            </motion.button>
                           )}
 
-                          <button
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={() => {
-                              if (confirm(isAr ? 'هل أنت متأكد من حذف هذا السجل التدريبي؟' : 'Delete this record?')) {
+                              if (confirm(isAr ? 'هل أنت متأكد من حذف هذا السجل؟' : 'Delete this record?')) {
                                 deleteTrainingRecord(rec.id);
                               }
                             }}
                             className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-rose-50 dark:bg-slate-700 dark:hover:bg-rose-900/30 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-all"
                           >
                             <i className="fa-solid fa-trash text-xs"></i>
-                          </button>
+                          </motion.button>
                         </div>
                       </td>
                     </tr>
@@ -588,196 +587,196 @@ export const TrainingView: React.FC = () => {
         </div>
       </div>
 
-      {/* Add Training Record Modal */}
-      {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 max-w-xl w-full p-6 shadow-2xl space-y-5 animate-scaleUp">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md">
-                  <i className="fa-solid fa-graduation-cap"></i>
-                </div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  {isAr ? 'تسجيل دورة تدريبية واعتماد كفاءة موظف' : 'Log Employee Training & Certification'}
-                </h3>
+      {/* Add Training Modal with AnimatedModal */}
+      <AnimatedModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} className="max-w-2xl">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-6 shadow-2xl space-y-5">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md">
+                <i className="fa-solid fa-graduation-cap"></i>
               </div>
-              <button
-                onClick={() => setIsAddModalOpen(false)}
-                className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
-              >
-                <i className="fa-solid fa-xmark text-sm"></i>
-              </button>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                {isAr ? 'تسجيل دورة تدريبية واعتماد كفاءة موظف' : 'Log Employee Training & Certification'}
+              </h3>
+            </div>
+            <button
+              onClick={() => setIsAddModalOpen(false)}
+              className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors"
+            >
+              <i className="fa-solid fa-xmark text-sm"></i>
+            </button>
+          </div>
+
+          <form onSubmit={handleAddSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'اسم الموظف *' : 'Employee Name *'}
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newTraining.employeeName}
+                  onChange={e => setNewTraining({ ...newTraining, employeeName: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
+                  placeholder={isAr ? 'مثال: محمد سالم الدوسري' : 'e.g. John Doe'}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'الرقم الوظيفي' : 'Employee ID'}
+                </label>
+                <input
+                  type="text"
+                  value={newTraining.employeeId}
+                  onChange={e => setNewTraining({ ...newTraining, employeeId: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
+                  placeholder="EMP-4421"
+                />
+              </div>
+
+              <div className="space-y-1 sm:col-span-2">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'اسم الدورة التدريبية *' : 'Course Name *'}
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newTraining.courseName}
+                  onChange={e => setNewTraining({ ...newTraining, courseName: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
+                  placeholder={isAr ? 'مثال: سلامة الأغذية وتطبيق نظام الهاسب HACCP Level 3' : 'e.g. HACCP Food Safety Level 3'}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'نوع التدريب' : 'Course Type'}
+                </label>
+                <select
+                  value={newTraining.courseType}
+                  onChange={e => setNewTraining({ ...newTraining, courseType: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
+                >
+                  <option value="HACCP">HACCP (سلامة الغذاء)</option>
+                  <option value="HYGIENE">GHP (النظافة والاشتراطات الصحية)</option>
+                  <option value="OSHA">OSHA (السلامة المهنية والكيماويات)</option>
+                  <option value="FIRE_SAFETY">Fire Safety (مكافحة الحرائق)</option>
+                  <option value="FIRST_AID">First Aid (الإسعافات الأولية)</option>
+                  <option value="ISO">ISO Standards (أنظمة الجودة)</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'القسم التابع له *' : 'Department *'}
+                </label>
+                <select
+                  required
+                  value={newTraining.deptKey}
+                  onChange={e => setNewTraining({ ...newTraining, deptKey: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
+                >
+                  <option value="">{isAr ? '-- اختر القسم --' : '-- Select Dept --'}</option>
+                  {sectorDeptKeys.map(k => (
+                    <option key={k} value={k}>
+                      {DEPARTMENTS[k]?.[isAr ? 'ar' : 'en'] || k}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'تاريخ الإتمام' : 'Completion Date'}
+                </label>
+                <input
+                  type="date"
+                  value={newTraining.completionDate}
+                  onChange={e => setNewTraining({ ...newTraining, completionDate: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'تاريخ انتهاء الصلاحية' : 'Expiry Date'}
+                </label>
+                <input
+                  type="date"
+                  value={newTraining.expiryDate}
+                  onChange={e => setNewTraining({ ...newTraining, expiryDate: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'درجة الاختبار (%)' : 'Score (%)'}
+                </label>
+                <input
+                  type="number"
+                  min="50"
+                  max="100"
+                  value={newTraining.score}
+                  onChange={e => setNewTraining({ ...newTraining, score: Number(e.target.value) })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'المدرب / جهة الاعتماد' : 'Trainer / Institution'}
+                </label>
+                <input
+                  type="text"
+                  value={newTraining.trainer}
+                  onChange={e => setNewTraining({ ...newTraining, trainer: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
+                  placeholder={isAr ? 'مثال: أكاديمية سلامة الغذاء الدولية' : 'e.g. Food Safety Academy'}
+                />
+              </div>
             </div>
 
-            <form onSubmit={handleAddSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'اسم الموظف *' : 'Employee Name *'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={newTraining.employeeName}
-                    onChange={e => setNewTraining({ ...newTraining, employeeName: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
-                    placeholder={isAr ? 'مثال: محمد سالم الدوسري' : 'e.g. John Doe'}
-                  />
-                </div>
+            <div className="flex items-center gap-2 pt-2">
+              <input
+                type="checkbox"
+                id="issuePass"
+                checked={newTraining.passIssued}
+                onChange={e => setNewTraining({ ...newTraining, passIssued: e.target.checked })}
+                className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+              />
+              <label htmlFor="issuePass" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+                {isAr ? 'إصدار بطاقة كفاءة صحية ومهنية رقمية فورية للموظف' : 'Issue digital competency hygiene pass'}
+              </label>
+            </div>
 
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'الرقم الوظيفي' : 'Employee ID'}
-                  </label>
-                  <input
-                    type="text"
-                    value={newTraining.employeeId}
-                    onChange={e => setNewTraining({ ...newTraining, employeeId: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
-                    placeholder="EMP-4421"
-                  />
-                </div>
-
-                <div className="space-y-1 sm:col-span-2">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'اسم الدورة التدريبية *' : 'Course Name *'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={newTraining.courseName}
-                    onChange={e => setNewTraining({ ...newTraining, courseName: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
-                    placeholder={isAr ? 'مثال: سلامة الأغذية وتطبيق نظام الهاسب HACCP Level 3' : 'e.g. HACCP Food Safety Level 3'}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'نوع التدريب' : 'Course Type'}
-                  </label>
-                  <select
-                    value={newTraining.courseType}
-                    onChange={e => setNewTraining({ ...newTraining, courseType: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
-                  >
-                    <option value="HACCP">HACCP (سلامة الغذاء)</option>
-                    <option value="HYGIENE">GHP (النظافة والاشتراطات الصحية)</option>
-                    <option value="OSHA">OSHA (السلامة المهنية والكيماويات)</option>
-                    <option value="FIRE_SAFETY">Fire Safety (مكافحة الحرائق)</option>
-                    <option value="FIRST_AID">First Aid (الإسعافات الأولية)</option>
-                    <option value="ISO">ISO Standards (أنظمة الجودة)</option>
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'القسم التابع له *' : 'Department *'}
-                  </label>
-                  <select
-                    required
-                    value={newTraining.deptKey}
-                    onChange={e => setNewTraining({ ...newTraining, deptKey: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
-                  >
-                    <option value="">{isAr ? '-- اختر القسم --' : '-- Select Dept --'}</option>
-                    {sectorDeptKeys.map(k => (
-                      <option key={k} value={k}>
-                        {DEPARTMENTS[k]?.[isAr ? 'ar' : 'en'] || k}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'تاريخ الإتمام' : 'Completion Date'}
-                  </label>
-                  <input
-                    type="date"
-                    value={newTraining.completionDate}
-                    onChange={e => setNewTraining({ ...newTraining, completionDate: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'تاريخ انتهاء الصلاحية' : 'Expiry Date'}
-                  </label>
-                  <input
-                    type="date"
-                    value={newTraining.expiryDate}
-                    onChange={e => setNewTraining({ ...newTraining, expiryDate: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'درجة الاختبار (%)' : 'Score (%)'}
-                  </label>
-                  <input
-                    type="number"
-                    min="50"
-                    max="100"
-                    value={newTraining.score}
-                    onChange={e => setNewTraining({ ...newTraining, score: Number(e.target.value) })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'المدرب / جهة الاعتماد' : 'Trainer / Institution'}
-                  </label>
-                  <input
-                    type="text"
-                    value={newTraining.trainer}
-                    onChange={e => setNewTraining({ ...newTraining, trainer: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
-                    placeholder={isAr ? 'مثال: أكاديمية سلامة الغذاء الدولية' : 'e.g. Food Safety Academy'}
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 pt-2">
-                <input
-                  type="checkbox"
-                  id="issuePass"
-                  checked={newTraining.passIssued}
-                  onChange={e => setNewTraining({ ...newTraining, passIssued: e.target.checked })}
-                  className="rounded text-emerald-600 focus:ring-emerald-500"
-                />
-                <label htmlFor="issuePass" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
-                  {isAr ? 'إصدار بطاقة كفاءة صحية ومهنية رقمية فورية للموظف' : 'Issue digital competency hygiene pass'}
-                </label>
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-700">
-                <button
-                  type="button"
-                  onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold"
-                >
-                  {isAr ? 'إلغاء' : 'Cancel'}
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-500/20"
-                >
-                  {isAr ? 'حفظ وتوثيق الكفاءة' : 'Save & Issue Certificate'}
-                </button>
-              </div>
-            </form>
-          </div>
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-700">
+              <button
+                type="button"
+                onClick={() => setIsAddModalOpen(false)}
+                className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              >
+                {isAr ? 'إلغاء' : 'Cancel'}
+              </button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                type="submit"
+                className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-500/20"
+              >
+                {isAr ? 'حفظ وتوثيق الكفاءة' : 'Save & Issue Certificate'}
+              </motion.button>
+            </div>
+          </form>
         </div>
-      )}
+      </AnimatedModal>
 
-      {/* Digital Competency Pass Preview Modal */}
-      {previewPassRecord && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/75 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 max-w-md w-full p-6 shadow-2xl space-y-5 animate-scaleUp">
+      {/* Digital Competency Pass Preview Modal with AnimatedModal */}
+      <AnimatedModal isOpen={!!previewPassRecord} onClose={() => setPreviewPassRecord(null)} className="max-w-md">
+        {previewPassRecord && (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-6 shadow-2xl space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
               <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <i className="fa-solid fa-id-card text-emerald-500"></i>
@@ -785,14 +784,14 @@ export const TrainingView: React.FC = () => {
               </h3>
               <button
                 onClick={() => setPreviewPassRecord(null)}
-                className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors"
               >
                 <i className="fa-solid fa-xmark text-sm"></i>
               </button>
             </div>
 
             {/* Badge Card Layout (Printable) */}
-            <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 rounded-2xl border border-slate-700 shadow-xl relative overflow-hidden space-y-4">
+            <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 rounded-2xl border border-slate-700 shadow-xl relative overflow-hidden space-y-4 font-sans">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center font-black text-sm">
@@ -847,11 +846,13 @@ export const TrainingView: React.FC = () => {
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
               <button
                 onClick={() => setPreviewPassRecord(null)}
-                className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold"
+                className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
                 {isAr ? 'إغلاق' : 'Close'}
               </button>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.96 }}
                 onClick={() => {
                   window.print();
                 }}
@@ -859,11 +860,11 @@ export const TrainingView: React.FC = () => {
               >
                 <i className="fa-solid fa-print"></i>
                 {isAr ? 'طباعة البطاقة' : 'Print Badge'}
-              </button>
+              </motion.button>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </AnimatedModal>
+    </AnimatedPage>
   );
 };

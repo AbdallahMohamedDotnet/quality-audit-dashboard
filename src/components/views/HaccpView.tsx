@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { HACCP_FLOWS, SECTORS } from '../../data';
 import { StatCard } from '../common/StatCard';
+import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
+import { ScrollReveal } from '../common/ScrollReveal';
 
 export const HaccpView: React.FC = () => {
   const {
@@ -54,9 +57,9 @@ export const HaccpView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <AnimatedPage>
       {/* Header */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
@@ -74,38 +77,43 @@ export const HaccpView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             type="button"
             onClick={printReport}
             className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
           >
             <i className="fa-solid fa-print"></i>
             <span>{isAr ? 'طباعة خطة HACCP' : 'Print Plan'}</span>
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             type="button"
             onClick={handleShareHaccpWhatsApp}
             className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-1.5"
           >
             <i className="fa-brands fa-whatsapp text-sm"></i>
             <span>{isAr ? 'مشاركة الوثيقة' : 'Share WhatsApp'}</span>
-          </button>
+          </motion.button>
         </div>
       </div>
 
       {/* Sector Switcher */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 transition-colors">
         <span className="text-xs font-bold text-slate-600 dark:text-slate-300 flex items-center gap-2">
           <i className="fa-solid fa-industry text-sky-500"></i>
           <span>{isAr ? 'تحديد قطاع خط الإنتاج والتجهيز:' : 'Select Industry Production Stream:'}</span>
         </span>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {SECTORS.map(sec => {
             const isSelected = currentSector === sec.val;
             return (
-              <button
+              <motion.button
+                whileTap={{ scale: 0.95 }}
                 key={sec.val}
                 type="button"
                 onClick={() => {
@@ -119,17 +127,17 @@ export const HaccpView: React.FC = () => {
                 }`}
               >
                 {isAr ? sec.ar : sec.en}
-              </button>
+              </motion.button>
             );
           })}
         </div>
       </div>
 
       {/* HACCP KPI Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title={isAr ? 'إجمالي مراحل التدفق' : 'Total Process Steps'}
-          value={flowSteps.length.toString()}
+          value={flowSteps.length}
           subtitle={isAr ? 'مخطط تسلسل العمليات' : 'Sequential process chain'}
           icon={<i className="fa-solid fa-arrows-split-up-and-left text-xl"></i>}
           variant="sky"
@@ -137,7 +145,7 @@ export const HaccpView: React.FC = () => {
 
         <StatCard
           title={isAr ? 'نقاط التحكم الحرجة (CCPs)' : 'Critical Control Points'}
-          value={ccpSteps.length.toString()}
+          value={ccpSteps.length}
           subtitle={isAr ? 'تتطلب مراقبة مستمرة' : 'Mandatory monitoring'}
           icon={<i className="fa-solid fa-triangle-exclamation text-xl"></i>}
           variant="rose"
@@ -145,7 +153,7 @@ export const HaccpView: React.FC = () => {
 
         <StatCard
           title={isAr ? 'برامج الاشتراطات المسبقة (PRPs)' : 'Prerequisite Programs'}
-          value={(flowSteps.length - ccpSteps.length).toString()}
+          value={flowSteps.length - ccpSteps.length}
           subtitle={isAr ? 'إجراءات النظافة والتعقيم' : 'GHP & Sanitation baseline'}
           icon={<i className="fa-solid fa-list-check text-xl"></i>}
           variant="emerald"
@@ -158,10 +166,10 @@ export const HaccpView: React.FC = () => {
           icon={<i className="fa-solid fa-stamp text-xl"></i>}
           variant="indigo"
         />
-      </div>
+      </StaggerGrid>
 
       {/* Process Flow Interactive Stepper */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 transition-colors">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
             <i className="fa-solid fa-diagram-project text-sky-500"></i>
@@ -172,12 +180,14 @@ export const HaccpView: React.FC = () => {
           </span>
         </div>
 
-        <div className="flex items-center gap-3 overflow-x-auto pb-3 pt-1">
+        <div className="flex items-center gap-3 overflow-x-auto pb-3 pt-1 scrollbar-none">
           {flowSteps.map((step, idx) => {
             const isSelected = selectedStepIndex === idx;
             return (
               <div key={idx} className="flex items-center gap-3 shrink-0">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.96 }}
                   type="button"
                   onClick={() => setSelectedStepIndex(idx)}
                   className={`p-4 rounded-2xl border text-center min-w-[150px] max-w-[190px] space-y-2 transition-all cursor-pointer ${
@@ -209,7 +219,7 @@ export const HaccpView: React.FC = () => {
                   <p className="text-xs font-black leading-tight">
                     {isAr ? step.label.ar : step.label.en}
                   </p>
-                </button>
+                </motion.button>
 
                 {idx < flowSteps.length - 1 && (
                   <i className="fa-solid fa-arrow-left rtl:inline ltr:hidden text-slate-300 dark:text-slate-700 text-base"></i>
@@ -224,106 +234,117 @@ export const HaccpView: React.FC = () => {
       </div>
 
       {/* Selected Step Deep Dive Details */}
-      {selectedStep && (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 gap-3">
-            <div className="flex items-center gap-3">
-              <div
-                className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black ${
-                  selectedStep.isCCP
-                    ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/30'
-                    : 'bg-sky-600 text-white shadow-lg shadow-sky-600/30'
-                }`}
-              >
-                #{selectedStepIndex + 1}
+      <AnimatePresence mode="wait">
+        {selectedStep && (
+          <motion.div
+            key={selectedStepIndex}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+            className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 gap-3">
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black ${
+                    selectedStep.isCCP
+                      ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/30'
+                      : 'bg-sky-600 text-white shadow-lg shadow-sky-600/30'
+                  }`}
+                >
+                  #{selectedStepIndex + 1}
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+                    <span>{isAr ? selectedStep.label.ar : selectedStep.label.en}</span>
+                    {selectedStep.isCCP && (
+                      <span className="px-2.5 py-0.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-black">
+                        {isAr ? 'نقطة تحكم حرجة معتمدة (Critical Control Point)' : 'Certified CCP'}
+                      </span>
+                    )}
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {selectedStep.isCCP
+                      ? isAr
+                        ? 'تتطلب قياساً دورياً وتسجيل قراءات الحدود الحرجة مع خطة إجراء تصحيحي فوري'
+                        : 'Requires continuous monitoring, calibration logs, and defined corrective actions'
+                      : isAr
+                      ? 'خاضعة لاشتراطات النظافة والممارسات الصحية الجيدة (GHP)'
+                      : 'Governed by Good Hygiene Practices (GHP) and standard sanitation SOPs'}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                  <span>{isAr ? selectedStep.label.ar : selectedStep.label.en}</span>
-                  {selectedStep.isCCP && (
-                    <span className="px-2.5 py-0.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-black">
-                      {isAr ? 'نقطة تحكم حرجة معتمدة (Critical Control Point)' : 'Certified CCP'}
-                    </span>
-                  )}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+
+              {selectedStep.isCCP && (
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.96 }}
+                  type="button"
+                  onClick={() => handleLogCcpDeviation(selectedStep)}
+                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5"
+                >
+                  <i className="fa-solid fa-triangle-exclamation"></i>
+                  <span>{isAr ? 'قيد حيود CCP عاجل' : 'Log CCP Deviation'}</span>
+                </motion.button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* 1. Hazard Identification */}
+              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-2">
+                <span className="text-xs font-black text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
+                  <i className="fa-solid fa-virus"></i>
+                  {isAr ? '1. تحليل المخاطر المحتملة (Hazards)' : '1. Potential Hazards'}
+                </span>
+                <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-relaxed">
                   {selectedStep.isCCP
                     ? isAr
-                      ? 'تتطلب قياساً دورياً وتسجيل قراءات الحدود الحرجة مع خطة إجراء تصحيحي فوري'
-                      : 'Requires continuous monitoring, calibration logs, and defined corrective actions'
+                      ? 'بكتيريا ممرضة (Salmonella, Listeria)، بقايا كيميائية، أو أجسام فيزيائية حادة.'
+                      : 'Pathogenic bacteria (Salmonella, Listeria), chemical residues, or foreign matter.'
                     : isAr
-                    ? 'خاضعة لاشتراطات النظافة والممارسات الصحية الجيدة (GHP)'
-                    : 'Governed by Good Hygiene Practices (GHP) and standard sanitation SOPs'}
+                    ? 'تلوث عرضي سطحي أو أخطاء تداول بشرية.'
+                    : 'Surface cross-contamination or personnel handling errors.'}
+                </p>
+              </div>
+
+              {/* 2. Critical Limits */}
+              <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 space-y-2">
+                <span className="text-xs font-black text-rose-700 dark:text-rose-300 flex items-center gap-1.5">
+                  <i className="fa-solid fa-ruler-combined"></i>
+                  {isAr ? '2. الحدود الحرجة (Critical Limits)' : '2. Critical Limits'}
+                </span>
+                <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-relaxed">
+                  {selectedStep.isCCP
+                    ? isAr
+                      ? 'درجة الحرارة: ≤ 4°C للتبريد أو ≥ 75°C للطهي، ضغط التعقيم: 1.2 bar، مدة المعاملة: 15 دقيقة.'
+                      : 'Temperature: ≤ 4°C chilling or ≥ 75°C core cooking, Pressure: 1.2 bar, Time: 15 mins.'
+                    : isAr
+                    ? 'الالتزام بجدول التنظيف والتعقيم المعياري (SSOP).'
+                    : 'Full adherence to Sanitation Standard Operating Procedures (SSOP).'}
+                </p>
+              </div>
+
+              {/* 3. Monitoring & Corrective Action */}
+              <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 space-y-2">
+                <span className="text-xs font-black text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+                  <i className="fa-solid fa-list-check"></i>
+                  {isAr ? '3. المراقبة والإجراء التصحيحي' : '3. Monitoring & Corrective Action'}
+                </span>
+                <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-relaxed">
+                  {selectedStep.isCCP
+                    ? isAr
+                      ? 'فحص رقمي كل 30 دقيقة بمجسات معايرة. في حال الحيود: إيقاف الخط فوراً وعزل المنتج وإعادة المعالجة.'
+                      : 'Digital probe check every 30m. If breached: stop line, quarantine product, and reprocess.'
+                    : isAr
+                    ? 'فحص بصري دوري وتوثيق التوقيع في سجل الهاسب.'
+                    : 'Periodic visual inspection and supervisor sign-off in logbook.'}
                 </p>
               </div>
             </div>
-
-            {selectedStep.isCCP && (
-              <button
-                type="button"
-                onClick={() => handleLogCcpDeviation(selectedStep)}
-                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5"
-              >
-                <i className="fa-solid fa-triangle-exclamation"></i>
-                <span>{isAr ? 'قيد حيود CCP عاجل' : 'Log CCP Deviation'}</span>
-              </button>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* 1. Hazard Identification */}
-            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-2">
-              <span className="text-xs font-black text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
-                <i className="fa-solid fa-virus"></i>
-                {isAr ? '1. تحليل المخاطر المحتملة (Hazards)' : '1. Potential Hazards'}
-              </span>
-              <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-relaxed">
-                {selectedStep.isCCP
-                  ? isAr
-                    ? 'بكتيريا ممرضة (Salmonella, Listeria)، بقايا كيميائية، أو أجسام فيزيائية حادة.'
-                    : 'Pathogenic bacteria (Salmonella, Listeria), chemical residues, or foreign matter.'
-                  : isAr
-                  ? 'تلوث عرضي سطحي أو أخطاء تداول بشرية.'
-                  : 'Surface cross-contamination or personnel handling errors.'}
-              </p>
-            </div>
-
-            {/* 2. Critical Limits */}
-            <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 space-y-2">
-              <span className="text-xs font-black text-rose-700 dark:text-rose-300 flex items-center gap-1.5">
-                <i className="fa-solid fa-ruler-combined"></i>
-                {isAr ? '2. الحدود الحرجة (Critical Limits)' : '2. Critical Limits'}
-              </span>
-              <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-relaxed">
-                {selectedStep.isCCP
-                  ? isAr
-                    ? 'درجة الحرارة: ≤ 4°C للتبريد أو ≥ 75°C للطهي، ضغط التعقيم: 1.2 bar، مدة المعاملة: 15 دقيقة.'
-                    : 'Temperature: ≤ 4°C chilling or ≥ 75°C core cooking, Pressure: 1.2 bar, Time: 15 mins.'
-                  : isAr
-                  ? 'الالتزام بجدول التنظيف والتعقيم المعياري (SSOP).'
-                  : 'Full adherence to Sanitation Standard Operating Procedures (SSOP).'}
-              </p>
-            </div>
-
-            {/* 3. Monitoring & Corrective Action */}
-            <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 space-y-2">
-              <span className="text-xs font-black text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
-                <i className="fa-solid fa-list-check"></i>
-                {isAr ? '3. المراقبة والإجراء التصحيحي' : '3. Monitoring & Corrective Action'}
-              </span>
-              <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-relaxed">
-                {selectedStep.isCCP
-                  ? isAr
-                    ? 'فحص رقمي كل 30 دقيقة بمجسات معايرة. في حال الحيود: إيقاف الخط فوراً وعزل المنتج وإعادة المعالجة.'
-                    : 'Digital probe check every 30m. If breached: stop line, quarantine product, and reprocess.'
-                  : isAr
-                  ? 'فحص بصري دوري وتوثيق التوقيع في سجل الهاسب.'
-                  : 'Periodic visual inspection and supervisor sign-off in logbook.'}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </AnimatedPage>
   );
 };

@@ -1,12 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { CalibrationRecord } from '../../types';
 import { StatCard } from '../common/StatCard';
 import { Badge } from '../common/Badge';
+import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
+import { AnimatedModal } from '../common/AnimatedModal';
 import { SECTOR_DEPARTMENTS, DEPARTMENTS } from '../../data';
 import { exportToCsv } from '../../utils/export';
+import { staggerChild, tableRowVariants } from '../../utils/animations';
 
 export const CalibrationView: React.FC = () => {
   const {
@@ -119,82 +123,74 @@ export const CalibrationView: React.FC = () => {
       status: 'VALID',
       notes: '',
     });
+
+    showToast(
+      isAr ? 'تمت إضافة جهاز القياس بنجاح' : 'Equipment registered successfully',
+      'success'
+    );
   };
 
   const handleQuickRecalibrate = (cal: CalibrationRecord) => {
     const today = new Date().toISOString().split('T')[0];
-    const nextHalfYear = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const newCert = `CERT-RECAL-${Date.now().toString().slice(-4)}`;
-
+    const nextDue = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     updateCalibrationRecord(cal.id, {
       lastCalibrationDate: today,
-      nextCalibrationDate: nextHalfYear,
-      certificateNumber: newCert,
+      nextCalibrationDate: nextDue,
       status: 'VALID',
+      certificateNumber: `REC-${Date.now().toString().slice(-5)}`,
     });
-
     showToast(
-      isAr
-        ? `تم توثيق إعادة معايرة الجهاز (${cal.equipmentCode}) واعتماد الشهادة ${newCert}`
-        : `Re-calibration logged for (${cal.equipmentCode}) with cert ${newCert}`,
+      isAr ? `تم تحديث معايرة الجهاز [${cal.equipmentCode}] بنجاح لمدة 6 أشهر` : `Re-calibrated [${cal.equipmentCode}] for 6 months`,
       'success'
     );
   };
 
   const handleShareWhatsApp = (cal: CalibrationRecord) => {
     const msg = isAr
-      ? `*إشعار استحقاق معايرة أجهزة القياس والفحص*\nالجهاز: ${cal.equipmentName}\nالكود: ${cal.equipmentCode}\nالقسم: ${cal.dept}\nالموقع: ${cal.location}\nتاريخ الاستحقاق: ${cal.nextCalibrationDate}\nالحالة: ${cal.status === 'OVERDUE' ? 'متأخرة عن الموعد (مخالفة معايير الجودة)' : 'مستحقة قريباً'}\nشهادة المعايرة الحالية: ${cal.certificateNumber}\nنسبة السماحية: ${cal.acceptableTolerance}\nيرجى تسليم الجهاز لجهة المعايرة فوراً.`
-      : `*Equipment Calibration Notice*\nDevice: ${cal.equipmentName}\nCode: ${cal.equipmentCode}\nDept: ${cal.dept}\nLocation: ${cal.location}\nDue Date: ${cal.nextCalibrationDate}\nStatus: ${cal.status}\nCert: ${cal.certificateNumber}\nPlease perform calibration promptly.`;
-
+      ? `*تنبيه استحقاق معايرة أجهزة القياس*\nالجهاز: ${cal.equipmentName} (${cal.equipmentCode})\nالقسم: ${cal.dept} - ${cal.location}\nالحالة: ${cal.status}\nتاريخ الاستحقاق: ${cal.nextCalibrationDate}\nنسبة السماحية: ${cal.acceptableTolerance}\nشهادة الفحص: ${cal.certificateNumber}\nيرجى التنسيق لإجراء المعايرة وتحديث السجل.`
+      : `*Calibration Alert & Notice*\nEquipment: ${cal.equipmentName} (${cal.equipmentCode})\nDept: ${cal.dept} - ${cal.location}\nStatus: ${cal.status}\nNext Due: ${cal.nextCalibrationDate}\nTolerance: ${cal.acceptableTolerance}\nCert Ref: ${cal.certificateNumber}\nPlease coordinate scheduled verification.`;
     dispatchWhatsApp(msg);
   };
 
   const handleExportCsv = () => {
     const headers = [
-      isAr ? 'كود السجل' : 'Record ID',
-      isAr ? 'اسم الجهاز / الأداة' : 'Equipment Name',
-      isAr ? 'كود الجهاز' : 'Equipment Code',
+      isAr ? 'كود الجهاز' : 'Code',
+      isAr ? 'اسم الجهاز' : 'Name',
       isAr ? 'القسم' : 'Department',
       isAr ? 'الموقع' : 'Location',
-      isAr ? 'آخر معايرة' : 'Last Calibrated',
-      isAr ? 'المعايرة القادمة' : 'Next Due',
-      isAr ? 'جهة المعايرة' : 'Calibrated By',
       isAr ? 'رقم الشهادة' : 'Cert No',
+      isAr ? 'جهة المعايرة' : 'Lab',
       isAr ? 'نسبة السماحية' : 'Tolerance',
+      isAr ? 'آخر معايرة' : 'Last Cal',
+      isAr ? 'المعايرة القادمة' : 'Next Due',
       isAr ? 'الحالة' : 'Status',
-      isAr ? 'ملاحظات' : 'Notes',
     ];
-
     const rows = filteredCalibrations.map(c => [
-      c.id,
-      c.equipmentName,
       c.equipmentCode,
+      c.equipmentName,
       c.dept,
       c.location,
+      c.certificateNumber,
+      c.calibratedBy,
+      c.acceptableTolerance,
       c.lastCalibrationDate,
       c.nextCalibrationDate,
-      c.calibratedBy,
-      c.certificateNumber,
-      c.acceptableTolerance,
       c.status,
-      c.notes || '',
     ]);
-
-    exportToCsv(`Calibration_Log_Report_${Date.now()}`, headers, rows);
-    showToast(isAr ? 'تم تصدير سجل المعايرة بنجاح' : 'Exported Calibration Log to CSV', 'success');
+    exportToCsv(`Calibration_Log_${new Date().toISOString().split('T')[0]}`, headers, rows);
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm backdrop-blur-sm">
+    <AnimatedPage>
+      {/* Header Banner */}
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-md">
-            <i className="fa-solid fa-scale-balanced text-lg"></i>
+          <div className="w-10 h-10 rounded-2xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center text-lg">
+            <i className="fa-solid fa-scale-balanced"></i>
           </div>
           <div>
-            <h2 className="text-xl font-black text-slate-900 dark:text-white">
-              {isAr ? 'سجل معايرة أجهزة القياس ومعدات الفحص الدقيقة (Calibration Log)' : 'Equipment & Sensor Calibration Log'}
+            <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
+              {isAr ? 'سجل معايرة الأجهزة والمجسات الدورية' : 'Equipment Calibration & Metrology Log'}
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {isAr
@@ -205,26 +201,30 @@ export const CalibrationView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             onClick={handleExportCsv}
             className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
           >
             <i className="fa-solid fa-file-csv text-emerald-500"></i>
             {isAr ? 'تصدير CSV' : 'Export CSV'}
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             onClick={() => setIsAddModalOpen(true)}
-            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-sky-500/20 active:scale-95"
+            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-sky-500/20"
           >
             <i className="fa-solid fa-plus"></i>
             {isAr ? 'قيد جهاز قياس' : 'Add Instrument'}
-          </button>
+          </motion.button>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title={isAr ? 'نسبة جاهزية المعايرة' : 'Calibration Readiness'}
           value={`${calibrationCompliance}%`}
@@ -253,10 +253,10 @@ export const CalibrationView: React.FC = () => {
           icon={<i className="fa-solid fa-triangle-exclamation text-xl"></i>}
           variant={overdueCount > 0 ? 'rose' : 'indigo'}
         />
-      </div>
+      </StaggerGrid>
 
       {/* Search & Filter Bar */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm transition-colors">
         <div className="relative flex-1">
           <i className="fa-solid fa-magnifying-glass absolute top-3.5 left-3.5 rtl:left-auto rtl:right-3.5 text-slate-400 text-sm"></i>
           <input
@@ -268,15 +268,15 @@ export const CalibrationView: React.FC = () => {
                 ? 'بحث باسم الجهاز، كود الجهاز، القسم، الموقع، رقم الشهادة، أو جهة المعايرة...'
                 : 'Search by device name, tag code, dept, location, cert, or lab...'
             }
-            className="w-full pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:ring-2 focus:ring-sky-500 outline-none"
+            className="w-full pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:ring-2 focus:ring-sky-500 outline-none transition-colors"
           />
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           <select
             value={filterDept}
             onChange={e => setFilterDept(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none"
+            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none transition-colors"
           >
             <option value="ALL">{isAr ? 'جميع الأقسام' : 'All Departments'}</option>
             {sectorDeptKeys.map(k => (
@@ -289,7 +289,7 @@ export const CalibrationView: React.FC = () => {
           <select
             value={filterStatus}
             onChange={e => setFilterStatus(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none"
+            className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none transition-colors"
           >
             <option value="ALL">{isAr ? 'جميع الحالات' : 'All Statuses'}</option>
             <option value="VALID">{isAr ? 'سارية المفعول (Valid)' : 'Valid'}</option>
@@ -308,99 +308,106 @@ export const CalibrationView: React.FC = () => {
             <p className="text-xs">{isAr ? 'لا توجد أجهزة قياس مطابقة للبحث' : 'No calibration records found'}</p>
           </div>
         ) : (
-          filteredCalibrations.map(cal => {
-            const isOverdue = cal.status === 'OVERDUE' || cal.status === 'OUT_OF_SERVICE';
-            const isDueSoon = cal.status === 'DUE_SOON';
-            return (
-              <div
-                key={cal.id}
-                className="bg-white dark:bg-slate-800/80 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="space-y-0.5">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-bold text-slate-900 dark:text-white text-sm">{cal.equipmentName}</span>
-                      <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-sky-50 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 font-bold">
-                        {cal.equipmentCode}
-                      </span>
+          <StaggerGrid className="space-y-3.5">
+            {filteredCalibrations.map(cal => {
+              const isOverdue = cal.status === 'OVERDUE' || cal.status === 'OUT_OF_SERVICE';
+              const isDueSoon = cal.status === 'DUE_SOON';
+              return (
+                <motion.div
+                  key={cal.id}
+                  variants={staggerChild}
+                  className="bg-white dark:bg-slate-800/80 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-bold text-slate-900 dark:text-white text-sm">{cal.equipmentName}</span>
+                        <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-sky-50 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 font-bold">
+                          {cal.equipmentCode}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">{cal.dept} • {cal.location}</p>
                     </div>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400">{cal.dept} • {cal.location}</p>
-                  </div>
-                  <Badge
-                    variant={
-                      cal.status === 'VALID'
-                        ? 'emerald'
-                        : cal.status === 'DUE_SOON'
-                        ? 'amber'
-                        : 'rose'
-                    }
-                    size="sm"
-                  >
-                    {cal.status}
-                  </Badge>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">{isAr ? 'شهادة / فحص:' : 'Cert / Lab:'}</span>
-                    <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400 block truncate">{cal.certificateNumber}</span>
-                    <span className="text-[10px] text-slate-500 block truncate">{cal.calibratedBy}</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">{isAr ? 'تاريخ الاستحقاق:' : 'Due Date:'}</span>
-                    <span className={`font-bold font-mono ${
-                      isOverdue ? 'text-rose-500' : isDueSoon ? 'text-amber-500' : 'text-emerald-500'
-                    }`}>
-                      {cal.nextCalibrationDate}
-                    </span>
-                    <span className="text-[10px] text-slate-400 block">±{cal.acceptableTolerance}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
-                  <button
-                    onClick={() => setTagModalRecord(cal)}
-                    className="px-2.5 py-1.5 rounded-lg bg-sky-50 text-sky-600 dark:bg-sky-900/30 dark:text-sky-400 text-xs font-bold flex items-center gap-1"
-                  >
-                    <i className="fa-solid fa-tag"></i>
-                    <span>{isAr ? 'الملصق' : 'Tag'}</span>
-                  </button>
-                  <button
-                    onClick={() => handleQuickRecalibrate(cal)}
-                    className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
-                    title={isAr ? 'معايرة' : 'Calibrate'}
-                  >
-                    <i className="fa-solid fa-rotate-right text-xs"></i>
-                  </button>
-                  {(isOverdue || isDueSoon) && (
-                    <button
-                      onClick={() => handleShareWhatsApp(cal)}
-                      className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
-                      title={isAr ? 'واتساب' : 'WhatsApp'}
-                    >
-                      <i className="fa-brands fa-whatsapp text-xs"></i>
-                    </button>
-                  )}
-                  <button
-                    onClick={() => {
-                      if (confirm(isAr ? 'هل أنت متأكد من حذف هذا الجهاز؟' : 'Delete this record?')) {
-                        deleteCalibrationRecord(cal.id);
+                    <Badge
+                      variant={
+                        cal.status === 'VALID'
+                          ? 'emerald'
+                          : cal.status === 'DUE_SOON'
+                          ? 'amber'
+                          : 'rose'
                       }
-                    }}
-                    className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400"
-                    title={isAr ? 'حذف' : 'Delete'}
-                  >
-                    <i className="fa-solid fa-trash text-xs"></i>
-                  </button>
-                </div>
-              </div>
-            );
-          })
+                      size="sm"
+                    >
+                      {cal.status}
+                    </Badge>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">{isAr ? 'شهادة / فحص:' : 'Cert / Lab:'}</span>
+                      <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400 block truncate">{cal.certificateNumber}</span>
+                      <span className="text-[10px] text-slate-500 block truncate">{cal.calibratedBy}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">{isAr ? 'تاريخ الاستحقاق:' : 'Due Date:'}</span>
+                      <span className={`font-bold font-mono ${
+                        isOverdue ? 'text-rose-500' : isDueSoon ? 'text-amber-500' : 'text-emerald-500'
+                      }`}>
+                        {cal.nextCalibrationDate}
+                      </span>
+                      <span className="text-[10px] text-slate-400 block">±{cal.acceptableTolerance}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setTagModalRecord(cal)}
+                      className="px-2.5 py-1.5 rounded-lg bg-sky-50 text-sky-600 dark:bg-sky-900/30 dark:text-sky-400 text-xs font-bold flex items-center gap-1"
+                    >
+                      <i className="fa-solid fa-tag"></i>
+                      <span>{isAr ? 'الملصق' : 'Tag'}</span>
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleQuickRecalibrate(cal)}
+                      className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
+                      title={isAr ? 'معايرة' : 'Calibrate'}
+                    >
+                      <i className="fa-solid fa-rotate-right text-xs"></i>
+                    </motion.button>
+                    {(isOverdue || isDueSoon) && (
+                      <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleShareWhatsApp(cal)}
+                        className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
+                        title={isAr ? 'واتساب' : 'WhatsApp'}
+                      >
+                        <i className="fa-brands fa-whatsapp text-xs"></i>
+                      </motion.button>
+                    )}
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        if (confirm(isAr ? 'هل أنت متأكد من حذف هذا الجهاز؟' : 'Delete this record?')) {
+                          deleteCalibrationRecord(cal.id);
+                        }
+                      }}
+                      className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400"
+                      title={isAr ? 'حذف' : 'Delete'}
+                    >
+                      <i className="fa-solid fa-trash text-xs"></i>
+                    </motion.button>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </StaggerGrid>
         )}
       </div>
 
       {/* Desktop Equipment Table (>= md) */}
-      <div className="hidden md:block bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden backdrop-blur-sm">
+      <div className="hidden md:block bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden backdrop-blur-sm transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-start text-xs border-collapse">
             <thead>
@@ -522,34 +529,42 @@ export const CalibrationView: React.FC = () => {
                       {/* Actions & Tag */}
                       <td className="py-4 px-4 text-center">
                         <div className="flex items-center justify-center gap-1.5">
-                          <button
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => setTagModalRecord(cal)}
                             title={isAr ? 'معاينة وطباعة ملصق المعايرة المعتمد' : 'Calibration Tag Sticker'}
                             className="px-2.5 py-1 rounded-lg bg-sky-50 hover:bg-sky-100 dark:bg-sky-900/30 dark:hover:bg-sky-900/50 text-sky-600 dark:text-sky-400 text-xs font-bold transition-all flex items-center gap-1 shadow-sm"
                           >
                             <i className="fa-solid fa-tag"></i>
                             <span>{isAr ? 'الملصق' : 'Tag'}</span>
-                          </button>
+                          </motion.button>
 
-                          <button
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={() => handleQuickRecalibrate(cal)}
                             title={isAr ? 'توثيق إجراء إعادة المعايرة' : 'Log Re-calibration'}
                             className="w-7 h-7 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all shadow-sm"
                           >
                             <i className="fa-solid fa-rotate-right text-xs"></i>
-                          </button>
+                          </motion.button>
 
                           {(isOverdue || isDueSoon) && (
-                            <button
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
                               onClick={() => handleShareWhatsApp(cal)}
                               title={isAr ? 'إرسال تنبيه واتساب لفريق الصيانة' : 'WhatsApp Alert'}
                               className="w-7 h-7 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/30 dark:hover:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center transition-all shadow-sm"
                             >
                               <i className="fa-brands fa-whatsapp text-xs"></i>
-                            </button>
+                            </motion.button>
                           )}
 
-                          <button
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={() => {
                               if (confirm(isAr ? 'هل أنت متأكد من حذف هذا الجهاز؟' : 'Delete this record?')) {
                                 deleteCalibrationRecord(cal.id);
@@ -558,7 +573,7 @@ export const CalibrationView: React.FC = () => {
                             className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-rose-50 dark:bg-slate-700 dark:hover:bg-rose-900/30 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-all"
                           >
                             <i className="fa-solid fa-trash text-xs"></i>
-                          </button>
+                          </motion.button>
                         </div>
                       </td>
                     </tr>
@@ -570,177 +585,177 @@ export const CalibrationView: React.FC = () => {
         </div>
       </div>
 
-      {/* Add Calibration Modal */}
-      {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 max-w-xl w-full p-6 shadow-2xl space-y-5 animate-scaleUp">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-sky-600 text-white flex items-center justify-center shadow-md">
-                  <i className="fa-solid fa-scale-balanced"></i>
-                </div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  {isAr ? 'قيد جهاز قياس جديد في سجل المعايرة الدورية' : 'Log New Equipment for Calibration'}
-                </h3>
+      {/* Add Calibration Modal with AnimatedModal */}
+      <AnimatedModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} className="max-w-xl">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-6 shadow-2xl space-y-5">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-sky-600 text-white flex items-center justify-center shadow-md">
+                <i className="fa-solid fa-scale-balanced"></i>
               </div>
-              <button
-                onClick={() => setIsAddModalOpen(false)}
-                className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
-              >
-                <i className="fa-solid fa-xmark text-sm"></i>
-              </button>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                {isAr ? 'قيد جهاز قياس جديد في سجل المعايرة الدورية' : 'Log New Equipment for Calibration'}
+              </h3>
             </div>
+            <button
+              onClick={() => setIsAddModalOpen(false)}
+              className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors"
+            >
+              <i className="fa-solid fa-xmark text-sm"></i>
+            </button>
+          </div>
 
-            <form onSubmit={handleAddSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'اسم الجهاز / الأداة *' : 'Equipment Name *'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={newCalForm.equipmentName}
-                    onChange={e => setNewCalForm({ ...newCalForm, equipmentName: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
-                    placeholder={isAr ? 'مثال: مسبار قياس حرارة الطهي' : 'e.g. Probe Thermometer'}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'كود الجهاز / الرقم التسلسلي *' : 'Equipment Code / Serial *'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={newCalForm.equipmentCode}
-                    onChange={e => setNewCalForm({ ...newCalForm, equipmentCode: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
-                    placeholder="PRB-005 / SCL-015"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'القسم المسؤول *' : 'Department *'}
-                  </label>
-                  <select
-                    required
-                    value={newCalForm.deptKey}
-                    onChange={e => setNewCalForm({ ...newCalForm, deptKey: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
-                  >
-                    <option value="">{isAr ? '-- اختر القسم --' : '-- Select Dept --'}</option>
-                    {sectorDeptKeys.map(k => (
-                      <option key={k} value={k}>
-                        {DEPARTMENTS[k]?.[isAr ? 'ar' : 'en'] || k}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'مكان التواجد / الخط التشغيلي' : 'Physical Location'}
-                  </label>
-                  <input
-                    type="text"
-                    value={newCalForm.location}
-                    onChange={e => setNewCalForm({ ...newCalForm, location: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
-                    placeholder={isAr ? 'خط الإنتاج 1 / مختبر الجودة' : 'Line 1 / QC Lab'}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'تاريخ آخر معايرة' : 'Last Calibration Date'}
-                  </label>
-                  <input
-                    type="date"
-                    value={newCalForm.lastCalibrationDate}
-                    onChange={e => setNewCalForm({ ...newCalForm, lastCalibrationDate: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'تاريخ المعايرة القادمة' : 'Next Due Date'}
-                  </label>
-                  <input
-                    type="date"
-                    value={newCalForm.nextCalibrationDate}
-                    onChange={e => setNewCalForm({ ...newCalForm, nextCalibrationDate: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'جهة المعايرة المعتمدة' : 'Calibration Lab / Agency'}
-                  </label>
-                  <input
-                    type="text"
-                    value={newCalForm.calibratedBy}
-                    onChange={e => setNewCalForm({ ...newCalForm, calibratedBy: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
-                    placeholder={isAr ? 'مختبر المعايرة القياسية SASO' : 'Certified Metrology Lab'}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'نسبة السماحية المقبولة' : 'Acceptable Tolerance'}
-                  </label>
-                  <input
-                    type="text"
-                    value={newCalForm.acceptableTolerance}
-                    onChange={e => setNewCalForm({ ...newCalForm, acceptableTolerance: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
-                    placeholder="±0.3°C / ±0.01g / ±0.05 pH"
-                  />
-                </div>
+          <form onSubmit={handleAddSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'اسم الجهاز / الأداة *' : 'Equipment Name *'}
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newCalForm.equipmentName}
+                  onChange={e => setNewCalForm({ ...newCalForm, equipmentName: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
+                  placeholder={isAr ? 'مثال: مسبار قياس حرارة الطهي' : 'e.g. Probe Thermometer'}
+                />
               </div>
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'ملاحظات المعايرة' : 'Notes'}
+                  {isAr ? 'كود الجهاز / الرقم التسلسلي *' : 'Equipment Code / Serial *'}
                 </label>
-                <textarea
-                  rows={2}
-                  value={newCalForm.notes}
-                  onChange={e => setNewCalForm({ ...newCalForm, notes: e.target.value })}
+                <input
+                  type="text"
+                  required
+                  value={newCalForm.equipmentCode}
+                  onChange={e => setNewCalForm({ ...newCalForm, equipmentCode: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
-                  placeholder={isAr ? 'طريقة الفحص، المحاليل القياسية المستخدمة...' : 'Method of test, buffer solutions used...'}
+                  placeholder="PRB-005 / SCL-015"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-700">
-                <button
-                  type="button"
-                  onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold"
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'القسم المسؤول *' : 'Department *'}
+                </label>
+                <select
+                  required
+                  value={newCalForm.deptKey}
+                  onChange={e => setNewCalForm({ ...newCalForm, deptKey: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
                 >
-                  {isAr ? 'إلغاء' : 'Cancel'}
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-md shadow-sky-500/20"
-                >
-                  {isAr ? 'قيد الجهاز واعتماد السجل' : 'Save & Log Equipment'}
-                </button>
+                  <option value="">{isAr ? '-- اختر القسم --' : '-- Select Dept --'}</option>
+                  {sectorDeptKeys.map(k => (
+                    <option key={k} value={k}>
+                      {DEPARTMENTS[k]?.[isAr ? 'ar' : 'en'] || k}
+                    </option>
+                  ))}
+                </select>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
 
-      {/* Calibration Tag Sticker Modal */}
-      {tagModalRecord && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/75 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 max-w-sm w-full p-6 shadow-2xl space-y-5 animate-scaleUp">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'مكان التواجد / الخط التشغيلي' : 'Physical Location'}
+                </label>
+                <input
+                  type="text"
+                  value={newCalForm.location}
+                  onChange={e => setNewCalForm({ ...newCalForm, location: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
+                  placeholder={isAr ? 'خط الإنتاج 1 / مختبر الجودة' : 'Line 1 / QC Lab'}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'تاريخ آخر معايرة' : 'Last Calibration Date'}
+                </label>
+                <input
+                  type="date"
+                  value={newCalForm.lastCalibrationDate}
+                  onChange={e => setNewCalForm({ ...newCalForm, lastCalibrationDate: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'تاريخ المعايرة القادمة' : 'Next Due Date'}
+                </label>
+                <input
+                  type="date"
+                  value={newCalForm.nextCalibrationDate}
+                  onChange={e => setNewCalForm({ ...newCalForm, nextCalibrationDate: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'جهة المعايرة المعتمدة' : 'Calibration Lab / Agency'}
+                </label>
+                <input
+                  type="text"
+                  value={newCalForm.calibratedBy}
+                  onChange={e => setNewCalForm({ ...newCalForm, calibratedBy: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
+                  placeholder={isAr ? 'مختبر المعايرة القياسية SASO' : 'Certified Metrology Lab'}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAr ? 'نسبة السماحية المقبولة' : 'Acceptable Tolerance'}
+                </label>
+                <input
+                  type="text"
+                  value={newCalForm.acceptableTolerance}
+                  onChange={e => setNewCalForm({ ...newCalForm, acceptableTolerance: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
+                  placeholder="±0.3°C / ±0.01g / ±0.05 pH"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                {isAr ? 'ملاحظات المعايرة' : 'Notes'}
+              </label>
+              <textarea
+                rows={2}
+                value={newCalForm.notes}
+                onChange={e => setNewCalForm({ ...newCalForm, notes: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-sky-500"
+                placeholder={isAr ? 'طريقة الفحص، المحاليل القياسية المستخدمة...' : 'Method of test, buffer solutions used...'}
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-700">
+              <button
+                type="button"
+                onClick={() => setIsAddModalOpen(false)}
+                className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              >
+                {isAr ? 'إلغاء' : 'Cancel'}
+              </button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                type="submit"
+                className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-md shadow-sky-500/20"
+              >
+                {isAr ? 'قيد الجهاز واعتماد السجل' : 'Save & Log Equipment'}
+              </motion.button>
+            </div>
+          </form>
+        </div>
+      </AnimatedModal>
+
+      {/* Calibration Tag Sticker Modal with AnimatedModal */}
+      <AnimatedModal isOpen={!!tagModalRecord} onClose={() => setTagModalRecord(null)} className="max-w-sm">
+        {tagModalRecord && (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-6 shadow-2xl space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
               <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <i className="fa-solid fa-tag text-sky-500"></i>
@@ -748,7 +763,7 @@ export const CalibrationView: React.FC = () => {
               </h3>
               <button
                 onClick={() => setTagModalRecord(null)}
-                className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                className="w-8 h-8 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors"
               >
                 <i className="fa-solid fa-xmark text-sm"></i>
               </button>
@@ -791,11 +806,13 @@ export const CalibrationView: React.FC = () => {
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
               <button
                 onClick={() => setTagModalRecord(null)}
-                className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold"
+                className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
                 {isAr ? 'إغلاق' : 'Close'}
               </button>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.96 }}
                 onClick={() => {
                   window.print();
                 }}
@@ -803,11 +820,11 @@ export const CalibrationView: React.FC = () => {
               >
                 <i className="fa-solid fa-print"></i>
                 {isAr ? 'طباعة الملصق' : 'Print Sticker'}
-              </button>
+              </motion.button>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </AnimatedModal>
+    </AnimatedPage>
   );
 };

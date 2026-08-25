@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { useAudit } from '@/context/AuditContext';
 import { ROLES } from '@/data';
 
@@ -45,7 +46,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full">
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
+      className="w-full"
+    >
       {/* Top action bar: Back to home + Theme & Language toggles */}
       <div className="flex items-center justify-between mb-4 px-1">
         <Link
@@ -62,7 +68,9 @@ export default function LoginPage() {
 
         <div className="flex items-center gap-2">
           {/* Theme Switcher */}
-          <button
+          <motion.button
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
             type="button"
             onClick={toggleTheme}
             aria-label={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
@@ -73,10 +81,12 @@ export default function LoginPage() {
             } shadow-sm backdrop-blur-sm`}
           >
             {isDark ? '☀️' : '🌙'}
-          </button>
+          </motion.button>
 
           {/* Language Switcher */}
-          <button
+          <motion.button
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
             type="button"
             onClick={() => setLanguage(isAr ? 'en' : 'ar')}
             className={`px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-colors ${
@@ -86,7 +96,7 @@ export default function LoginPage() {
             } shadow-sm backdrop-blur-sm`}
           >
             {isAr ? 'EN' : 'عر'}
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -189,14 +199,16 @@ export default function LoginPage() {
           </div>
 
           {/* Submit Button */}
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={isLoading}
             className="w-full bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white font-black py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider cursor-pointer"
           >
             <i className={`fa-solid ${isLoading ? 'fa-spinner fa-spin' : 'fa-right-to-bracket'}`}></i>
             {isAr ? 'دخول مساحة العمل' : 'Enter Workspace'}
-          </button>
+          </motion.button>
         </form>
 
         {/* Quick Demo Access Roles */}
@@ -206,7 +218,8 @@ export default function LoginPage() {
           </p>
           <div className="grid grid-cols-2 gap-2 max-h-[140px] overflow-y-auto pe-1">
             {ROLES.map(role => (
-              <button
+              <motion.button
+                whileTap={{ scale: 0.95 }}
                 key={role.val}
                 type="button"
                 onClick={() => handleQuickLogin(role.val)}
@@ -220,11 +233,11 @@ export default function LoginPage() {
                 title={isAr ? role.ar : role.en}
               >
                 {isAr ? role.ar : role.en}
-              </button>
+              </motion.button>
             ))}
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

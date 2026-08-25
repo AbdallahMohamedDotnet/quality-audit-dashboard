@@ -1,9 +1,12 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { calculateCarbonFootprint } from '../../utils/calculations';
 import { StatCard } from '../common/StatCard';
+import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
+import { ScrollReveal } from '../common/ScrollReveal';
 
 export const SustainabilityView: React.FC = () => {
   const { isAr, isDark, utilities, setUtilities, dispatchWhatsApp } = useAudit();
@@ -23,9 +26,9 @@ export const SustainabilityView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <AnimatedPage>
       {/* Header */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
@@ -42,18 +45,20 @@ export const SustainabilityView: React.FC = () => {
           </p>
         </div>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.96 }}
           type="button"
           onClick={handleShareEsgReport}
           className="px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5"
         >
           <i className="fa-brands fa-whatsapp text-sm"></i>
           <span>{isAr ? 'مشاركة تقرير ESG' : 'Share ESG Report'}</span>
-        </button>
+        </motion.button>
       </div>
 
       {/* KPI Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <StaggerGrid className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard
           title={isAr ? 'البصمة الكربونية المقدرة' : 'Carbon Footprint'}
           value={`${carbonTons} MT`}
@@ -78,124 +83,126 @@ export const SustainabilityView: React.FC = () => {
           icon={<i className="fa-solid fa-bolt text-xl"></i>}
           variant="amber"
         />
-      </div>
+      </StaggerGrid>
 
       {/* Inputs and Recommendations Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Resource Consumption Inputs (5 cols) */}
-        <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-          <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800">
-            {isAr ? 'مدخلات استهلاك الموارد الشهرية' : 'Monthly Resource Consumption'}
-          </h3>
+      <ScrollReveal>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Resource Consumption Inputs (5 cols) */}
+          <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+            <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800">
+              {isAr ? 'مدخلات استهلاك الموارد الشهرية' : 'Monthly Resource Consumption'}
+            </h3>
 
-          <div className="space-y-4">
-            <div>
-              <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                {isAr ? 'استهلاك الكهرباء (كيلوواط/ساعة - kWh)' : 'Electricity Consumption (kWh)'}
-              </label>
-              <input
-                type="number"
-                value={utilities.elec}
-                onChange={e =>
-                  setUtilities({ ...utilities, elec: parseFloat(e.target.value) || 0 })
-                }
-                className={`w-full p-3 rounded-xl border text-xs font-mono font-bold outline-none focus:border-emerald-500 ${
-                  isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
-                }`}
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                {isAr ? 'استهلاك المياه (متر مكعب - m³)' : 'Water Consumption (m³)'}
-              </label>
-              <input
-                type="number"
-                value={utilities.water}
-                onChange={e =>
-                  setUtilities({ ...utilities, water: parseFloat(e.target.value) || 0 })
-                }
-                className={`w-full p-3 rounded-xl border text-xs font-mono font-bold outline-none focus:border-emerald-500 ${
-                  isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
-                }`}
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                {isAr ? 'المخلفات والنفايات الصلبة (كجم - kg)' : 'Solid Waste Generated (kg)'}
-              </label>
-              <input
-                type="number"
-                value={utilities.waste}
-                onChange={e =>
-                  setUtilities({ ...utilities, waste: parseFloat(e.target.value) || 0 })
-                }
-                className={`w-full p-3 rounded-xl border text-xs font-mono font-bold outline-none focus:border-emerald-500 ${
-                  isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
-                }`}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Environmental Initiatives & Action Guide (7 cols) */}
-        <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-          <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800">
-            {isAr ? 'مبادرات خفض الانبعاثات والتحسين البيئي' : 'Carbon Reduction Initiatives & Audit Protocols'}
-          </h3>
-
-          <div className="space-y-3">
-            <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-start gap-3">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0">
-                <i className="fa-solid fa-lightbulb text-sm"></i>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
+                  {isAr ? 'استهلاك الكهرباء (كيلوواط/ساعة - kWh)' : 'Electricity Consumption (kWh)'}
+                </label>
+                <input
+                  type="number"
+                  value={utilities.elec}
+                  onChange={e =>
+                    setUtilities({ ...utilities, elec: parseFloat(e.target.value) || 0 })
+                  }
+                  className={`w-full p-3 rounded-xl border text-xs font-mono font-bold outline-none transition-colors focus:border-emerald-500 ${
+                    isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
+                  }`}
+                />
               </div>
-              <div className="space-y-0.5">
-                <h4 className="text-xs font-black text-emerald-700 dark:text-emerald-300">
-                  {isAr ? 'أنظمة الإضاءة الموفرة LED والمستشعرات الذكية' : 'Smart LED & Occupancy Sensors'}
-                </h4>
-                <p className="text-[11px] font-bold text-slate-600 dark:text-slate-400 leading-relaxed">
-                  {isAr
-                    ? 'تحقيق خفض فوري في استهلاك الطاقة بنسبة 25% مع تقليل الحمل الحراري على أنظمة التكييف.'
-                    : 'Delivers 25% direct electricity savings and reduces HVAC thermal loads.'}
-                </p>
-              </div>
-            </div>
 
-            <div className="p-3.5 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-start gap-3">
-              <div className="w-8 h-8 rounded-xl bg-sky-500 text-white flex items-center justify-center shrink-0">
-                <i className="fa-solid fa-faucet-drip text-sm"></i>
+              <div>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
+                  {isAr ? 'استهلاك المياه (متر مكعب - m³)' : 'Water Consumption (m³)'}
+                </label>
+                <input
+                  type="number"
+                  value={utilities.water}
+                  onChange={e =>
+                    setUtilities({ ...utilities, water: parseFloat(e.target.value) || 0 })
+                  }
+                  className={`w-full p-3 rounded-xl border text-xs font-mono font-bold outline-none transition-colors focus:border-emerald-500 ${
+                    isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
+                  }`}
+                />
               </div>
-              <div className="space-y-0.5">
-                <h4 className="text-xs font-black text-sky-700 dark:text-sky-300">
-                  {isAr ? 'مرشدات تدفق المياه وفحص التسريبات الدورية' : 'Water Aerators & Leak Audit'}
-                </h4>
-                <p className="text-[11px] font-bold text-slate-600 dark:text-slate-400 leading-relaxed">
-                  {isAr
-                    ? 'تقليل فاقد المياه في المطابخ والغرف بنسبة تصل إلى 30% مع الحفاظ على ضغط مريح.'
-                    : 'Cuts water waste in kitchens and guest areas by up to 30%.'}
-                </p>
-              </div>
-            </div>
 
-            <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
-              <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0">
-                <i className="fa-solid fa-recycle text-sm"></i>
-              </div>
-              <div className="space-y-0.5">
-                <h4 className="text-xs font-black text-amber-700 dark:text-amber-300">
-                  {isAr ? 'فرز المخلفات وإعادة التدوير من المصدر' : 'Source Waste Segregation'}
-                </h4>
-                <p className="text-[11px] font-bold text-slate-600 dark:text-slate-400 leading-relaxed">
-                  {isAr
-                    ? 'فصل الكرتون والبلاستيك والمخلفات العضوية وتحويلها إلى أسمدة زراعية.'
-                    : 'Segregate organic, plastic, and cardboard waste for recycling streams.'}
-                </p>
+              <div>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
+                  {isAr ? 'المخلفات والنفايات الصلبة (كجم - kg)' : 'Solid Waste Generated (kg)'}
+                </label>
+                <input
+                  type="number"
+                  value={utilities.waste}
+                  onChange={e =>
+                    setUtilities({ ...utilities, waste: parseFloat(e.target.value) || 0 })
+                  }
+                  className={`w-full p-3 rounded-xl border text-xs font-mono font-bold outline-none transition-colors focus:border-emerald-500 ${
+                    isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
+                  }`}
+                />
               </div>
             </div>
           </div>
+
+          {/* Environmental Initiatives & Action Guide (7 cols) */}
+          <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+            <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800">
+              {isAr ? 'مبادرات خفض الانبعاثات والتحسين البيئي' : 'Carbon Reduction Initiatives & Audit Protocols'}
+            </h3>
+
+            <div className="space-y-3">
+              <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0">
+                  <i className="fa-solid fa-lightbulb text-sm"></i>
+                </div>
+                <div className="space-y-0.5">
+                  <h4 className="text-xs font-black text-emerald-700 dark:text-emerald-300">
+                    {isAr ? 'أنظمة الإضاءة الموفرة LED والمستشعرات الذكية' : 'Smart LED & Occupancy Sensors'}
+                  </h4>
+                  <p className="text-[11px] font-bold text-slate-600 dark:text-slate-400 leading-relaxed">
+                    {isAr
+                      ? 'تحقيق خفض فوري في استهلاك الطاقة بنسبة 25% مع تقليل الحمل الحراري على أنظمة التكييف.'
+                      : 'Delivers 25% direct electricity savings and reduces HVAC thermal loads.'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-sky-500 text-white flex items-center justify-center shrink-0">
+                  <i className="fa-solid fa-faucet-drip text-sm"></i>
+                </div>
+                <div className="space-y-0.5">
+                  <h4 className="text-xs font-black text-sky-700 dark:text-sky-300">
+                    {isAr ? 'مرشدات تدفق المياه وفحص التسريبات الدورية' : 'Water Aerators & Leak Audit'}
+                  </h4>
+                  <p className="text-[11px] font-bold text-slate-600 dark:text-slate-400 leading-relaxed">
+                    {isAr
+                      ? 'تقليل فاقد المياه في المطابخ والغرف بنسبة تصل إلى 30% مع الحفاظ على ضغط مريح.'
+                      : 'Cuts water waste in kitchens and guest areas by up to 30%.'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0">
+                  <i className="fa-solid fa-recycle text-sm"></i>
+                </div>
+                <div className="space-y-0.5">
+                  <h4 className="text-xs font-black text-amber-700 dark:text-amber-300">
+                    {isAr ? 'فرز المخلفات وإعادة التدوير من المصدر' : 'Source Waste Segregation'}
+                  </h4>
+                  <p className="text-[11px] font-bold text-slate-600 dark:text-slate-400 leading-relaxed">
+                    {isAr
+                      ? 'فصل الكرتون والبلاستيك والمخلفات العضوية وتحويلها إلى أسمدة زراعية.'
+                      : 'Segregate organic, plastic, and cardboard waste for recycling streams.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </ScrollReveal>
+    </AnimatedPage>
   );
 };

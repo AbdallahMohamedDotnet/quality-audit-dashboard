@@ -1,11 +1,15 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { SECTORS, DEPARTMENTS, SECTOR_DEPARTMENTS, IOT_SENSORS, STANDARDS } from '../../data';
 import { StatCard } from '../common/StatCard';
 import { DepartmentScoreChart } from '../common/DepartmentScoreChart';
+import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
+import { ScrollReveal } from '../common/ScrollReveal';
 import { getSectorLatestScores, calculateSectorMetrics } from '../../utils/calculations';
+import { staggerChild, staggerChildScale, cardHover, cardTap } from '../../utils/animations';
 
 export const DashboardView: React.FC = () => {
   const {
@@ -63,39 +67,44 @@ export const DashboardView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <AnimatedPage>
       {/* Sector Selector Tabs Bar */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
         <div className="flex items-center justify-between gap-3 mb-3 px-1">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-300">
             <i className="fa-solid fa-industry text-sky-500"></i>
             <span>{isAr ? 'اختر قطاع التشغيل والتدقيق:' : 'Select Industry Sector:'}</span>
           </div>
           <div className="flex items-center gap-2">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.96 }}
               type="button"
               onClick={handleShareExecutiveSummary}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shadow-sm transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shadow-sm transition-colors"
             >
               <i className="fa-brands fa-whatsapp text-sm"></i>
               <span className="hidden sm:inline">{isAr ? 'مشاركة الملخص' : 'Share Summary'}</span>
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.96 }}
               type="button"
               onClick={printReport}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-300 dark:border-slate-700 transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-300 dark:border-slate-700 transition-colors"
             >
               <i className="fa-solid fa-print"></i>
               <span className="hidden sm:inline">{isAr ? 'طباعة تقرير A4' : 'Print A4 PDF'}</span>
-            </button>
+            </motion.button>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-none">
           {SECTORS.map(sec => {
             const isSelected = currentSector === sec.val;
             return (
-              <button
+              <motion.button
+                whileTap={{ scale: 0.95 }}
                 key={sec.val}
                 type="button"
                 onClick={() => setCurrentSector(sec.val)}
@@ -129,14 +138,14 @@ export const DashboardView: React.FC = () => {
                   }`}
                 />
                 <span>{isAr ? sec.ar : sec.en}</span>
-              </button>
+              </motion.button>
             );
           })}
         </div>
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title={isAr ? 'نسبة الامتثال العامة' : 'Overall Compliance Score'}
           value={`${metrics.averageScore}%`}
@@ -181,12 +190,15 @@ export const DashboardView: React.FC = () => {
           icon={<i className="fa-solid fa-shield-halved text-xl"></i>}
           variant="indigo"
         />
-      </div>
+      </StaggerGrid>
 
       {/* Mission Modules Control Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+      <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* 1. Suppliers AVL */}
-        <div
+        <motion.div
+          variants={staggerChild}
+          whileHover={cardHover}
+          whileTap={cardTap}
           onClick={() => setActiveTab('suppliers')}
           className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-indigo-500 hover:shadow-md cursor-pointer transition-all group flex items-center justify-between"
         >
@@ -206,10 +218,13 @@ export const DashboardView: React.FC = () => {
           <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
             <i className="fa-solid fa-truck-field text-base"></i>
           </div>
-        </div>
+        </motion.div>
 
         {/* 2. CAPA Master Tracker */}
-        <div
+        <motion.div
+          variants={staggerChild}
+          whileHover={cardHover}
+          whileTap={cardTap}
           onClick={() => setActiveTab('capa')}
           className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-rose-500 hover:shadow-md cursor-pointer transition-all group flex items-center justify-between"
         >
@@ -229,10 +244,13 @@ export const DashboardView: React.FC = () => {
           <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center group-hover:scale-110 transition-transform">
             <i className="fa-solid fa-arrows-spin text-base"></i>
           </div>
-        </div>
+        </motion.div>
 
         {/* 3. Training Matrix */}
-        <div
+        <motion.div
+          variants={staggerChild}
+          whileHover={cardHover}
+          whileTap={cardTap}
           onClick={() => setActiveTab('training')}
           className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 hover:shadow-md cursor-pointer transition-all group flex items-center justify-between"
         >
@@ -252,10 +270,13 @@ export const DashboardView: React.FC = () => {
           <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
             <i className="fa-solid fa-graduation-cap text-base"></i>
           </div>
-        </div>
+        </motion.div>
 
         {/* 4. Calibration Log */}
-        <div
+        <motion.div
+          variants={staggerChild}
+          whileHover={cardHover}
+          whileTap={cardTap}
           onClick={() => setActiveTab('calibration')}
           className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-sky-500 hover:shadow-md cursor-pointer transition-all group flex items-center justify-between"
         >
@@ -275,215 +296,223 @@ export const DashboardView: React.FC = () => {
           <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center group-hover:scale-110 transition-transform">
             <i className="fa-solid fa-scale-balanced text-base"></i>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </StaggerGrid>
 
       {/* Standards Framework Widget & Live Telemetry Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Live IoT Telemetry Monitoring Bar (8 cols) */}
-        <div className="lg:col-span-8 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-3 w-3">
-                <span
-                  className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                    isTelemetrySimulating ? 'bg-emerald-400' : 'bg-slate-400'
-                  }`}
-                />
-                <span
-                  className={`relative inline-flex rounded-full h-3 w-3 ${
-                    isTelemetrySimulating ? 'bg-emerald-500' : 'bg-slate-500'
-                  }`}
-                />
-              </span>
-              <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
-                {isAr ? 'حساسات المراقبة المباشرة (Live IoT Telemetry)' : 'Live IoT Telemetry Sensors'}
-              </h4>
-            </div>
+      <ScrollReveal>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Live IoT Telemetry Monitoring Bar (8 cols) */}
+          <div className="lg:col-span-8 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-3 w-3">
+                  <span
+                    className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                      isTelemetrySimulating ? 'bg-emerald-400' : 'bg-slate-400'
+                    }`}
+                  />
+                  <span
+                    className={`relative inline-flex rounded-full h-3 w-3 ${
+                      isTelemetrySimulating ? 'bg-emerald-500' : 'bg-slate-500'
+                    }`}
+                  />
+                </span>
+                <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
+                  {isAr ? 'حساسات المراقبة المباشرة (Live IoT Telemetry)' : 'Live IoT Telemetry Sensors'}
+                </h4>
+              </div>
 
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setActiveTab('iot')}
-                className="text-[11px] font-bold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1"
-              >
-                <span>{isAr ? 'محطة المراقبة الكاملة' : 'Full Stream Station'}</span>
-                <i className="fa-solid fa-arrow-left text-[9px] rtl:inline ltr:hidden"></i>
-                <i className="fa-solid fa-arrow-right text-[9px] ltr:inline rtl:hidden"></i>
-              </button>
-
-              <button
-                type="button"
-                onClick={toggleTelemetrySimulation}
-                className="text-[11px] font-bold text-slate-500 hover:text-sky-500 flex items-center gap-1.5"
-              >
-                <i className={`fa-solid ${isTelemetrySimulating ? 'fa-pause' : 'fa-play'}`}></i>
-                {isAr
-                  ? isTelemetrySimulating
-                    ? 'إيقاف'
-                    : 'تشغيل'
-                  : isTelemetrySimulating
-                  ? 'Pause'
-                  : 'Play'}
-              </button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {sensors.map(sensor => {
-              const val = iotTelemetry[sensor.id];
-              const isWarning = val === 'WARNING';
-              return (
-                <div
-                  key={sensor.id}
-                  className={`p-3.5 rounded-2xl border transition-all ${
-                    isWarning
-                      ? 'bg-rose-500/10 border-rose-500/50 text-rose-600 dark:text-rose-400 animate-pulse'
-                      : 'bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800/80 text-slate-800 dark:text-slate-200'
-                  }`}
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('iot')}
+                  className="text-[11px] font-bold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1 transition-all hover:scale-105"
                 >
-                  <div className="flex items-center justify-between text-[11px] mb-1">
-                    <span className="font-bold truncate text-slate-500 dark:text-slate-400">
-                      {isAr ? sensor.labelAr : sensor.labelEn}
-                    </span>
-                    <i className={`fa-solid ${sensor.icon} text-sky-500`}></i>
-                  </div>
-                  <div className="text-base sm:text-lg font-black font-mono flex items-baseline gap-1">
-                    <span>{val ?? sensor.init}</span>
-                    <span className="text-[10px] text-slate-400 font-sans font-bold">{sensor.unit}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+                  <span>{isAr ? 'محطة المراقبة الكاملة' : 'Full Stream Station'}</span>
+                  <i className="fa-solid fa-arrow-left text-[9px] rtl:inline ltr:hidden"></i>
+                  <i className="fa-solid fa-arrow-right text-[9px] ltr:inline rtl:hidden"></i>
+                </button>
 
-        {/* Standards Framework Summary Card (4 cols) */}
-        <div className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 flex flex-col justify-between">
-          <div>
-            <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-1 flex items-center gap-2">
-              <i className="fa-solid fa-certificate text-amber-500"></i>
-              {isAr ? 'أطر ومعايير الاعتماد للقطاع' : 'Certified Standards Framework'}
-            </h4>
-            <p className="text-[11px] text-slate-500 mb-3">
-              {isAr
-                ? `${sectorStandards.length} معياراً تشغيلياً نشطاً لهذا القطاع`
-                : `${sectorStandards.length} active standards mapped to sector`}
-            </p>
+                <motion.button
+                  whileTap={{ scale: 0.92 }}
+                  type="button"
+                  onClick={toggleTelemetrySimulation}
+                  className="text-[11px] font-bold text-slate-500 hover:text-sky-500 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 transition-colors"
+                >
+                  <i className={`fa-solid ${isTelemetrySimulating ? 'fa-pause' : 'fa-play'}`}></i>
+                  {isAr
+                    ? isTelemetrySimulating
+                      ? 'إيقاف'
+                      : 'تشغيل'
+                    : isTelemetrySimulating
+                    ? 'Pause'
+                    : 'Play'}
+                </motion.button>
+              </div>
+            </div>
 
-            <div className="grid grid-cols-2 gap-2 text-center text-xs">
-              <div className="p-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 space-y-0.5">
-                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase block">ISO Standards</span>
-                <span className="text-lg font-black font-mono text-indigo-700 dark:text-indigo-300">{isoStandardsCount}</span>
-              </div>
-              <div className="p-3 rounded-2xl bg-sky-500/10 border border-sky-500/20 space-y-0.5">
-                <span className="text-[10px] font-bold text-sky-600 dark:text-sky-400 uppercase block">OSHA Safety</span>
-                <span className="text-lg font-black font-mono text-sky-700 dark:text-sky-300">{oshaStandardsCount}</span>
-              </div>
-              <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-0.5">
-                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase block">HACCP / Food</span>
-                <span className="text-lg font-black font-mono text-emerald-700 dark:text-emerald-300">{haccpStandardsCount}</span>
-              </div>
-              <div className="p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 space-y-0.5">
-                <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase block">SFDA / GMP</span>
-                <span className="text-lg font-black font-mono text-purple-700 dark:text-purple-300">{Math.max(1, otherStandardsCount)}</span>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {sensors.map(sensor => {
+                const val = iotTelemetry[sensor.id];
+                const isWarning = val === 'WARNING';
+                return (
+                  <motion.div
+                    key={sensor.id}
+                    whileHover={{ scale: 1.02 }}
+                    className={`p-3.5 rounded-2xl border transition-all ${
+                      isWarning
+                        ? 'bg-rose-500/10 border-rose-500/50 text-rose-600 dark:text-rose-400 animate-pulse'
+                        : 'bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800/80 text-slate-800 dark:text-slate-200 hover:border-sky-500/40'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between text-[11px] mb-1">
+                      <span className="font-bold truncate text-slate-500 dark:text-slate-400">
+                        {isAr ? sensor.labelAr : sensor.labelEn}
+                      </span>
+                      <i className={`fa-solid ${sensor.icon} text-sky-500`}></i>
+                    </div>
+                    <div className="text-base sm:text-lg font-black font-mono flex items-baseline gap-1">
+                      <span>{val ?? sensor.init}</span>
+                      <span className="text-[10px] text-slate-400 font-sans font-bold">{sensor.unit}</span>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
 
-          <div className="pt-2 text-center">
-            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1">
-              <i className="fa-solid fa-shield-check"></i>
-              {isAr ? 'معايير ممتثلة للمواصفات الدولية 2026' : '100% Compliant with 2026 Specifications'}
-            </span>
+          {/* Standards Framework Summary Card (4 cols) */}
+          <div className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 flex flex-col justify-between">
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-1 flex items-center gap-2">
+                <i className="fa-solid fa-certificate text-amber-500"></i>
+                {isAr ? 'أطر ومعايير الاعتماد للقطاع' : 'Certified Standards Framework'}
+              </h4>
+              <p className="text-[11px] text-slate-500 mb-3">
+                {isAr
+                  ? `${sectorStandards.length} معياراً تشغيلياً نشطاً لهذا القطاع`
+                  : `${sectorStandards.length} active standards mapped to sector`}
+              </p>
+
+              <div className="grid grid-cols-2 gap-2 text-center text-xs">
+                <div className="p-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 space-y-0.5 transition-transform hover:scale-105">
+                  <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase block">ISO Standards</span>
+                  <span className="text-lg font-black font-mono text-indigo-700 dark:text-indigo-300">{isoStandardsCount}</span>
+                </div>
+                <div className="p-3 rounded-2xl bg-sky-500/10 border border-sky-500/20 space-y-0.5 transition-transform hover:scale-105">
+                  <span className="text-[10px] font-bold text-sky-600 dark:text-sky-400 uppercase block">OSHA Safety</span>
+                  <span className="text-lg font-black font-mono text-sky-700 dark:text-sky-300">{oshaStandardsCount}</span>
+                </div>
+                <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-0.5 transition-transform hover:scale-105">
+                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase block">HACCP / Food</span>
+                  <span className="text-lg font-black font-mono text-emerald-700 dark:text-emerald-300">{haccpStandardsCount}</span>
+                </div>
+                <div className="p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 space-y-0.5 transition-transform hover:scale-105">
+                  <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase block">SFDA / GMP</span>
+                  <span className="text-lg font-black font-mono text-purple-700 dark:text-purple-300">{Math.max(1, otherStandardsCount)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 text-center">
+              <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1">
+                <i className="fa-solid fa-shield-check"></i>
+                {isAr ? 'معايير ممتثلة للمواصفات الدولية 2026' : '100% Compliant with 2026 Specifications'}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
 
       {/* Main Grid: Department Score Distribution & Quick Audit Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Department Score Breakdown Chart (7 cols) */}
-        <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-            <div>
-              <h4 className="text-sm font-black text-slate-900 dark:text-white">
-                {isAr ? 'توزيع درجات الامتثال حسب الأقسام' : 'Department Compliance Distribution'}
-              </h4>
-              <p className="text-[11px] text-slate-500">
-                {isAr
-                  ? 'مؤشرات الأداء الفعلية بناءً على آخر جولات التدقيق المعتمدة'
-                  : 'Actual performance based on latest certified audits'}
-              </p>
+      <ScrollReveal>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left Column: Department Score Breakdown Chart (7 cols) */}
+          <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+              <div>
+                <h4 className="text-sm font-black text-slate-900 dark:text-white">
+                  {isAr ? 'توزيع درجات الامتثال حسب الأقسام' : 'Department Compliance Distribution'}
+                </h4>
+                <p className="text-[11px] text-slate-500">
+                  {isAr
+                    ? 'مؤشرات الأداء الفعلية بناءً على آخر جولات التدقيق المعتمدة'
+                    : 'Actual performance based on latest certified audits'}
+                </p>
+              </div>
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+                {isAr ? `${metrics.auditedCount} تم تدقيقها` : `${metrics.auditedCount} Audited`}
+              </span>
             </div>
-            <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
-              {isAr ? `${metrics.auditedCount} تم تدقيقها` : `${metrics.auditedCount} Audited`}
-            </span>
+
+            <DepartmentScoreChart data={chartData} onSelectDept={deptKey => startAudit(deptKey)} />
           </div>
 
-          <DepartmentScoreChart data={chartData} onSelectDept={deptKey => startAudit(deptKey)} />
-        </div>
-
-        {/* Right Column: Quick Audit Action Grid (5 cols) */}
-        <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-            <div>
-              <h4 className="text-sm font-black text-slate-900 dark:text-white">
-                {isAr ? 'بدء جولة تدقيق فورية' : 'Start Instant Audit Session'}
-              </h4>
-              <p className="text-[11px] text-slate-500">
-                {isAr ? 'اختر القسم لتحميل المعايير وبدء الفحص' : 'Select a department to load standards'}
-              </p>
+          {/* Right Column: Quick Audit Action Grid (5 cols) */}
+          <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+              <div>
+                <h4 className="text-sm font-black text-slate-900 dark:text-white">
+                  {isAr ? 'بدء جولة تدقيق فورية' : 'Start Instant Audit Session'}
+                </h4>
+                <p className="text-[11px] text-slate-500">
+                  {isAr ? 'اختر القسم لتحميل المعايير وبدء الفحص' : 'Select a department to load standards'}
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[420px] overflow-y-auto pe-1">
-            {sectorDeptKeys.map(key => {
-              const deptInfo = DEPARTMENTS[key];
-              const name = deptInfo ? (isAr ? deptInfo.ar : deptInfo.en) : key;
-              const hasScore = key in sectorScores;
-              const score = sectorScores[key];
-              const standardsCount = STANDARDS.filter(
-                s => s.sectors.includes(currentSector) && s.depts.includes(key)
-              ).length;
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[420px] overflow-y-auto pe-1">
+              {sectorDeptKeys.map(key => {
+                const deptInfo = DEPARTMENTS[key];
+                const name = deptInfo ? (isAr ? deptInfo.ar : deptInfo.en) : key;
+                const hasScore = key in sectorScores;
+                const score = sectorScores[key];
+                const standardsCount = STANDARDS.filter(
+                  s => s.sectors.includes(currentSector) && s.depts.includes(key)
+                ).length;
 
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => startAudit(key)}
-                  className={`p-3.5 rounded-2xl border text-start transition-all hover:scale-[1.02] flex flex-col justify-between group ${
-                    hasScore
-                      ? 'bg-emerald-500/5 hover:bg-emerald-500/10 border-emerald-500/30'
-                      : 'bg-slate-50 dark:bg-slate-950/60 hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-800'
-                  }`}
-                >
-                  <div className="space-y-1">
-                    <span className="text-xs font-black text-slate-900 dark:text-white block group-hover:text-sky-500 transition-colors">
-                      {name}
-                    </span>
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block">
-                      {isAr ? `${standardsCount} معياراً تشغيلياً` : `${standardsCount} Standards`}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-3 mt-2 border-t border-slate-200/60 dark:border-slate-800/60">
-                    <span className="text-[10px] font-bold text-sky-600 dark:text-sky-400 flex items-center gap-1">
-                      {isAr ? 'بدء الفحص' : 'Start Audit'}
-                      <i className="fa-solid fa-arrow-left text-[9px] rtl:inline ltr:hidden"></i>
-                      <i className="fa-solid fa-arrow-right text-[9px] ltr:inline rtl:hidden"></i>
-                    </span>
-                    {hasScore && (
-                      <span className="text-[11px] font-mono font-black text-emerald-600 dark:text-emerald-400">
-                        {score}%
+                return (
+                  <motion.button
+                    whileHover={{ scale: 1.025, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                    key={key}
+                    type="button"
+                    onClick={() => startAudit(key)}
+                    className={`p-3.5 rounded-2xl border text-start transition-all flex flex-col justify-between group ${
+                      hasScore
+                        ? 'bg-emerald-500/5 hover:bg-emerald-500/10 border-emerald-500/30'
+                        : 'bg-slate-50 dark:bg-slate-950/60 hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-800'
+                    }`}
+                  >
+                    <div className="space-y-1">
+                      <span className="text-xs font-black text-slate-900 dark:text-white block group-hover:text-sky-500 transition-colors">
+                        {name}
                       </span>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block">
+                        {isAr ? `${standardsCount} معياراً تشغيلياً` : `${standardsCount} Standards`}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 w-full">
+                      <span className="text-[10px] font-bold text-sky-600 dark:text-sky-400 flex items-center gap-1">
+                        {isAr ? 'بدء الفحص' : 'Start Audit'}
+                        <i className="fa-solid fa-arrow-left text-[9px] rtl:inline ltr:hidden"></i>
+                        <i className="fa-solid fa-arrow-right text-[9px] ltr:inline rtl:hidden"></i>
+                      </span>
+                      {hasScore && (
+                        <span className="text-[11px] font-mono font-black text-emerald-600 dark:text-emerald-400">
+                          {score}%
+                        </span>
+                      )}
+                    </div>
+                  </motion.button>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </ScrollReveal>
+    </AnimatedPage>
   );
 };

@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { SECTORS, SECTOR_DEPARTMENTS } from '../../data';
 import { StatCard } from '../common/StatCard';
+import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
+import { ScrollReveal } from '../common/ScrollReveal';
 
 export const SettingsView: React.FC = () => {
   const {
@@ -85,9 +88,9 @@ export const SettingsView: React.FC = () => {
   const sectorDeptCount = (SECTOR_DEPARTMENTS[currentSector] || []).length;
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <AnimatedPage>
       {/* Header */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-500 flex items-center justify-center">
@@ -104,18 +107,20 @@ export const SettingsView: React.FC = () => {
           </p>
         </div>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.96 }}
           type="button"
           onClick={handleExportSystemBackup}
           className="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-md transition-all flex items-center gap-2"
         >
           <i className="fa-solid fa-download"></i>
           <span>{isAr ? 'نسخ احتياطي كامل (JSON)' : 'Full System Backup'}</span>
-        </button>
+        </motion.button>
       </div>
 
       {/* System Metrics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title={isAr ? 'إصدار النظام' : 'Platform Version'}
           value="v9.8.0 PRO"
@@ -147,196 +152,208 @@ export const SettingsView: React.FC = () => {
           icon={<i className="fa-solid fa-signal text-xl"></i>}
           variant="teal"
         />
-      </div>
+      </StaggerGrid>
 
       {/* Settings Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Communication Dispatch Channels (7 cols) */}
-        <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-            <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <i className="fa-solid fa-envelopes-bulk text-sky-500"></i>
-              <span>{isAr ? 'قنوات الإرسال وتوجيه البلاغات' : 'Communication & Alert Channels'}</span>
-            </h3>
-            {isSaved && (
-              <span className="text-xs font-bold text-emerald-500 flex items-center gap-1 animate-fadeIn">
-                <i className="fa-solid fa-check"></i>
-                {isAr ? 'تم الحفظ' : 'Saved'}
-              </span>
-            )}
-          </div>
-
-          <form onSubmit={handleSaveSettings} className="space-y-4">
-            <div>
-              <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                {isAr ? 'رقم واتساب الإدارة العليا / الطوارئ' : 'GM / Emergency WhatsApp Phone'}
-              </label>
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1">
-                  <i className="fa-brands fa-whatsapp absolute left-3 rtl:right-3 top-3.5 text-[#25D366]"></i>
-                  <input
-                    type="text"
-                    value={formData.gmWhatsapp}
-                    onChange={e => setFormData({ ...formData, gmWhatsapp: e.target.value })}
-                    placeholder="+966500000000"
-                    className={`w-full p-2.5 pl-9 rtl:pr-9 rtl:pl-3 rounded-xl border text-xs font-mono font-bold outline-none focus:border-emerald-500 ${
-                      isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
-                    }`}
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={handleTestWhatsApp}
-                  className="px-3 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shrink-0 transition-all flex items-center gap-1"
-                >
-                  <i className="fa-solid fa-paper-plane"></i>
-                  <span>{isAr ? 'اختبار' : 'Test'}</span>
-                </button>
-              </div>
+      <ScrollReveal>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left Column: Communication Dispatch Channels (7 cols) */}
+          <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+              <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <i className="fa-solid fa-envelopes-bulk text-sky-500"></i>
+                <span>{isAr ? 'قنوات الإرسال وتوجيه البلاغات' : 'Communication & Alert Channels'}</span>
+              </h3>
+              {isSaved && (
+                <span className="text-xs font-bold text-emerald-500 flex items-center gap-1 animate-fadeIn">
+                  <i className="fa-solid fa-check"></i>
+                  {isAr ? 'تم الحفظ' : 'Saved'}
+                </span>
+              )}
             </div>
 
-            <div>
-              <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                {isAr ? 'بريد المدير العام (GM Email)' : 'General Manager (GM) Email'}
-              </label>
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1">
-                  <i className="fa-regular fa-envelope absolute left-3 rtl:right-3 top-3.5 text-sky-500"></i>
+            <form onSubmit={handleSaveSettings} className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
+                  {isAr ? 'رقم واتساب الإدارة العليا / الطوارئ' : 'GM / Emergency WhatsApp Phone'}
+                </label>
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <i className="fa-brands fa-whatsapp absolute left-3 rtl:right-3 top-3.5 text-[#25D366]"></i>
+                    <input
+                      type="text"
+                      value={formData.gmWhatsapp}
+                      onChange={e => setFormData({ ...formData, gmWhatsapp: e.target.value })}
+                      placeholder="+966500000000"
+                      className={`w-full p-2.5 pl-9 rtl:pr-9 rtl:pl-3 rounded-xl border text-xs font-mono font-bold outline-none transition-colors focus:border-emerald-500 ${
+                        isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
+                      }`}
+                    />
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    type="button"
+                    onClick={handleTestWhatsApp}
+                    className="px-3 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shrink-0 transition-all flex items-center gap-1"
+                  >
+                    <i className="fa-solid fa-paper-plane"></i>
+                    <span>{isAr ? 'اختبار' : 'Test'}</span>
+                  </motion.button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
+                  {isAr ? 'بريد المدير العام (GM Email)' : 'General Manager (GM) Email'}
+                </label>
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <i className="fa-regular fa-envelope absolute left-3 rtl:right-3 top-3.5 text-sky-500"></i>
+                    <input
+                      type="email"
+                      value={formData.gmEmail}
+                      onChange={e => setFormData({ ...formData, gmEmail: e.target.value })}
+                      placeholder="gm@enterprise-hospitality.com"
+                      className={`w-full p-2.5 pl-9 rtl:pr-9 rtl:pl-3 rounded-xl border text-xs font-bold outline-none transition-colors focus:border-sky-500 ${
+                        isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
+                      }`}
+                    />
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    type="button"
+                    onClick={handleTestEmail}
+                    className="px-3 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shrink-0 transition-all flex items-center gap-1"
+                  >
+                    <i className="fa-solid fa-paper-plane"></i>
+                    <span>{isAr ? 'اختبار' : 'Test'}</span>
+                  </motion.button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
+                  {isAr ? 'بريد مدير الجودة ورئيس القسم (Quality Head Email)' : 'Quality Director / Dept Head Email'}
+                </label>
+                <div className="relative">
+                  <i className="fa-solid fa-user-shield absolute left-3 rtl:right-3 top-3.5 text-indigo-500"></i>
                   <input
                     type="email"
-                    value={formData.gmEmail}
-                    onChange={e => setFormData({ ...formData, gmEmail: e.target.value })}
-                    placeholder="gm@enterprise-hospitality.com"
-                    className={`w-full p-2.5 pl-9 rtl:pr-9 rtl:pl-3 rounded-xl border text-xs font-bold outline-none focus:border-sky-500 ${
+                    value={formData.deptHeadEmail}
+                    onChange={e => setFormData({ ...formData, deptHeadEmail: e.target.value })}
+                    placeholder="quality@enterprise-hospitality.com"
+                    className={`w-full p-2.5 pl-9 rtl:pr-9 rtl:pl-3 rounded-xl border text-xs font-bold outline-none transition-colors focus:border-indigo-500 ${
                       isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                     }`}
                   />
                 </div>
-                <button
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
+                  {isAr ? 'بريد المالك / مجلس الإدارة (Owner / Board Email)' : 'Owner / Board Representative Email'}
+                </label>
+                <div className="relative">
+                  <i className="fa-solid fa-crown absolute left-3 rtl:right-3 top-3.5 text-amber-500"></i>
+                  <input
+                    type="email"
+                    value={formData.ownerEmail}
+                    onChange={e => setFormData({ ...formData, ownerEmail: e.target.value })}
+                    placeholder="owner@enterprise-hospitality.com"
+                    className={`w-full p-2.5 pl-9 rtl:pr-9 rtl:pl-3 rounded-xl border text-xs font-bold outline-none transition-colors focus:border-amber-500 ${
+                      isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
+                    }`}
+                  />
+                </div>
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                type="submit"
+                className="w-full py-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-black shadow-md transition-all flex items-center justify-center gap-2"
+              >
+                <i className="fa-solid fa-floppy-disk"></i>
+                <span>{isAr ? 'حفظ إعدادات الاتصال' : 'Save Communication Settings'}</span>
+              </motion.button>
+            </form>
+          </div>
+
+          {/* Right Column: Preferences & Environment (5 cols) */}
+          <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+            <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
+              <i className="fa-solid fa-palette text-sky-500"></i>
+              <span>{isAr ? 'تفضيلات العرض والواجهة' : 'Display & Localization'}</span>
+            </h3>
+
+            <div className="space-y-4">
+              {/* Theme Toggle */}
+              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+                <div className="space-y-0.5">
+                  <span className="text-xs font-black text-slate-900 dark:text-white block">
+                    {isAr ? 'نمط المظهر (Dark / Light)' : 'Interface Theme'}
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-bold">
+                    {isDark ? (isAr ? 'الوضع الليلي نشط' : 'Dark Mode Active') : (isAr ? 'الوضع النهاري نشط' : 'Light Mode Active')}
+                  </span>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.1, rotate: 15 }}
+                  whileTap={{ scale: 0.9 }}
                   type="button"
-                  onClick={handleTestEmail}
-                  className="px-3 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shrink-0 transition-all flex items-center gap-1"
+                  onClick={toggleTheme}
+                  className="p-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 transition-colors"
                 >
-                  <i className="fa-solid fa-paper-plane"></i>
-                  <span>{isAr ? 'اختبار' : 'Test'}</span>
-                </button>
+                  <i className={`fa-solid ${isDark ? 'fa-sun text-amber-400' : 'fa-moon text-sky-600'} text-base`}></i>
+                </motion.button>
               </div>
-            </div>
 
-            <div>
-              <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                {isAr ? 'بريد مدير الجودة ورئيس القسم (Quality Head Email)' : 'Quality Director / Dept Head Email'}
-              </label>
-              <div className="relative">
-                <i className="fa-solid fa-user-shield absolute left-3 rtl:right-3 top-3.5 text-indigo-500"></i>
-                <input
-                  type="email"
-                  value={formData.deptHeadEmail}
-                  onChange={e => setFormData({ ...formData, deptHeadEmail: e.target.value })}
-                  placeholder="quality@enterprise-hospitality.com"
-                  className={`w-full p-2.5 pl-9 rtl:pr-9 rtl:pl-3 rounded-xl border text-xs font-bold outline-none focus:border-indigo-500 ${
-                    isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
-                  }`}
-                />
+              {/* Language Toggle */}
+              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+                <div className="space-y-0.5">
+                  <span className="text-xs font-black text-slate-900 dark:text-white block">
+                    {isAr ? 'لغة النظام (Language)' : 'System Language'}
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-bold">
+                    {isAr ? 'العربية (RTL)' : 'English (LTR)'}
+                  </span>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  type="button"
+                  onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
+                  className="px-3.5 py-2 rounded-xl bg-sky-600 text-white text-xs font-black hover:bg-sky-700 transition-colors"
+                >
+                  {isAr ? 'English' : 'عربي'}
+                </motion.button>
               </div>
-            </div>
 
-            <div>
-              <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                {isAr ? 'بريد المالك / مجلس الإدارة (Owner / Board Email)' : 'Owner / Board Representative Email'}
-              </label>
-              <div className="relative">
-                <i className="fa-solid fa-crown absolute left-3 rtl:right-3 top-3.5 text-amber-500"></i>
-                <input
-                  type="email"
-                  value={formData.ownerEmail}
-                  onChange={e => setFormData({ ...formData, ownerEmail: e.target.value })}
-                  placeholder="owner@enterprise-hospitality.com"
-                  className={`w-full p-2.5 pl-9 rtl:pr-9 rtl:pl-3 rounded-xl border text-xs font-bold outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
-                  }`}
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-black shadow-md transition-all flex items-center justify-center gap-2"
-            >
-              <i className="fa-solid fa-floppy-disk"></i>
-              <span>{isAr ? 'حفظ إعدادات الاتصال' : 'Save Communication Settings'}</span>
-            </button>
-          </form>
-        </div>
-
-        {/* Right Column: Preferences & Environment (5 cols) */}
-        <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
-          <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
-            <i className="fa-solid fa-palette text-sky-500"></i>
-            <span>{isAr ? 'تفضيلات العرض والواجهة' : 'Display & Localization'}</span>
-          </h3>
-
-          <div className="space-y-4">
-            {/* Theme Toggle */}
-            <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-              <div className="space-y-0.5">
+              {/* Sector Default */}
+              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-2">
                 <span className="text-xs font-black text-slate-900 dark:text-white block">
-                  {isAr ? 'نمط المظهر (Dark / Light)' : 'Interface Theme'}
+                  {isAr ? 'القطاع الافتراضي النشط' : 'Active Sector Default'}
                 </span>
-                <span className="text-[11px] text-slate-400 font-bold">
-                  {isDark ? (isAr ? 'الوضع الليلي نشط' : 'Dark Mode Active') : (isAr ? 'الوضع النهاري نشط' : 'Light Mode Active')}
-                </span>
+                <select
+                  value={currentSector}
+                  onChange={e => setCurrentSector(e.target.value)}
+                  className={`w-full p-2.5 rounded-xl border text-xs font-bold outline-none transition-colors focus:border-sky-500 ${
+                    isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+                  }`}
+                >
+                  {SECTORS.map(s => (
+                    <option key={s.val} value={s.val}>
+                      {isAr ? s.ar : s.en}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <button
-                type="button"
-                onClick={toggleTheme}
-                className="p-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 transition-colors"
-              >
-                <i className={`fa-solid ${isDark ? 'fa-sun text-amber-400' : 'fa-moon text-sky-600'} text-base`}></i>
-              </button>
-            </div>
-
-            {/* Language Toggle */}
-            <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-              <div className="space-y-0.5">
-                <span className="text-xs font-black text-slate-900 dark:text-white block">
-                  {isAr ? 'لغة النظام (Language)' : 'System Language'}
-                </span>
-                <span className="text-[11px] text-slate-400 font-bold">
-                  {isAr ? 'العربية (RTL)' : 'English (LTR)'}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
-                className="px-3.5 py-2 rounded-xl bg-sky-600 text-white text-xs font-black hover:bg-sky-700 transition-colors"
-              >
-                {isAr ? 'English' : 'عربي'}
-              </button>
-            </div>
-
-            {/* Sector Default */}
-            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-2">
-              <span className="text-xs font-black text-slate-900 dark:text-white block">
-                {isAr ? 'القطاع الافتراضي النشط' : 'Active Sector Default'}
-              </span>
-              <select
-                value={currentSector}
-                onChange={e => setCurrentSector(e.target.value)}
-                className={`w-full p-2.5 rounded-xl border text-xs font-bold outline-none focus:border-sky-500 ${
-                  isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
-                }`}
-              >
-                {SECTORS.map(s => (
-                  <option key={s.val} value={s.val}>
-                    {isAr ? s.ar : s.en}
-                  </option>
-                ))}
-              </select>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </ScrollReveal>
+    </AnimatedPage>
   );
 };

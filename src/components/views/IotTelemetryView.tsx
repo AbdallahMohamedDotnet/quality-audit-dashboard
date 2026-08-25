@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { SECTORS, IOT_SENSORS } from '../../data';
 import { StatCard } from '../common/StatCard';
+import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
+import { staggerChild, cardHover } from '../../utils/animations';
 
 export const IotTelemetryView: React.FC = () => {
   const {
@@ -81,9 +84,9 @@ export const IotTelemetryView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <AnimatedPage>
       {/* Header */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
@@ -101,7 +104,9 @@ export const IotTelemetryView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             type="button"
             onClick={toggleTelemetrySimulation}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm ${
@@ -124,21 +129,23 @@ export const IotTelemetryView: React.FC = () => {
                 ? 'تشغيل البث التجريبي'
                 : 'Start Simulation'}
             </span>
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             type="button"
             onClick={handleShareTelemetryWhatsApp}
             className="px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5"
           >
             <i className="fa-brands fa-whatsapp text-sm"></i>
             <span>{isAr ? 'إرسال تقرير القراءات' : 'Share Readings'}</span>
-          </button>
+          </motion.button>
         </div>
       </div>
 
       {/* Sector Selection Bar */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 transition-colors">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-slate-600 dark:text-slate-300 flex items-center gap-2">
             <i className="fa-solid fa-industry text-sky-500"></i>
@@ -149,11 +156,12 @@ export const IotTelemetryView: React.FC = () => {
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {SECTORS.map(sec => {
             const isSelected = currentSector === sec.val;
             return (
-              <button
+              <motion.button
+                whileTap={{ scale: 0.95 }}
                 key={sec.val}
                 type="button"
                 onClick={() => setCurrentSector(sec.val)}
@@ -164,17 +172,17 @@ export const IotTelemetryView: React.FC = () => {
                 }`}
               >
                 {isAr ? sec.ar : sec.en}
-              </button>
+              </motion.button>
             );
           })}
         </div>
       </div>
 
       {/* Sensor KPI Statistics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title={isAr ? 'إجمالي المجسات النشطة' : 'Total Active Sensors'}
-          value={sensorStatusList.length.toString()}
+          value={sensorStatusList.length}
           subtitle={isAr ? 'محدثة كل 3 ثوانٍ' : 'Telemetry refreshed live'}
           icon={<i className="fa-solid fa-microchip text-xl"></i>}
           variant="sky"
@@ -182,7 +190,7 @@ export const IotTelemetryView: React.FC = () => {
 
         <StatCard
           title={isAr ? 'القراءات المثالية (Optimal)' : 'Optimal Sensors'}
-          value={optimalCount.toString()}
+          value={optimalCount}
           subtitle={isAr ? 'ضمن الحدود الآمنة' : 'Within safe parameters'}
           icon={<i className="fa-solid fa-circle-check text-xl"></i>}
           variant="emerald"
@@ -190,7 +198,7 @@ export const IotTelemetryView: React.FC = () => {
 
         <StatCard
           title={isAr ? 'تنبيهات اقتراب الحد (Warning)' : 'Near Tolerance Threshold'}
-          value={warningCount.toString()}
+          value={warningCount}
           subtitle={isAr ? 'تحتاج مراقبة وقائية' : 'Approaching upper/lower cap'}
           icon={<i className="fa-solid fa-triangle-exclamation text-xl"></i>}
           variant="amber"
@@ -198,12 +206,12 @@ export const IotTelemetryView: React.FC = () => {
 
         <StatCard
           title={isAr ? 'الحيود الحرج (Critical Breach)' : 'Critical Breaches'}
-          value={criticalCount.toString()}
+          value={criticalCount}
           subtitle={isAr ? 'تتطلب تدخلاً فورياً' : 'Immediate quarantine required'}
           icon={<i className="fa-solid fa-radiation text-xl"></i>}
           variant="rose"
         />
-      </div>
+      </StaggerGrid>
 
       {/* Filter Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
@@ -257,11 +265,13 @@ export const IotTelemetryView: React.FC = () => {
       </div>
 
       {/* Sensor Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredSensors.map(s => {
           return (
-            <div
+            <motion.div
               key={s.id}
+              variants={staggerChild}
+              whileHover={cardHover}
               className={`p-5 rounded-3xl border transition-all flex flex-col justify-between space-y-4 ${
                 s.status === 'CRITICAL'
                   ? 'bg-rose-500/5 dark:bg-rose-950/20 border-rose-500/40 shadow-lg shadow-rose-500/10'
@@ -350,20 +360,21 @@ export const IotTelemetryView: React.FC = () => {
                 </button>
 
                 {s.status !== 'OPTIMAL' && (
-                  <button
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
                     type="button"
                     onClick={() => handleCreateSensorNcr(s)}
                     className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-black shadow-sm transition-all flex items-center gap-1"
                   >
                     <i className="fa-solid fa-plus text-[9px]"></i>
                     <span>{isAr ? 'قيد NCR' : 'Log NCR'}</span>
-                  </button>
+                  </motion.button>
                 )}
               </div>
-            </div>
+            </motion.div>
           );
         })}
-      </div>
-    </div>
+      </StaggerGrid>
+    </AnimatedPage>
   );
 };

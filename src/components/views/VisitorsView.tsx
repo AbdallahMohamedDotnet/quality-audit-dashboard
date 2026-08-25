@@ -1,8 +1,12 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { exportToCsv } from '../../utils/export';
+import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
+import { AnimatedModal } from '../common/AnimatedModal';
+import { staggerChild } from '../../utils/animations';
 
 export const VisitorsView: React.FC = () => {
   const { isAr, isDark, visitors, addVisitor, checkoutVisitor, showToast, logoSvg } = useAudit();
@@ -104,12 +108,12 @@ export const VisitorsView: React.FC = () => {
   }`;
 
   return (
-    <div className="space-y-4 animate-fadeIn">
+    <AnimatedPage className="space-y-4">
 
       {/* ═══════════════════════════════════════════════════════════════
           PAGE HEADER — Title + Actions
       ═══════════════════════════════════════════════════════════════ */}
-      <div className={`rounded-2xl border px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between shadow-sm ${
+      <div className={`rounded-2xl border px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between shadow-sm transition-colors ${
         isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
       }`}>
         <div className="flex items-start gap-3 min-w-0">
@@ -128,7 +132,9 @@ export const VisitorsView: React.FC = () => {
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             type="button"
             onClick={handleExportCsv}
             className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-xs font-bold transition-colors ${
@@ -139,22 +145,24 @@ export const VisitorsView: React.FC = () => {
           >
             <i className="fa-solid fa-file-csv text-emerald-500 text-[11px]" />
             <span>{isAr ? 'تصدير CSV' : 'Export CSV'}</span>
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             type="button"
             onClick={() => setIsCheckinModalOpen(true)}
             className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-black shadow-md shadow-teal-600/25 transition-all"
           >
             <i className="fa-solid fa-user-plus text-[11px]" />
             <span>{isAr ? '+ تسجيل دخول زائر' : '+ Check-In Visitor'}</span>
-          </button>
+          </motion.button>
         </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
           SUMMARY STATS
       ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <StaggerGrid className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           {
             label: isAr ? 'إجمالي الزوار' : 'Total Visitors',
@@ -189,9 +197,10 @@ export const VisitorsView: React.FC = () => {
             pulse: false,
           },
         ].map((stat, i) => (
-          <div
+          <motion.div
             key={i}
-            className={`rounded-xl border p-3.5 flex items-center gap-3 shadow-sm ${
+            variants={staggerChild}
+            className={`rounded-xl border p-3.5 flex items-center gap-3 shadow-sm transition-colors ${
               isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
             }`}
           >
@@ -206,14 +215,14 @@ export const VisitorsView: React.FC = () => {
               <div className={`text-lg font-black leading-none ${stat.color}`}>{stat.value}</div>
               <div className="text-[10px] text-slate-500 font-medium mt-0.5">{stat.label}</div>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </StaggerGrid>
 
       {/* ═══════════════════════════════════════════════════════════════
           FILTER & SEARCH CONTROLS
       ═══════════════════════════════════════════════════════════════ */}
-      <div className={`rounded-2xl border px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between shadow-sm ${
+      <div className={`rounded-2xl border px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between shadow-sm transition-colors ${
         isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
       }`}>
         {/* Filter Tabs */}
@@ -225,7 +234,8 @@ export const VisitorsView: React.FC = () => {
               { key: 'DEPARTED' as const, labelAr: 'مغادر', labelEn: 'Departed', count: departedCount },
             ]
           ).map(tab => (
-            <button
+            <motion.button
+              whileTap={{ scale: 0.95 }}
               key={tab.key}
               type="button"
               onClick={() => setFilterMode(tab.key)}
@@ -250,7 +260,7 @@ export const VisitorsView: React.FC = () => {
               }`}>
                 {tab.count}
               </span>
-            </button>
+            </motion.button>
           ))}
         </div>
 
@@ -287,73 +297,78 @@ export const VisitorsView: React.FC = () => {
         {filteredVisitors.length === 0 ? (
           <EmptyState isAr={isAr} isDark={isDark} />
         ) : (
-          filteredVisitors.map(v => {
-            const isActive = v.timeOut === null;
-            return (
-              <div
-                key={v.id}
-                className={`rounded-2xl border p-4 space-y-3 shadow-sm ${
-                  isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
-                }`}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-0.5 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className={`w-2 h-2 rounded-full shrink-0 ${isActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
-                      <span className="text-sm font-black text-slate-900 dark:text-white truncate">{v.name}</span>
+          <StaggerGrid className="space-y-3">
+            {filteredVisitors.map(v => {
+              const isActive = v.timeOut === null;
+              return (
+                <motion.div
+                  key={v.id}
+                  variants={staggerChild}
+                  className={`rounded-2xl border p-4 space-y-3 shadow-sm transition-colors ${
+                    isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="space-y-0.5 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full shrink-0 ${isActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                        <span className="text-sm font-black text-slate-900 dark:text-white truncate">{v.name}</span>
+                      </div>
+                      <div className="text-[11px] text-slate-400 font-medium ps-4">{v.company || '—'}</div>
                     </div>
-                    <div className="text-[11px] text-slate-400 font-medium ps-4">{v.company || '—'}</div>
+                    <VisitStatusBadge isActive={isActive} isAr={isAr} />
                   </div>
-                  <VisitStatusBadge isActive={isActive} isAr={isAr} />
-                </div>
-                <div className={`grid grid-cols-2 gap-2 p-3 rounded-xl text-xs ${isDark ? 'bg-slate-950 border border-slate-800' : 'bg-slate-50 border border-slate-100'}`}>
-                  <div>
-                    <span className="text-[10px] text-slate-400 uppercase tracking-wider font-black block">{isAr ? 'الغرض' : 'Purpose'}</span>
-                    <span className="font-bold text-slate-700 dark:text-slate-200 block">{v.purpose || '—'}</span>
-                    <span className="text-[10px] text-sky-500 dark:text-sky-400 font-semibold">{v.host}</span>
+                  <div className={`grid grid-cols-2 gap-2 p-3 rounded-xl text-xs ${isDark ? 'bg-slate-950 border border-slate-800' : 'bg-slate-50 border border-slate-100'}`}>
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider font-black block">{isAr ? 'الغرض' : 'Purpose'}</span>
+                      <span className="font-bold text-slate-700 dark:text-slate-200 block">{v.purpose || '—'}</span>
+                      <span className="text-[10px] text-sky-500 dark:text-sky-400 font-semibold">{v.host}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider font-black block">{isAr ? 'التوقيت' : 'Timing'}</span>
+                      <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold block">{v.timeIn}</span>
+                      <span className="font-mono text-slate-500 text-[11px] block">{v.timeOut || (isAr ? 'متواجد حالياً' : 'On-Site')}</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 uppercase tracking-wider font-black block">{isAr ? 'التوقيت' : 'Timing'}</span>
-                    <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold block">{v.timeIn}</span>
-                    <span className="font-mono text-slate-500 text-[11px] block">{v.timeOut || (isAr ? 'متواجد حالياً' : 'On-Site')}</span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <PpeBadge issued={v.ppeIssued} isAr={isAr} />
+                    <HealthBadge declared={v.healthDeclared} isAr={isAr} />
                   </div>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <PpeBadge issued={v.ppeIssued} isAr={isAr} />
-                  <HealthBadge declared={v.healthDeclared} isAr={isAr} />
-                </div>
-                <div className={`flex items-center justify-end gap-2 pt-2 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedBadgeVisitor(v)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
-                      isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                    }`}
-                  >
-                    <i className="fa-solid fa-id-badge text-sky-500 text-[11px]" />
-                    <span>{isAr ? 'طباعة التصريح' : 'Pass Badge'}</span>
-                  </button>
-                  {isActive && (
-                    <button
+                  <div className={`flex items-center justify-end gap-2 pt-2 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
                       type="button"
-                      onClick={() => checkoutVisitor(v.id)}
-                      className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black shadow-sm transition-all"
+                      onClick={() => setSelectedBadgeVisitor(v)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
+                        isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      }`}
                     >
-                      <i className="fa-solid fa-arrow-right-from-bracket text-[11px]" />
-                      <span>{isAr ? 'تسجيل خروج' : 'Check-Out'}</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })
+                      <i className="fa-solid fa-id-badge text-sky-500 text-[11px]" />
+                      <span>{isAr ? 'طباعة التصريح' : 'Pass Badge'}</span>
+                    </motion.button>
+                    {isActive && (
+                      <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        type="button"
+                        onClick={() => checkoutVisitor(v.id)}
+                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black shadow-sm transition-all"
+                      >
+                        <i className="fa-solid fa-arrow-right-from-bracket text-[11px]" />
+                        <span>{isAr ? 'تسجيل خروج' : 'Check-Out'}</span>
+                      </motion.button>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </StaggerGrid>
         )}
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
           DESKTOP TABLE (>= md)
       ═══════════════════════════════════════════════════════════════ */}
-      <div className={`hidden md:block rounded-2xl border overflow-hidden shadow-sm ${
+      <div className={`hidden md:block rounded-2xl border overflow-hidden shadow-sm transition-colors ${
         isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
       }`}>
         <div className="overflow-x-auto">
@@ -446,7 +461,9 @@ export const VisitorsView: React.FC = () => {
                       {/* Actions */}
                       <td className="px-4 py-3.5 text-end">
                         <div className="flex items-center justify-end gap-1.5">
-                          <button
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             type="button"
                             onClick={() => setSelectedBadgeVisitor(v)}
                             className={`p-2 rounded-xl transition-colors ${
@@ -457,16 +474,18 @@ export const VisitorsView: React.FC = () => {
                             title={isAr ? 'طباعة تصريح الدخول' : 'Print Pass Badge'}
                           >
                             <i className="fa-solid fa-id-badge text-sm" />
-                          </button>
+                          </motion.button>
                           {isActive ? (
-                            <button
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
                               type="button"
                               onClick={() => checkoutVisitor(v.id)}
                               className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-black shadow-sm transition-all"
                             >
                               <i className="fa-solid fa-arrow-right-from-bracket text-[9px]" />
                               <span>{isAr ? 'خروج' : 'Check-Out'}</span>
-                            </button>
+                            </motion.button>
                           ) : (
                             <span className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[10px] font-black ${
                               isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'
@@ -504,125 +523,128 @@ export const VisitorsView: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          CHECK-IN MODAL
+          CHECK-IN MODAL with AnimatedModal
       ═══════════════════════════════════════════════════════════════ */}
-      {isCheckinModalOpen && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn">
-          <div
-            className={`w-full max-w-lg rounded-2xl shadow-2xl border max-h-[92vh] overflow-y-auto ${
-              isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
-            }`}
-          >
-            <div className={`flex items-center justify-between px-5 py-4 border-b sticky top-0 z-10 ${
-              isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
-            }`}>
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center text-white shrink-0">
-                  <i className="fa-solid fa-user-plus text-sm" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-black">
-                    {isAr ? 'تسجيل دخول زائر / مقاول' : 'Visitor & Contractor Check-In'}
-                  </h3>
-                  <p className="text-[10px] text-slate-500 mt-0.5">
-                    {isAr ? 'أدخل بيانات الزائر وأكمل الإجراءات المطلوبة' : 'Fill in visitor details and complete required steps'}
-                  </p>
-                </div>
+      <AnimatedModal isOpen={isCheckinModalOpen} onClose={() => setIsCheckinModalOpen(false)} className="max-w-lg">
+        <div
+          className={`w-full rounded-2xl shadow-2xl border max-h-[92vh] overflow-y-auto ${
+            isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
+          }`}
+        >
+          <div className={`flex items-center justify-between px-5 py-4 border-b sticky top-0 z-10 ${
+            isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
+          }`}>
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center text-white shrink-0">
+                <i className="fa-solid fa-user-plus text-sm" />
               </div>
+              <div>
+                <h3 className="text-sm font-black">
+                  {isAr ? 'تسجيل دخول زائر / مقاول' : 'Visitor & Contractor Check-In'}
+                </h3>
+                <p className="text-[10px] text-slate-500 mt-0.5">
+                  {isAr ? 'أدخل بيانات الزائر وأكمل الإجراءات المطلوبة' : 'Fill in visitor details and complete required steps'}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsCheckinModalOpen(false)}
+              className={`p-2 rounded-xl transition-colors ${
+                isDark ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <i className="fa-solid fa-xmark text-base" />
+            </button>
+          </div>
+
+          <form onSubmit={handleCheckinSubmit} className="p-5 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
+                  {isAr ? 'اسم الزائر الثلاثي' : 'Full Name'} <span className="text-rose-500">*</span>
+                </label>
+                <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder={isAr ? 'محمد إبراهيم' : 'e.g. Alex Hunter'} className={inputBase} />
+              </div>
+              <div>
+                <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
+                  {isAr ? 'الجهة أو الشركة' : 'Company / Entity'}
+                </label>
+                <input type="text" value={form.company} onChange={e => setForm({ ...form, company: e.target.value })} placeholder={isAr ? 'شركة الصيانة' : 'e.g. Apex Tech'} className={inputBase} />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
+                  {isAr ? 'الغرض من الزيارة' : 'Visit Purpose'}
+                </label>
+                <input type="text" value={form.purpose} onChange={e => setForm({ ...form, purpose: e.target.value })} placeholder={isAr ? 'صيانة طارئة / تفتيش' : 'e.g. Inspection'} className={inputBase} />
+              </div>
+              <div>
+                <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
+                  {isAr ? 'المُضيف أو القسم' : 'Host / Department'} <span className="text-rose-500">*</span>
+                </label>
+                <input type="text" value={form.host} onChange={e => setForm({ ...form, host: e.target.value })} placeholder={isAr ? 'م. سامي (مدير الصيانة)' : 'e.g. Eng. Sami'} className={inputBase} />
+              </div>
+            </div>
+
+            <div className={`space-y-2.5 p-4 rounded-xl border ${isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                {isAr ? 'متطلبات الامتثال الإلزامية' : 'Mandatory Compliance Requirements'}
+              </p>
+              <label className={`flex items-start gap-3 cursor-pointer p-3 rounded-xl transition-colors border ${
+                form.ppeIssued ? 'bg-emerald-500/5 border-emerald-500/20' : isDark ? 'border-transparent hover:bg-slate-900' : 'border-transparent hover:bg-white'
+              }`}>
+                <input type="checkbox" checked={form.ppeIssued} onChange={e => setForm({ ...form, ppeIssued: e.target.checked })} className="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 mt-0.5 shrink-0" />
+                <div>
+                  <div className="text-xs font-black text-slate-700 dark:text-slate-300">{isAr ? 'تسليم مهمات الوقاية الشخصية (PPE)' : 'PPE Gear Issued & Worn'}</div>
+                  <div className="text-[10px] text-slate-400 font-medium mt-0.5">{isAr ? 'خوذة، حذاء سلامة، سترة عالية الوضوح' : 'Helmet, Safety Shoes, High-Vis Vest'}</div>
+                </div>
+              </label>
+              <label className={`flex items-start gap-3 cursor-pointer p-3 rounded-xl transition-colors border ${
+                form.healthDeclared ? 'bg-emerald-500/5 border-emerald-500/20' : isDark ? 'border-transparent hover:bg-slate-900' : 'border-transparent hover:bg-white'
+              }`}>
+                <input type="checkbox" checked={form.healthDeclared} onChange={e => setForm({ ...form, healthDeclared: e.target.checked })} className="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 mt-0.5 shrink-0" />
+                <div>
+                  <div className="text-xs font-black text-slate-700 dark:text-slate-300">
+                    {isAr ? 'الإقرار الصحي وسلامة المهنية' : 'Health & Safety Declaration'}{' '}
+                    <span className="text-rose-500 text-[10px]">{isAr ? '(مطلوب)' : '(Required)'}</span>
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-medium mt-0.5">{isAr ? 'خلو من الأعراض المعدية والالتزام بتعليمات السلامة' : 'No communicable symptoms; safety rules acknowledged'}</div>
+                </div>
+              </label>
+            </div>
+
+            <div className={`flex items-center justify-end gap-2 pt-1 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
               <button
                 type="button"
                 onClick={() => setIsCheckinModalOpen(false)}
-                className={`p-2 rounded-xl transition-colors ${
-                  isDark ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
+                className={`px-4 py-2 rounded-xl border text-xs font-bold transition-colors ${
+                  isDark ? 'border-slate-700 text-slate-400 hover:bg-slate-800 hover:text-white' : 'border-slate-300 text-slate-500 hover:bg-slate-100'
                 }`}
               >
-                <i className="fa-solid fa-xmark text-base" />
+                {isAr ? 'إلغاء' : 'Cancel'}
               </button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                type="submit"
+                className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-black shadow-md shadow-teal-600/25 transition-all flex items-center gap-1.5"
+              >
+                <i className="fa-solid fa-id-card text-[11px]" />
+                <span>{isAr ? 'إصدار تصريح الدخول' : 'Issue Gate Pass'}</span>
+              </motion.button>
             </div>
-
-            <form onSubmit={handleCheckinSubmit} className="p-5 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
-                    {isAr ? 'اسم الزائر الثلاثي' : 'Full Name'} <span className="text-rose-500">*</span>
-                  </label>
-                  <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder={isAr ? 'محمد إبراهيم' : 'e.g. Alex Hunter'} className={inputBase} />
-                </div>
-                <div>
-                  <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
-                    {isAr ? 'الجهة أو الشركة' : 'Company / Entity'}
-                  </label>
-                  <input type="text" value={form.company} onChange={e => setForm({ ...form, company: e.target.value })} placeholder={isAr ? 'شركة الصيانة' : 'e.g. Apex Tech'} className={inputBase} />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
-                    {isAr ? 'الغرض من الزيارة' : 'Visit Purpose'}
-                  </label>
-                  <input type="text" value={form.purpose} onChange={e => setForm({ ...form, purpose: e.target.value })} placeholder={isAr ? 'صيانة طارئة / تفتيش' : 'e.g. Inspection'} className={inputBase} />
-                </div>
-                <div>
-                  <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
-                    {isAr ? 'المُضيف أو القسم' : 'Host / Department'} <span className="text-rose-500">*</span>
-                  </label>
-                  <input type="text" value={form.host} onChange={e => setForm({ ...form, host: e.target.value })} placeholder={isAr ? 'م. سامي (مدير الصيانة)' : 'e.g. Eng. Sami'} className={inputBase} />
-                </div>
-              </div>
-
-              <div className={`space-y-2.5 p-4 rounded-xl border ${isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">
-                  {isAr ? 'متطلبات الامتثال الإلزامية' : 'Mandatory Compliance Requirements'}
-                </p>
-                <label className={`flex items-start gap-3 cursor-pointer p-3 rounded-xl transition-colors border ${
-                  form.ppeIssued ? 'bg-emerald-500/5 border-emerald-500/20' : isDark ? 'border-transparent hover:bg-slate-900' : 'border-transparent hover:bg-white'
-                }`}>
-                  <input type="checkbox" checked={form.ppeIssued} onChange={e => setForm({ ...form, ppeIssued: e.target.checked })} className="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 mt-0.5 shrink-0" />
-                  <div>
-                    <div className="text-xs font-black text-slate-700 dark:text-slate-300">{isAr ? 'تسليم مهمات الوقاية الشخصية (PPE)' : 'PPE Gear Issued & Worn'}</div>
-                    <div className="text-[10px] text-slate-400 font-medium mt-0.5">{isAr ? 'خوذة، حذاء سلامة، سترة عالية الوضوح' : 'Helmet, Safety Shoes, High-Vis Vest'}</div>
-                  </div>
-                </label>
-                <label className={`flex items-start gap-3 cursor-pointer p-3 rounded-xl transition-colors border ${
-                  form.healthDeclared ? 'bg-emerald-500/5 border-emerald-500/20' : isDark ? 'border-transparent hover:bg-slate-900' : 'border-transparent hover:bg-white'
-                }`}>
-                  <input type="checkbox" checked={form.healthDeclared} onChange={e => setForm({ ...form, healthDeclared: e.target.checked })} className="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 mt-0.5 shrink-0" />
-                  <div>
-                    <div className="text-xs font-black text-slate-700 dark:text-slate-300">
-                      {isAr ? 'الإقرار الصحي وسلامة المهنية' : 'Health & Safety Declaration'}{' '}
-                      <span className="text-rose-500 text-[10px]">{isAr ? '(مطلوب)' : '(Required)'}</span>
-                    </div>
-                    <div className="text-[10px] text-slate-400 font-medium mt-0.5">{isAr ? 'خلو من الأعراض المعدية والالتزام بتعليمات السلامة' : 'No communicable symptoms; safety rules acknowledged'}</div>
-                  </div>
-                </label>
-              </div>
-
-              <div className={`flex items-center justify-end gap-2 pt-1 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
-                <button
-                  type="button"
-                  onClick={() => setIsCheckinModalOpen(false)}
-                  className={`px-4 py-2 rounded-xl border text-xs font-bold transition-colors ${
-                    isDark ? 'border-slate-700 text-slate-400 hover:bg-slate-800 hover:text-white' : 'border-slate-300 text-slate-500 hover:bg-slate-100'
-                  }`}
-                >
-                  {isAr ? 'إلغاء' : 'Cancel'}
-                </button>
-                <button type="submit" className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-black shadow-md shadow-teal-600/25 transition-all flex items-center gap-1.5">
-                  <i className="fa-solid fa-id-card text-[11px]" />
-                  <span>{isAr ? 'إصدار تصريح الدخول' : 'Issue Gate Pass'}</span>
-                </button>
-              </div>
-            </form>
-          </div>
+          </form>
         </div>
-      )}
+      </AnimatedModal>
 
       {/* ═══════════════════════════════════════════════════════════════
-          BADGE MODAL
+          BADGE MODAL with AnimatedModal
       ═══════════════════════════════════════════════════════════════ */}
-      {selectedBadgeVisitor && (
-        <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn">
-          <div className={`w-full max-w-sm rounded-2xl shadow-2xl border ${
+      <AnimatedModal isOpen={!!selectedBadgeVisitor} onClose={() => setSelectedBadgeVisitor(null)} className="max-w-sm">
+        {selectedBadgeVisitor && (
+          <div className={`w-full rounded-2xl shadow-2xl border ${
             isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
           }`}>
             <div className={`flex items-center justify-between px-5 py-4 border-b ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
@@ -692,19 +714,21 @@ export const VisitorsView: React.FC = () => {
               >
                 {isAr ? 'إغلاق' : 'Close'}
               </button>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.96 }}
                 type="button"
                 onClick={handlePrintBadge}
                 className="flex-1 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-black shadow-md shadow-teal-600/25 transition-all flex items-center justify-center gap-1.5"
               >
                 <i className="fa-solid fa-print text-[11px]" />
                 <span>{isAr ? 'طباعة البطاقة' : 'Print Badge'}</span>
-              </button>
+              </motion.button>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </AnimatedModal>
+    </AnimatedPage>
   );
 };
 

@@ -1,8 +1,12 @@
 'use client';
 
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { SECTOR_DEPARTMENTS, DEPARTMENTS } from '../../data';
+import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
+import { ScrollReveal } from '../common/ScrollReveal';
+import { staggerChild } from '../../utils/animations';
 
 export const AiAssistantView: React.FC = () => {
   const {
@@ -100,9 +104,9 @@ export const AiAssistantView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <AnimatedPage>
       {/* Header Banner */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-500 flex items-center justify-center">
@@ -124,34 +128,42 @@ export const AiAssistantView: React.FC = () => {
           <span className="text-[10px] font-bold text-slate-400 uppercase">
             {isAr ? 'أمثلة سريعة:' : 'Quick Presets:'}
           </span>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={() => handleLoadPreset('food')}
             className="px-2.5 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500 text-purple-600 hover:text-white text-[11px] font-bold transition-all"
           >
             🍔 {isAr ? 'جودة طعام' : 'Food'}
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={() => handleLoadPreset('cleanliness')}
             className="px-2.5 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500 text-purple-600 hover:text-white text-[11px] font-bold transition-all"
           >
             🛏️ {isAr ? 'نظافة' : 'Hygiene'}
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={() => handleLoadPreset('ac')}
             className="px-2.5 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500 text-purple-600 hover:text-white text-[11px] font-bold transition-all"
           >
             ❄️ {isAr ? 'تكييف' : 'HVAC'}
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={() => handleLoadPreset('safety')}
             className="px-2.5 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500 text-purple-600 hover:text-white text-[11px] font-bold transition-all"
           >
             ⚠️ {isAr ? 'سلامة' : 'Safety'}
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -173,7 +185,7 @@ export const AiAssistantView: React.FC = () => {
                   value={complaint.guestName}
                   onChange={e => setComplaint({ ...complaint, guestName: e.target.value })}
                   placeholder={isAr ? 'أ. عبد الله محمد' : 'e.g. John Doe'}
-                  className={`w-full p-2.5 rounded-xl border text-xs font-bold outline-none focus:border-sky-500 ${
+                  className={`w-full p-2.5 rounded-xl border text-xs font-bold outline-none transition-colors focus:border-purple-500 ${
                     isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                   }`}
                 />
@@ -188,7 +200,7 @@ export const AiAssistantView: React.FC = () => {
                   value={complaint.room}
                   onChange={e => setComplaint({ ...complaint, room: e.target.value })}
                   placeholder="e.g. Room 402"
-                  className={`w-full p-2.5 rounded-xl border text-xs font-bold outline-none focus:border-sky-500 ${
+                  className={`w-full p-2.5 rounded-xl border text-xs font-bold outline-none transition-colors focus:border-purple-500 ${
                     isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                   }`}
                 />
@@ -202,7 +214,7 @@ export const AiAssistantView: React.FC = () => {
               <select
                 value={complaint.dept}
                 onChange={e => setComplaint({ ...complaint, dept: e.target.value })}
-                className={`w-full p-2.5 rounded-xl border text-xs font-bold outline-none focus:border-purple-500 cursor-pointer ${
+                className={`w-full p-2.5 rounded-xl border text-xs font-bold outline-none focus:border-purple-500 cursor-pointer transition-colors ${
                   isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                 }`}
               >
@@ -228,20 +240,22 @@ export const AiAssistantView: React.FC = () => {
                     ? 'مثال: وجبة العشاء في المطعم وصلت باردة وكان هناك تأخير 45 دقيقة وسوء تعامل من النادل...'
                     : 'e.g. Food delivered cold with 45 minutes delay and unprofessional server behavior...'
                 }
-                className={`w-full p-3 rounded-xl border text-xs font-bold outline-none focus:border-purple-500 ${
+                className={`w-full p-3 rounded-xl border text-xs font-bold outline-none transition-colors focus:border-purple-500 ${
                   isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                 }`}
               />
             </div>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
               type="button"
               onClick={analyzeComplaintAi}
               className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs shadow-lg shadow-purple-600/30 transition-all flex items-center justify-center gap-2"
             >
               <i className="fa-solid fa-wand-magic-sparkles"></i>
               <span>{isAr ? 'تحليل ومطابقة بالذكاء الاصطناعي' : 'Run AI Root-Cause Analysis'}</span>
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -260,151 +274,177 @@ export const AiAssistantView: React.FC = () => {
             )}
           </div>
 
-          {!complaint.output ? (
-            <div className="py-16 text-center border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl space-y-2">
-              <i className="fa-solid fa-robot text-4xl text-slate-400 mb-2 block animate-pulse"></i>
-              <p className="text-xs font-bold text-slate-500">
-                {isAr
-                  ? 'أدخل بيانات الشكوى واضغط "تحليل" لتوليد الرد الرسمي وخطة الإجراءات التصحيحية فوراً'
-                  : 'Enter incident details and run AI analysis to produce actionable root-cause resolutions.'}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4 animate-fadeIn">
-              {/* 1. Official Customer Apology */}
-              <div className="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/30 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-sky-600 dark:text-sky-400 flex items-center gap-1.5">
-                    <i className="fa-regular fa-comment-dots"></i>
-                    {isAr ? 'صيغة الاعتذار والاسترضاء المعتمدة للعميل' : 'Customer Apology & Redress Response'}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleCopyText(complaint.output!.reply, isAr ? 'صيغة الرد' : 'Response')}
-                      className="text-[11px] font-bold text-slate-500 hover:text-sky-500 flex items-center gap-1"
-                    >
-                      <i className="fa-regular fa-copy"></i>
-                      <span>{isAr ? 'نسخ' : 'Copy'}</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleShareApologyWhatsApp}
-                      className="text-[11px] font-bold text-[#25D366] hover:underline flex items-center gap-1"
-                    >
-                      <i className="fa-brands fa-whatsapp"></i>
-                      <span>{isAr ? 'واتساب' : 'WhatsApp'}</span>
-                    </button>
-                  </div>
-                </div>
-                <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-relaxed bg-white/70 dark:bg-slate-950/70 p-3 rounded-xl">
-                  {complaint.output.reply}
+          <AnimatePresence mode="wait">
+            {!complaint.output ? (
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="py-16 text-center border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl space-y-2"
+              >
+                <i className="fa-solid fa-robot text-4xl text-slate-400 mb-2 block animate-pulse"></i>
+                <p className="text-xs font-bold text-slate-500">
+                  {isAr
+                    ? 'أدخل بيانات الشكوى واضغط "تحليل" لتوليد الرد الرسمي وخطة الإجراءات التصحيحية فوراً'
+                    : 'Enter incident details and run AI analysis to produce actionable root-cause resolutions.'}
                 </p>
-              </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="results"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.35 }}
+                className="space-y-4"
+              >
+                {/* 1. Official Customer Apology */}
+                <div className="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/30 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-sky-600 dark:text-sky-400 flex items-center gap-1.5">
+                      <i className="fa-regular fa-comment-dots"></i>
+                      {isAr ? 'صيغة الاعتذار والاسترضاء المعتمدة للعميل' : 'Customer Apology & Redress Response'}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleCopyText(complaint.output!.reply, isAr ? 'صيغة الرد' : 'Response')}
+                        className="text-[11px] font-bold text-slate-500 hover:text-sky-500 flex items-center gap-1 transition-colors"
+                      >
+                        <i className="fa-regular fa-copy"></i>
+                        <span>{isAr ? 'نسخ' : 'Copy'}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleShareApologyWhatsApp}
+                        className="text-[11px] font-bold text-[#25D366] hover:underline flex items-center gap-1"
+                      >
+                        <i className="fa-brands fa-whatsapp"></i>
+                        <span>{isAr ? 'واتساب' : 'WhatsApp'}</span>
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-relaxed bg-white/70 dark:bg-slate-950/70 p-3 rounded-xl">
+                    {complaint.output.reply}
+                  </p>
+                </div>
 
-              {/* 2. Executive Incident Brief */}
-              <div className="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/30 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-purple-600 dark:text-purple-400 flex items-center gap-1.5">
-                    <i className="fa-solid fa-chart-line"></i>
-                    {isAr ? 'التقرير الفني للإدارة العليا' : 'Executive Incident Brief'}
+                {/* 2. Executive Incident Brief */}
+                <div className="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/30 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-purple-600 dark:text-purple-400 flex items-center gap-1.5">
+                      <i className="fa-solid fa-chart-line"></i>
+                      {isAr ? 'التقرير الفني للإدارة العليا' : 'Executive Incident Brief'}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleCopyText(complaint.output!.report, isAr ? 'التقرير الفني' : 'Report')}
+                        className="text-[11px] font-bold text-slate-500 hover:text-purple-500 flex items-center gap-1 transition-colors"
+                      >
+                        <i className="fa-regular fa-copy"></i>
+                        <span>{isAr ? 'نسخ' : 'Copy'}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleEscalateGmEmail}
+                        className="text-[11px] font-bold text-sky-500 hover:underline flex items-center gap-1"
+                      >
+                        <i className="fa-regular fa-envelope"></i>
+                        <span>{isAr ? 'تصعيد بالإيميل' : 'Email GM'}</span>
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-relaxed">
+                    {complaint.output.report}
+                  </p>
+                </div>
+
+                {/* 3. CAPA 3-Stage Blueprint */}
+                <div className="space-y-2 pt-2">
+                  <span className="text-xs font-black text-slate-700 dark:text-slate-300 block">
+                    {isAr ? 'بروتوكول المعالجة ثلاثي المراحل (CAPA Timeline)' : '3-Tier CAPA Timeline'}
                   </span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleCopyText(complaint.output!.report, isAr ? 'التقرير الفني' : 'Report')}
-                      className="text-[11px] font-bold text-slate-500 hover:text-purple-500 flex items-center gap-1"
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-1"
                     >
-                      <i className="fa-regular fa-copy"></i>
-                      <span>{isAr ? 'نسخ' : 'Copy'}</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleEscalateGmEmail}
-                      className="text-[11px] font-bold text-sky-500 hover:underline flex items-center gap-1"
+                      <span className="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase block">
+                        {isAr ? '1. الاحتواء الفوري (2h)' : '1. Immediate Containment'}
+                      </span>
+                      <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                        {complaint.output.capaImmediate}
+                      </p>
+                    </motion.div>
+
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30 space-y-1"
                     >
-                      <i className="fa-regular fa-envelope"></i>
-                      <span>{isAr ? 'تصعيد بالإيميل' : 'Email GM'}</span>
-                    </button>
+                      <span className="text-[10px] font-black text-purple-600 dark:text-purple-400 uppercase block">
+                        {isAr ? '2. التحقيق الجذري (48h)' : '2. 5-Whys Root Cause'}
+                      </span>
+                      <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                        {complaint.output.capaRootCause}
+                      </p>
+                    </motion.div>
+
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-1"
+                    >
+                      <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase block">
+                        {isAr ? '3. الوقاية الشاملة (7d)' : '3. Preventative Systemic'}
+                      </span>
+                      <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                        {complaint.output.capaPreventive}
+                      </p>
+                    </motion.div>
+                  </div>
+
+                  {/* 1-Click Push to CAPA Tracker */}
+                  <div className="pt-2">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.97 }}
+                      type="button"
+                      onClick={() => {
+                        const deptName = DEPARTMENTS[complaint.dept]?.[isAr ? 'ar' : 'en'] || complaint.dept;
+                        const title = isAr
+                          ? `معالجة شكوى (${complaint.guestName || 'عميل'}) - قسم ${deptName}`
+                          : `Customer Incident Resolution (${complaint.guestName || 'Client'}) - ${deptName}`;
+
+                        escalateToCapa(
+                          'COMPLAINT',
+                          complaint.room || 'GUEST',
+                          title,
+                          deptName,
+                          complaint.output!.capaRootCause,
+                          complaint.output!.capaImmediate,
+                          complaint.output!.capaPreventive,
+                          'HIGH'
+                        );
+                        setActiveTab('capa');
+                      }}
+                      className="w-full py-3 rounded-2xl bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-700 hover:to-amber-700 text-white text-xs font-black shadow-md shadow-rose-500/20 transition-all flex items-center justify-center gap-2"
+                    >
+                      <i className="fa-solid fa-arrows-spin"></i>
+                      <span>
+                        {isAr
+                          ? 'اعتماد وتصدير الخطة مباشرة إلى سجل CAPA Master Tracker'
+                          : 'Push & Escalate Plan Directly to CAPA Tracker'}
+                      </span>
+                    </motion.button>
                   </div>
                 </div>
-                <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-relaxed">
-                  {complaint.output.report}
-                </p>
-              </div>
-
-              {/* 3. CAPA 3-Stage Blueprint */}
-              <div className="space-y-2 pt-2">
-                <span className="text-xs font-black text-slate-700 dark:text-slate-300 block">
-                  {isAr ? 'بروتوكول المعالجة ثلاثي المراحل (CAPA Timeline)' : '3-Tier CAPA Timeline'}
-                </span>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-1">
-                    <span className="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase block">
-                      {isAr ? '1. الاحتواء الفوري (2h)' : '1. Immediate Containment'}
-                    </span>
-                    <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
-                      {complaint.output.capaImmediate}
-                    </p>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30 space-y-1">
-                    <span className="text-[10px] font-black text-purple-600 dark:text-purple-400 uppercase block">
-                      {isAr ? '2. التحقيق الجذري (48h)' : '2. 5-Whys Root Cause'}
-                    </span>
-                    <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
-                      {complaint.output.capaRootCause}
-                    </p>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-1">
-                    <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase block">
-                      {isAr ? '3. الوقاية الشاملة (7d)' : '3. Preventative Systemic'}
-                    </span>
-                    <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
-                      {complaint.output.capaPreventive}
-                    </p>
-                  </div>
-                </div>
-
-                {/* 1-Click Push to CAPA Tracker */}
-                <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const deptName = DEPARTMENTS[complaint.dept]?.[isAr ? 'ar' : 'en'] || complaint.dept;
-                      const title = isAr
-                        ? `معالجة شكوى (${complaint.guestName || 'عميل'}) - قسم ${deptName}`
-                        : `Customer Incident Resolution (${complaint.guestName || 'Client'}) - ${deptName}`;
-
-                      escalateToCapa(
-                        'COMPLAINT',
-                        complaint.room || 'GUEST',
-                        title,
-                        deptName,
-                        complaint.output!.capaRootCause,
-                        complaint.output!.capaImmediate,
-                        complaint.output!.capaPreventive,
-                        'HIGH'
-                      );
-                      setActiveTab('capa');
-                    }}
-                    className="w-full py-3 rounded-2xl bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-700 hover:to-amber-700 text-white text-xs font-black shadow-md shadow-rose-500/20 transition-all flex items-center justify-center gap-2 active:scale-98"
-                  >
-                    <i className="fa-solid fa-arrows-spin"></i>
-                    <span>
-                      {isAr
-                        ? 'اعتماد وتصدير الخطة مباشرة إلى سجل CAPA Master Tracker'
-                        : 'Push & Escalate Plan Directly to CAPA Tracker'}
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
-    </div>
+    </AnimatedPage>
   );
 };

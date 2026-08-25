@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { SECTORS, DEPARTMENTS, STANDARDS } from '../../data';
 import { Badge } from '../common/Badge';
+import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
+import { staggerChild, cardHover } from '../../utils/animations';
 
 export const KpiStandardsView: React.FC = () => {
   const { isAr, isDark, currentSector, setCurrentSector, startAudit, setActiveTab, addNcr } = useAudit();
@@ -51,9 +54,9 @@ export const KpiStandardsView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <AnimatedPage>
       {/* Header Controls */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
@@ -76,11 +79,12 @@ export const KpiStandardsView: React.FC = () => {
         </div>
 
         {/* Sector Tabs Bar */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {SECTORS.map(sec => {
             const isSelected = currentSector === sec.val;
             return (
-              <button
+              <motion.button
+                whileTap={{ scale: 0.95 }}
                 key={sec.val}
                 type="button"
                 onClick={() => {
@@ -94,7 +98,7 @@ export const KpiStandardsView: React.FC = () => {
                 }`}
               >
                 {isAr ? sec.ar : sec.en}
-              </button>
+              </motion.button>
             );
           })}
         </div>
@@ -132,15 +136,17 @@ export const KpiStandardsView: React.FC = () => {
       </div>
 
       {/* Standards Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredStandards.map(std => {
           const deptNames = std.depts
             .map(d => DEPARTMENTS[d]?.[isAr ? 'ar' : 'en'] || d)
             .join(' • ');
 
           return (
-            <div
+            <motion.div
               key={std.id}
+              variants={staggerChild}
+              whileHover={cardHover}
               className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-sky-500/50 transition-all group"
             >
               <div className="space-y-2.5">
@@ -179,7 +185,9 @@ export const KpiStandardsView: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     type="button"
                     onClick={() => handleQuickCreateNcr(std)}
                     className="px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white dark:text-rose-400 dark:hover:text-white text-xs font-bold border border-rose-500/30 transition-all flex items-center gap-1.5"
@@ -187,22 +195,24 @@ export const KpiStandardsView: React.FC = () => {
                   >
                     <i className="fa-solid fa-triangle-exclamation"></i>
                     <span className="hidden sm:inline">{isAr ? 'قيد NCR' : 'Log NCR'}</span>
-                  </button>
+                  </motion.button>
 
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     type="button"
                     onClick={() => startAudit(std.depts[0])}
                     className="px-3 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
                   >
                     <i className="fa-solid fa-clipboard-check"></i>
                     <span>{isAr ? 'تدقيق القسم' : 'Audit Dept'}</span>
-                  </button>
+                  </motion.button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           );
         })}
-      </div>
+      </StaggerGrid>
 
       {filteredStandards.length === 0 && (
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-12 text-center border border-dashed border-slate-300 dark:border-slate-800">
@@ -214,6 +224,6 @@ export const KpiStandardsView: React.FC = () => {
           </p>
         </div>
       )}
-    </div>
+    </AnimatedPage>
   );
 };
