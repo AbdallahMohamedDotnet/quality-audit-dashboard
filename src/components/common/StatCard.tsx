@@ -1,6 +1,9 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
+import { staggerChild, cardHover, cardTap } from '../../utils/animations';
+import { useAnimatedCounter } from '../../hooks/useAnimatedCounter';
 
 interface StatCardProps {
   title: string;
@@ -10,6 +13,7 @@ interface StatCardProps {
   variant?: 'sky' | 'emerald' | 'amber' | 'rose' | 'indigo' | 'purple' | 'teal';
   trend?: string;
   onClick?: () => void;
+  animateValue?: boolean;
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
@@ -20,6 +24,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   variant = 'sky',
   trend,
   onClick,
+  animateValue = true,
 }) => {
   const variantStyles = {
     sky: {
@@ -59,12 +64,29 @@ export const StatCard: React.FC<StatCardProps> = ({
     },
   }[variant];
 
+  // Animated counter handling
+  const isPureNumber = typeof value === 'number';
+  const percentMatch = typeof value === 'string' ? value.match(/^(\d+(\.\d+)?)%$/) : null;
+  const targetNum = isPureNumber ? value : percentMatch ? parseFloat(percentMatch[1]) : 0;
+  const shouldAnimate = animateValue && (isPureNumber || percentMatch !== null);
+
+  const counterVal = useAnimatedCounter(targetNum, 900, shouldAnimate);
+
+  const displayValue = shouldAnimate
+    ? percentMatch
+      ? `${counterVal}%`
+      : counterVal
+    : value;
+
   return (
-    <div
+    <motion.div
+      variants={staggerChild}
+      whileHover={onClick ? cardHover : { y: -2, transition: { duration: 0.2 } }}
+      whileTap={onClick ? cardTap : undefined}
       onClick={onClick}
-      className={`relative overflow-hidden rounded-2xl p-4 sm:p-5 border transition-all duration-300 ${
-        onClick ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]' : ''
-      } bg-white dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 shadow-md backdrop-blur-sm group`}
+      className={`relative overflow-hidden rounded-2xl p-4 sm:p-5 border transition-shadow duration-200 ${
+        onClick ? 'cursor-pointer hover:shadow-lg' : 'hover:shadow-md'
+      } bg-white dark:bg-slate-800/90 border-slate-200/80 dark:border-slate-700/80 shadow-sm backdrop-blur-sm group select-none`}
     >
       <div className="flex items-start justify-between gap-2.5 sm:gap-3">
         <div className="space-y-1 min-w-0">
@@ -73,10 +95,10 @@ export const StatCard: React.FC<StatCardProps> = ({
           </p>
           <div className="flex items-baseline gap-1.5 sm:gap-2">
             <h3 className="text-xl sm:text-2xl md:text-3xl font-black font-mono tracking-tight text-slate-900 dark:text-white truncate">
-              {value}
+              {displayValue}
             </h3>
             {trend && (
-              <span className="text-[10px] sm:text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5 shrink-0">
+              <span className="text-[10px] sm:text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5 shrink-0 transition-transform group-hover:translate-y-[-1px]">
                 <i className="fa-solid fa-arrow-trend-up text-[9px] sm:text-[10px]"></i>
                 {trend}
               </span>
@@ -90,7 +112,7 @@ export const StatCard: React.FC<StatCardProps> = ({
         </div>
 
         <div
-          className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg shrink-0 ${variantStyles.iconBg} group-hover:scale-110 transition-transform duration-300`}
+          className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg shrink-0 ${variantStyles.iconBg} transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}
         >
           {icon}
         </div>
@@ -106,9 +128,13 @@ export const StatCard: React.FC<StatCardProps> = ({
             ? 'from-amber-500 to-orange-600'
             : variant === 'rose'
             ? 'from-rose-500 to-red-600'
+            : variant === 'purple'
+            ? 'from-purple-500 to-pink-600'
+            : variant === 'teal'
+            ? 'from-teal-500 to-emerald-600'
             : 'from-indigo-500 to-purple-600'
         }`}
       />
-    </div>
+    </motion.div>
   );
 };

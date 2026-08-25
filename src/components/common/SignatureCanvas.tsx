@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 
 export interface SignatureCanvasHandle {
@@ -159,14 +160,15 @@ export const SignatureCanvas = forwardRef<SignatureCanvasHandle, SignatureCanvas
             {isAr ? 'التوقيع الرقمي للمدقق المعتمد' : 'Certified Digital Signature'}
             <span className="text-rose-500">*</span>
           </label>
-          <button
+          <motion.button
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={handleClear}
             className="text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1"
           >
             <i className="fa-solid fa-rotate-left"></i>
             {isAr ? 'مسح وإعادة التوقيع' : 'Clear & Resign'}
-          </button>
+          </motion.button>
         </div>
 
         <div
@@ -196,3 +198,5 @@ export const SignatureCanvas = forwardRef<SignatureCanvasHandle, SignatureCanvas
     );
   }
 );
+
+SignatureCanvas.displayName = 'SignatureCanvas';

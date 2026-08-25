@@ -1,13 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAudit } from '../../context/AuditContext';
+import { AnimatedModal } from '../common/AnimatedModal';
 
 export const LogoModal: React.FC = () => {
   const { isAr, isDark, isLogoModalOpen, setIsLogoModalOpen, logoSvg, setLogoSvg, showToast } = useAudit();
   const [svgInput, setSvgInput] = useState(logoSvg);
 
-  if (!isLogoModalOpen) return null;
+  useEffect(() => {
+    setSvgInput(logoSvg);
+  }, [logoSvg, isLogoModalOpen]);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,9 +31,9 @@ export const LogoModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn">
+    <AnimatedModal isOpen={isLogoModalOpen} onClose={() => setIsLogoModalOpen(false)} className="max-w-lg">
       <div
-        className={`w-full max-w-lg rounded-3xl p-5 sm:p-6 shadow-2xl border transition-colors max-h-[90vh] overflow-y-auto ${
+        className={`w-full rounded-3xl p-5 sm:p-6 shadow-2xl border transition-colors max-h-[90vh] overflow-y-auto ${
           isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
         }`}
       >
@@ -46,7 +49,7 @@ export const LogoModal: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsLogoModalOpen(false)}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
           >
             <i className="fa-solid fa-xmark text-lg"></i>
           </button>
@@ -96,7 +99,7 @@ export const LogoModal: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-black shadow-md transition-colors text-center"
+                className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-black shadow-md transition-all active:scale-95 text-center"
               >
                 {isAr ? 'حفظ وتطبيق' : 'Save & Apply'}
               </button>
@@ -104,6 +107,6 @@ export const LogoModal: React.FC = () => {
           </div>
         </form>
       </div>
-    </div>
+    </AnimatedModal>
   );
 };

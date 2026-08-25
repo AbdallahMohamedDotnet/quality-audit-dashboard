@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
+import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 
 interface PhotoUploaderProps {
@@ -39,33 +40,37 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({
           <div className="relative group w-12 h-12 rounded-lg overflow-hidden border border-emerald-500/50 shadow-sm">
             <img src={photo} alt="Evidence" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-              <button
+              <motion.button
+                whileTap={{ scale: 0.9 }}
                 type="button"
                 onClick={onRemove}
                 className="text-white hover:text-rose-400 p-1 text-xs"
                 title={isAr ? 'حذف الصورة' : 'Remove image'}
               >
                 <i className="fa-solid fa-trash"></i>
-              </button>
+              </motion.button>
             </div>
           </div>
-          <button
+          <motion.button
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={() => fileInputRef.current?.click()}
             className="text-[11px] font-bold text-sky-600 dark:text-sky-400 hover:underline"
           >
             {isAr ? 'تغيير الصورة' : 'Change Photo'}
-          </button>
+          </motion.button>
         </div>
       ) : (
-        <button
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.96 }}
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg border border-slate-300 dark:border-slate-700 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg border border-slate-300 dark:border-slate-700 transition-colors shadow-sm"
         >
           <i className="fa-solid fa-camera text-sky-500"></i>
           {isAr ? 'إرفاق صورة إثبات' : 'Attach Photo Evidence'}
-        </button>
+        </motion.button>
       )}
     </div>
   );

@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
+import { staggerFast, staggerChild } from '../../utils/animations';
 
 export interface DepartmentScoreItem {
   name: string;
@@ -24,7 +26,12 @@ export const DepartmentScoreChart: React.FC<DepartmentScoreChartProps> = ({
   const hasAnyScore = data.some(item => item.score !== null);
 
   return (
-    <div className="space-y-2.5 w-full">
+    <motion.div
+      variants={staggerFast}
+      initial="hidden"
+      animate="visible"
+      className="space-y-2.5 w-full"
+    >
       {data.map((item, index) => {
         const hasScore = item.score !== null;
         const color = hasScore
@@ -36,10 +43,11 @@ export const DepartmentScoreChart: React.FC<DepartmentScoreChartProps> = ({
           : emptyColor;
 
         return (
-          <div
+          <motion.div
             key={item.deptKey || index}
+            variants={staggerChild}
             onClick={() => onSelectDept?.(item.deptKey)}
-            className={`flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 p-1.5 rounded-xl transition-all ${
+            className={`flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 p-1.5 rounded-xl transition-all duration-200 ${
               onSelectDept ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/60' : ''
             }`}
           >
@@ -66,10 +74,16 @@ export const DepartmentScoreChart: React.FC<DepartmentScoreChartProps> = ({
               }`}
             >
               {hasScore && (
-                <div
-                  className="absolute top-0 bottom-0 rounded-full transition-all duration-700 ease-out"
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${item.score}%` }}
+                  transition={{
+                    duration: 0.8,
+                    delay: 0.05 + index * 0.04,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="absolute top-0 bottom-0 rounded-full shadow-sm"
                   style={{
-                    width: `${item.score}%`,
                     backgroundColor: color,
                     [isAr ? 'right' : 'left']: 0,
                   }}
@@ -83,7 +97,7 @@ export const DepartmentScoreChart: React.FC<DepartmentScoreChartProps> = ({
             >
               {hasScore ? `${item.score}%` : '—'}
             </span>
-          </div>
+          </motion.div>
         );
       })}
 
@@ -97,6 +111,6 @@ export const DepartmentScoreChart: React.FC<DepartmentScoreChartProps> = ({
           </p>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
