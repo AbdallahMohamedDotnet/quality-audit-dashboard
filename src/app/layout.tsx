@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { AuditProvider } from '../context/AuditContext';
-import { MainLayoutShell } from '../components/layout/MainLayoutShell';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -44,7 +43,7 @@ export default function RootLayout({
       </head>
       <body className="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 antialiased selection:bg-sky-500 selection:text-white min-h-screen">
         <AuditProvider>
-          <MainLayoutShell>{children}</MainLayoutShell>
+          {children}
         </AuditProvider>
       </body>
     </html>

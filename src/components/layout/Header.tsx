@@ -1,10 +1,12 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { useAudit } from '../../context/AuditContext';
 import { SECTORS } from '../../data';
 
 export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobileMenu }) => {
+  const router = useRouter();
   const {
     isAr,
     isDark,
@@ -15,7 +17,6 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
     currentSector,
     logoSvg,
     setIsLogoModalOpen,
-    setIsLoginModalOpen,
     logout,
   } = useAudit();
 
@@ -235,7 +236,7 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
           ) : (
             <button
               type="button"
-              onClick={() => setIsLoginModalOpen(true)}
+              onClick={() => router.push('/auth/login')}
               className={`${pillBase} bg-sky-600 hover:bg-sky-500 text-white border-sky-600 hover:border-sky-500 shadow-sm`}
             >
               <i className="fa-solid fa-right-to-bracket text-[10px]" />

@@ -61,8 +61,6 @@ interface AuditContextType {
   currentRole: string;
   login: (role: string, password?: string) => boolean;
   logout: () => void;
-  isLoginModalOpen: boolean;
-  setIsLoginModalOpen: (open: boolean) => void;
 
   // Navigation & Sector
   activeTab: TabKey;
@@ -220,7 +218,6 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   // Auth & Roles
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [currentRole, setCurrentRole] = useState<string>('ceo');
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   // Navigation with Next.js Router & URL Sync
   const router = useRouter();
@@ -594,11 +591,12 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const logout = useCallback(() => {
     setIsLoggedIn(false);
     setStoredItem('audit_is_logged_in', false);
+    router.push('/auth/login');
     showToast(
       isAr ? 'تم تسجيل الخروج بنجاح' : 'Logged out successfully',
       'info'
     );
-  }, [isAr, showToast]);
+  }, [isAr, showToast, router]);
 
   // Audit Actions
   const startAudit = useCallback(
@@ -1161,8 +1159,6 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         currentRole,
         login,
         logout,
-        isLoginModalOpen,
-        setIsLoginModalOpen,
         activeTab,
         setActiveTab,
         currentSector,

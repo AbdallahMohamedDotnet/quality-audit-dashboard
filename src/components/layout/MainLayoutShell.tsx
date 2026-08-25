@@ -7,7 +7,6 @@ import { Sidebar } from './Sidebar';
 import { Footer } from './Footer';
 import { Toast } from './Toast';
 import { LogoModal } from './LogoModal';
-import { LoginModal } from './LoginModal';
 import { PrintReportTemplate } from '../views/PrintReportTemplate';
 
 export const MainLayoutShell: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -42,7 +41,6 @@ export const MainLayoutShell: React.FC<{ children: ReactNode }> = ({ children })
       {/* Global Overlays */}
       <Toast />
       <LogoModal />
-      <LoginModal />
       <PrintReportTemplate />
     </div>
   );
