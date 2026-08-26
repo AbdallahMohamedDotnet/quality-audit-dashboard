@@ -60,7 +60,7 @@ export const KpiStandardsView: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
-              {isAr ? 'دليل المعايير ومؤشرات الجودة (KPIs)' : 'Standards Directory & KPI Catalog'}
+              {isAr ? '🎯 دليل المعايير ومؤشرات الجودة (KPIs)' : '🎯 Standards Directory & KPI Catalog'}
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {isAr
@@ -72,8 +72,8 @@ export const KpiStandardsView: React.FC = () => {
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-slate-500">
               {isAr
-                ? `إجمالي النتائج: ${filteredStandards.length}`
-                : `Total Results: ${filteredStandards.length}`}
+                ? `📊 إجمالي النتائج: ${filteredStandards.length}`
+                : `📊 Total Results: ${filteredStandards.length}`}
             </span>
           </div>
         </div>
@@ -112,8 +112,8 @@ export const KpiStandardsView: React.FC = () => {
               onChange={e => setSearchQuery(e.target.value)}
               placeholder={
                 isAr
-                  ? 'بحث في المعايير بالرمز أو الاسم أو رقم الأيزو أو النص...'
-                  : 'Search by standard ID, code, ISO number, or keyword...'
+                  ? '🔍 بحث في المعايير بالرمز أو الاسم أو رقم الأيزو أو النص...'
+                  : '🔍 Search by standard ID, code, ISO number, or keyword...'
               }
               className={`w-full p-3 rounded-xl border text-xs font-bold outline-none transition-colors px-9 ${
                 isDark
@@ -121,7 +121,7 @@ export const KpiStandardsView: React.FC = () => {
                   : 'bg-slate-50 border-slate-300 text-slate-900'
               }`}
             />
-            <i className="fa-solid fa-magnifying-glass absolute top-3.5 ltr:left-3 rtl:right-3 text-xs text-slate-400"></i>
+            <span className="absolute top-3.5 ltr:left-3 rtl:right-3 text-xs text-slate-400">🔍</span>
             {searchQuery && (
               <button
                 type="button"
@@ -153,7 +153,7 @@ export const KpiStandardsView: React.FC = () => {
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-black text-sky-600 dark:text-sky-400 bg-sky-500/10 px-2.5 py-0.5 rounded-lg border border-sky-500/20">
-                      {std.id}
+                      #{std.id}
                     </span>
                     <Badge variant="indigo" size="sm">
                       {std.standard}
@@ -169,7 +169,7 @@ export const KpiStandardsView: React.FC = () => {
                 </p>
 
                 <div className="text-[11px] text-slate-500 dark:text-slate-400 font-bold flex items-center gap-1.5">
-                  <i className="fa-solid fa-layer-group text-sky-500"></i>
+                  <span className="text-sky-500">🏢</span>
                   <span className="truncate">{deptNames}</span>
                 </div>
               </div>
@@ -177,7 +177,7 @@ export const KpiStandardsView: React.FC = () => {
               <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 gap-3">
                 <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-center min-w-[100px]">
                   <span className="text-[9px] font-bold text-slate-500 block uppercase">
-                    {isAr ? 'الحد القياسي' : 'Baseline'}
+                    {isAr ? '📏 الحد القياسي' : '📏 Baseline'}
                   </span>
                   <span className="text-xs font-mono font-black text-slate-800 dark:text-slate-200">
                     {std.operator} {std.baseline} {std.unit}
@@ -193,7 +193,7 @@ export const KpiStandardsView: React.FC = () => {
                     className="px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white dark:text-rose-400 dark:hover:text-white text-xs font-bold border border-rose-500/30 transition-all flex items-center gap-1.5"
                     title={isAr ? 'قيد مذكرة NCR لهذا المعيار' : 'Create NCR from Standard'}
                   >
-                    <i className="fa-solid fa-triangle-exclamation"></i>
+                    <span>⚠️</span>
                     <span className="hidden sm:inline">{isAr ? 'قيد NCR' : 'Log NCR'}</span>
                   </motion.button>
 
@@ -204,7 +204,7 @@ export const KpiStandardsView: React.FC = () => {
                     onClick={() => startAudit(std.depts[0])}
                     className="px-3 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
                   >
-                    <i className="fa-solid fa-clipboard-check"></i>
+                    <span>📋</span>
                     <span>{isAr ? 'تدقيق القسم' : 'Audit Dept'}</span>
                   </motion.button>
                 </div>

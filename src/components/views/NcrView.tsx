@@ -110,7 +110,7 @@ export const NcrView: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center">
-              <i className="fa-solid fa-triangle-exclamation"></i>
+              <span className="text-base">⚠️</span>
             </span>
             <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
               {isAr ? 'سجل وإدارة مذكرات عدم المطابقة (NCR)' : 'Non-Conformance Reports (NCR) Manager'}
@@ -131,7 +131,7 @@ export const NcrView: React.FC = () => {
             onClick={handleExportCsv}
             className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
           >
-            <i className="fa-solid fa-file-excel text-emerald-500"></i>
+            <span>📊</span>
             <span>{isAr ? 'تصدير CSV' : 'Export CSV'}</span>
           </motion.button>
 
@@ -142,7 +142,7 @@ export const NcrView: React.FC = () => {
             onClick={() => setIsCreateModalOpen(true)}
             className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black shadow-md shadow-rose-600/30 transition-all flex items-center justify-center gap-1.5"
           >
-            <i className="fa-solid fa-plus"></i>
+            <span>➕</span>
             <span>{isAr ? 'قيد مذكرة جديدة' : 'Log New NCR'}</span>
           </motion.button>
         </div>
@@ -159,7 +159,7 @@ export const NcrView: React.FC = () => {
               : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
         >
-          {isAr ? `الكل (${ncrs.length})` : `All (${ncrs.length})`}
+          {isAr ? `📑 الكل (${ncrs.length})` : `📑 All (${ncrs.length})`}
         </button>
 
         <button
@@ -171,11 +171,10 @@ export const NcrView: React.FC = () => {
               : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
         >
-          <span className="w-2 h-2 rounded-full bg-rose-500"></span>
           <span>
             {isAr
-              ? `قيد المعالجة (${ncrs.filter(n => n.status === 'OPEN').length})`
-              : `Open (${ncrs.filter(n => n.status === 'OPEN').length})`}
+              ? `⏳ قيد المعالجة (${ncrs.filter(n => n.status === 'OPEN').length})`
+              : `⏳ Open (${ncrs.filter(n => n.status === 'OPEN').length})`}
           </span>
         </button>
 
@@ -188,11 +187,10 @@ export const NcrView: React.FC = () => {
               : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
         >
-          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
           <span>
             {isAr
-              ? `مغلقة ومكتملة (${ncrs.filter(n => n.status === 'CLOSED').length})`
-              : `Closed (${ncrs.filter(n => n.status === 'CLOSED').length})`}
+              ? `✅ مغلقة ومكتملة (${ncrs.filter(n => n.status === 'CLOSED').length})`
+              : `✅ Closed (${ncrs.filter(n => n.status === 'CLOSED').length})`}
           </span>
         </button>
       </div>
@@ -215,7 +213,7 @@ export const NcrView: React.FC = () => {
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-black text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">
-                      {ncr.id}
+                      #{ncr.id}
                     </span>
                     <Badge
                       variant={
@@ -227,7 +225,7 @@ export const NcrView: React.FC = () => {
                       }
                       size="sm"
                     >
-                      {ncr.type}
+                      {ncr.type === 'CRITICAL' ? '🚨 CRITICAL' : ncr.type === 'TECHNICAL' ? '⚙️ TECHNICAL' : '💡 OBSERVATION'}
                     </Badge>
                   </div>
 
@@ -238,17 +236,18 @@ export const NcrView: React.FC = () => {
                         : 'bg-emerald-500 text-white shadow-sm'
                     }`}
                   >
-                    <i className={`fa-solid ${isOpen ? 'fa-clock' : 'fa-check'}`}></i>
-                    {isOpen ? (isAr ? 'مفتوحة (قيد CAPA)' : 'Open (CAPA Pending)') : (isAr ? 'مغلقة' : 'Closed')}
+                    <span>{isOpen ? '⏳' : '✅'}</span>
+                    <span>{isOpen ? (isAr ? 'مفتوحة (قيد CAPA)' : 'Open (CAPA Pending)') : (isAr ? 'مغلقة' : 'Closed')}</span>
                   </span>
                 </div>
 
                 <div>
-                  <h4 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white">
-                    {ncr.deptName}
+                  <h4 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                    <span>🏢</span>
+                    <span>{ncr.deptName}</span>
                   </h4>
                   <p className="text-[11px] text-sky-600 dark:text-sky-400 font-mono font-bold">
-                    {ncr.std}
+                    📜 {ncr.std}
                   </p>
                 </div>
 
@@ -257,7 +256,7 @@ export const NcrView: React.FC = () => {
                 </p>
 
                 <div className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                  <i className="fa-regular fa-calendar"></i>
+                  <span>📅</span>
                   <span>{ncr.date}</span>
                 </div>
               </div>
@@ -272,7 +271,7 @@ export const NcrView: React.FC = () => {
                     className="px-3 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1"
                     title={isAr ? 'إرسال تنبيه واتساب' : 'Dispatch WhatsApp Alert'}
                   >
-                    <i className="fa-brands fa-whatsapp"></i>
+                    <span>📲</span>
                     <span className="hidden sm:inline">{isAr ? 'إشعار واتساب' : 'WhatsApp'}</span>
                   </motion.button>
 
@@ -283,7 +282,7 @@ export const NcrView: React.FC = () => {
                     className="p-2 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
                     title={isAr ? 'حذف المذكرة' : 'Delete ticket'}
                   >
-                    <i className="fa-solid fa-trash-can text-xs"></i>
+                    <span className="text-xs">🗑️</span>
                   </motion.button>
                 </div>
 
@@ -309,7 +308,7 @@ export const NcrView: React.FC = () => {
                       className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
                       title={isAr ? 'تصعيد وفتح مسار في CAPA Tracker' : 'Escalate to CAPA Tracker'}
                     >
-                      <i className="fa-solid fa-arrows-spin"></i>
+                      <span>🔄</span>
                       <span>{isAr ? 'تصعيد إلى CAPA' : 'Escalate to CAPA'}</span>
                     </motion.button>
 
@@ -320,7 +319,7 @@ export const NcrView: React.FC = () => {
                       onClick={() => closeNcr(ncr.id)}
                       className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md transition-all flex items-center gap-1.5"
                     >
-                      <i className="fa-solid fa-check-double"></i>
+                      <span>✅</span>
                       <span>{isAr ? 'إغلاق واعتماد' : 'Verify & Close'}</span>
                     </motion.button>
                   </div>
@@ -333,7 +332,7 @@ export const NcrView: React.FC = () => {
 
       {filteredNcrs.length === 0 && (
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-12 text-center border border-dashed border-slate-300 dark:border-slate-800">
-          <i className="fa-solid fa-circle-check text-4xl text-emerald-500 mb-2 block"></i>
+          <span className="text-4xl block mb-2">✅</span>
           <h3 className="text-sm font-black text-slate-800 dark:text-slate-200">
             {isAr ? 'لا توجد مذكرات عدم مطابقة مسجلة' : 'No Non-Conformance tickets found'}
           </h3>
@@ -348,7 +347,7 @@ export const NcrView: React.FC = () => {
           <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-slate-800">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-rose-600 flex items-center justify-center text-white">
-                <i className="fa-solid fa-plus text-sm"></i>
+                <span className="text-sm">➕</span>
               </div>
               <h3 className="text-base font-black">
                 {isAr ? 'قيد مذكرة حيود وعدم مطابقة جديدة' : 'Log New Non-Conformance Report'}
@@ -367,7 +366,7 @@ export const NcrView: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                  {isAr ? 'تصنيف الحيود' : 'Severity'}
+                  {isAr ? '🏷️ تصنيف الحيود' : '🏷️ Severity'}
                 </label>
                 <select
                   value={newNcr.type}
@@ -376,15 +375,15 @@ export const NcrView: React.FC = () => {
                     isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                   }`}
                 >
-                  <option value="TECHNICAL">{isAr ? 'حيود فني (Technical)' : 'Technical'}</option>
-                  <option value="CRITICAL">{isAr ? 'حيود حرج (Critical CCP)' : 'Critical CCP'}</option>
-                  <option value="OBSERVATION">{isAr ? 'ملاحظة تحسين (Observation)' : 'Observation'}</option>
+                  <option value="TECHNICAL">{isAr ? '⚙️ حيود فني (Technical)' : '⚙️ Technical'}</option>
+                  <option value="CRITICAL">{isAr ? '🚨 حيود حرج (Critical CCP)' : '🚨 Critical CCP'}</option>
+                  <option value="OBSERVATION">{isAr ? '💡 ملاحظة تحسين (Observation)' : '💡 Observation'}</option>
                 </select>
               </div>
 
               <div>
                 <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                  {isAr ? 'القسم المعني' : 'Department'}
+                  {isAr ? '🏢 القسم المعني' : '🏢 Department'}
                 </label>
                 <select
                   value={newNcr.deptKey}
@@ -393,7 +392,7 @@ export const NcrView: React.FC = () => {
                     isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                   }`}
                 >
-                  <option value="">{isAr ? '-- اختر القسم --' : '-- Select Dept --'}</option>
+                  <option value="">{isAr ? '🏢 -- اختر القسم --' : '🏢 -- Select Dept --'}</option>
                   {sectorDeptKeys.map(key => (
                     <option key={key} value={key}>
                       {DEPARTMENTS[key]?.[isAr ? 'ar' : 'en'] || key}
@@ -405,7 +404,7 @@ export const NcrView: React.FC = () => {
 
             <div>
               <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                {isAr ? 'كود المعيار أو رقم الأيزو (اختياري)' : 'Standard / ISO Ref (Optional)'}
+                {isAr ? '📜 كود المعيار أو رقم الأيزو (اختياري)' : '📜 Standard / ISO Ref (Optional)'}
               </label>
               <input
                 type="text"
@@ -420,7 +419,7 @@ export const NcrView: React.FC = () => {
 
             <div>
               <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                {isAr ? 'وصف الحيود والملاحظة بالتفصيل' : 'Detailed Deviation Description'}
+                {isAr ? '📝 وصف الحيود والملاحظة بالتفصيل' : '📝 Detailed Deviation Description'}
               </label>
               <textarea
                 rows={3}
@@ -443,15 +442,17 @@ export const NcrView: React.FC = () => {
                 onClick={() => setIsCreateModalOpen(false)}
                 className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
-                {isAr ? 'إلغاء' : 'Cancel'}
+                <span>❌</span>
+                <span>{isAr ? 'إلغاء' : 'Cancel'}</span>
               </button>
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.96 }}
                 type="submit"
-                className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black shadow-md"
+                className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black shadow-md flex items-center gap-1.5"
               >
-                {isAr ? 'تسجيل المذكرة' : 'Save NCR'}
+                <span>💾</span>
+                <span>{isAr ? 'تسجيل المذكرة' : 'Save NCR'}</span>
               </motion.button>
             </div>
           </form>

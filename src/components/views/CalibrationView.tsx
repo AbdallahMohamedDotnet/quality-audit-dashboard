@@ -186,11 +186,11 @@ export const CalibrationView: React.FC = () => {
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center text-lg">
-            <i className="fa-solid fa-scale-balanced"></i>
+            <span>⚖️</span>
           </div>
           <div>
             <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
-              {isAr ? 'سجل معايرة الأجهزة والمجسات الدورية' : 'Equipment Calibration & Metrology Log'}
+              {isAr ? 'سجل معايرة الأجهزة والمجسات الدورية (Metrology)' : 'Equipment Calibration & Metrology Log'}
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {isAr
@@ -207,7 +207,7 @@ export const CalibrationView: React.FC = () => {
             onClick={handleExportCsv}
             className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
           >
-            <i className="fa-solid fa-file-csv text-emerald-500"></i>
+            <span>📊</span>
             {isAr ? 'تصدير CSV' : 'Export CSV'}
           </motion.button>
 
@@ -217,7 +217,7 @@ export const CalibrationView: React.FC = () => {
             onClick={() => setIsAddModalOpen(true)}
             className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-sky-500/20"
           >
-            <i className="fa-solid fa-plus"></i>
+            <span>➕</span>
             {isAr ? 'قيد جهاز قياس' : 'Add Instrument'}
           </motion.button>
         </div>
@@ -226,31 +226,31 @@ export const CalibrationView: React.FC = () => {
       {/* KPI Cards */}
       <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          title={isAr ? 'نسبة جاهزية المعايرة' : 'Calibration Readiness'}
+          title={isAr ? '🎯 نسبة جاهزية المعايرة' : '🎯 Calibration Readiness'}
           value={`${calibrationCompliance}%`}
           subtitle={isAr ? `إجمالي الأجهزة: ${totalEquipment}` : `Total instruments: ${totalEquipment}`}
-          icon={<i className="fa-solid fa-gauge-high text-xl"></i>}
+          icon={<span className="text-xl">🎯</span>}
           variant="sky"
         />
         <StatCard
-          title={isAr ? 'أجهزة مطابقة ومعايرة' : 'Valid & Calibrated'}
+          title={isAr ? '✅ أجهزة مطابقة ومعايرة' : '✅ Valid & Calibrated'}
           value={validCount}
           subtitle={isAr ? 'شهادات قياسية سارية المفعول' : 'In-tolerance & certified'}
-          icon={<i className="fa-solid fa-check-to-slot text-xl"></i>}
+          icon={<span className="text-xl">✅</span>}
           variant="emerald"
         />
         <StatCard
-          title={isAr ? 'تستحق المعايرة قريباً' : 'Due Soon (<30d)'}
+          title={isAr ? '⏳ تستحق المعايرة قريباً' : '⏳ Due Soon (<30d)'}
           value={dueSoonCount}
           subtitle={isAr ? 'يتطلب التنسيق مع جهة الفحص' : 'Schedule re-calibration'}
-          icon={<i className="fa-solid fa-stopwatch text-xl"></i>}
+          icon={<span className="text-xl">⏳</span>}
           variant="amber"
         />
         <StatCard
-          title={isAr ? 'أجهزة متأخرة / خارج الخدمة' : 'Overdue / Out of Service'}
+          title={isAr ? '⚠️ أجهزة متأخرة / خارج الخدمة' : '⚠️ Overdue / Out of Service'}
           value={overdueCount}
           subtitle={isAr ? 'يمنع استخدامها بالإنتاج نهائياً' : 'Do not use for production'}
-          icon={<i className="fa-solid fa-triangle-exclamation text-xl"></i>}
+          icon={<span className="text-xl">⚠️</span>}
           variant={overdueCount > 0 ? 'rose' : 'indigo'}
         />
       </StaggerGrid>
@@ -258,15 +258,15 @@ export const CalibrationView: React.FC = () => {
       {/* Search & Filter Bar */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm transition-colors">
         <div className="relative flex-1">
-          <i className="fa-solid fa-magnifying-glass absolute top-3.5 left-3.5 rtl:left-auto rtl:right-3.5 text-slate-400 text-sm"></i>
+          <span className="absolute top-3 left-3.5 rtl:left-auto rtl:right-3.5 text-slate-400 text-sm">🔍</span>
           <input
             type="text"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             placeholder={
               isAr
-                ? 'بحث باسم الجهاز، كود الجهاز، القسم، الموقع، رقم الشهادة، أو جهة المعايرة...'
-                : 'Search by device name, tag code, dept, location, cert, or lab...'
+                ? '🔍 بحث باسم الجهاز، كود الجهاز، القسم، الموقع، رقم الشهادة، أو جهة المعايرة...'
+                : '🔍 Search by device name, tag code, dept, location, cert, or lab...'
             }
             className="w-full pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:ring-2 focus:ring-sky-500 outline-none transition-colors"
           />
@@ -278,7 +278,7 @@ export const CalibrationView: React.FC = () => {
             onChange={e => setFilterDept(e.target.value)}
             className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none transition-colors"
           >
-            <option value="ALL">{isAr ? 'جميع الأقسام' : 'All Departments'}</option>
+            <option value="ALL">{isAr ? '🏢 جميع الأقسام' : '🏢 All Departments'}</option>
             {sectorDeptKeys.map(k => (
               <option key={k} value={DEPARTMENTS[k]?.[isAr ? 'ar' : 'en'] || k}>
                 {DEPARTMENTS[k]?.[isAr ? 'ar' : 'en'] || k}
@@ -291,11 +291,11 @@ export const CalibrationView: React.FC = () => {
             onChange={e => setFilterStatus(e.target.value)}
             className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none transition-colors"
           >
-            <option value="ALL">{isAr ? 'جميع الحالات' : 'All Statuses'}</option>
-            <option value="VALID">{isAr ? 'سارية المفعول (Valid)' : 'Valid'}</option>
-            <option value="DUE_SOON">{isAr ? 'مستحقة قريباً (Due Soon)' : 'Due Soon'}</option>
-            <option value="OVERDUE">{isAr ? 'متأخرة عن الموعد (Overdue)' : 'Overdue'}</option>
-            <option value="OUT_OF_SERVICE">{isAr ? 'خارج الخدمة (Out of Service)' : 'Out of Service'}</option>
+            <option value="ALL">{isAr ? '📑 جميع الحالات' : '📑 All Statuses'}</option>
+            <option value="VALID">{isAr ? '✅ سارية المفعول (Valid)' : '✅ Valid'}</option>
+            <option value="DUE_SOON">{isAr ? '⏳ مستحقة قريباً (Due Soon)' : '⏳ Due Soon'}</option>
+            <option value="OVERDUE">{isAr ? '⚠️ متأخرة عن الموعد (Overdue)' : '⚠️ Overdue'}</option>
+            <option value="OUT_OF_SERVICE">{isAr ? '🚫 خارج الخدمة (Out of Service)' : '🚫 Out of Service'}</option>
           </select>
         </div>
       </div>
@@ -304,7 +304,7 @@ export const CalibrationView: React.FC = () => {
       <div className="block md:hidden space-y-3.5">
         {filteredCalibrations.length === 0 ? (
           <div className="bg-white dark:bg-slate-800/80 rounded-2xl p-8 text-center text-slate-400 border border-slate-200/80 dark:border-slate-700/80">
-            <i className="fa-solid fa-compass-drafting text-3xl opacity-40 mb-2 block"></i>
+            <span className="text-3xl opacity-40 mb-2 block">⚖️</span>
             <p className="text-xs">{isAr ? 'لا توجد أجهزة قياس مطابقة للبحث' : 'No calibration records found'}</p>
           </div>
         ) : (
@@ -321,12 +321,12 @@ export const CalibrationView: React.FC = () => {
                   <div className="flex items-start justify-between gap-2">
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="font-bold text-slate-900 dark:text-white text-sm">{cal.equipmentName}</span>
+                        <span className="font-bold text-slate-900 dark:text-white text-sm">🔬 {cal.equipmentName}</span>
                         <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-sky-50 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 font-bold">
-                          {cal.equipmentCode}
+                          #{cal.equipmentCode}
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400">{cal.dept} • {cal.location}</p>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">🏢 {cal.dept} • 📍 {cal.location}</p>
                     </div>
                     <Badge
                       variant={
@@ -338,18 +338,18 @@ export const CalibrationView: React.FC = () => {
                       }
                       size="sm"
                     >
-                      {cal.status}
+                      {cal.status === 'VALID' ? '✅ VALID' : cal.status === 'DUE_SOON' ? '⏳ DUE SOON' : '⚠️ OVERDUE'}
                     </Badge>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50">
                     <div>
-                      <span className="text-[10px] text-slate-400 block">{isAr ? 'شهادة / فحص:' : 'Cert / Lab:'}</span>
+                      <span className="text-[10px] text-slate-400 block">{isAr ? '📜 شهادة / فحص:' : '📜 Cert / Lab:'}</span>
                       <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400 block truncate">{cal.certificateNumber}</span>
                       <span className="text-[10px] text-slate-500 block truncate">{cal.calibratedBy}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block">{isAr ? 'تاريخ الاستحقاق:' : 'Due Date:'}</span>
+                      <span className="text-[10px] text-slate-400 block">{isAr ? '📅 تاريخ الاستحقاق:' : '📅 Due Date:'}</span>
                       <span className={`font-bold font-mono ${
                         isOverdue ? 'text-rose-500' : isDueSoon ? 'text-amber-500' : 'text-emerald-500'
                       }`}>
@@ -365,7 +365,7 @@ export const CalibrationView: React.FC = () => {
                       onClick={() => setTagModalRecord(cal)}
                       className="px-2.5 py-1.5 rounded-lg bg-sky-50 text-sky-600 dark:bg-sky-900/30 dark:text-sky-400 text-xs font-bold flex items-center gap-1"
                     >
-                      <i className="fa-solid fa-tag"></i>
+                      <span>🏷️</span>
                       <span>{isAr ? 'الملصق' : 'Tag'}</span>
                     </motion.button>
                     <motion.button
@@ -374,7 +374,7 @@ export const CalibrationView: React.FC = () => {
                       className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
                       title={isAr ? 'معايرة' : 'Calibrate'}
                     >
-                      <i className="fa-solid fa-rotate-right text-xs"></i>
+                      <span className="text-xs">🔄</span>
                     </motion.button>
                     {(isOverdue || isDueSoon) && (
                       <motion.button
@@ -383,7 +383,7 @@ export const CalibrationView: React.FC = () => {
                         className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
                         title={isAr ? 'واتساب' : 'WhatsApp'}
                       >
-                        <i className="fa-brands fa-whatsapp text-xs"></i>
+                        <span>📲</span>
                       </motion.button>
                     )}
                     <motion.button
@@ -396,7 +396,7 @@ export const CalibrationView: React.FC = () => {
                       className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400"
                       title={isAr ? 'حذف' : 'Delete'}
                     >
-                      <i className="fa-solid fa-trash text-xs"></i>
+                      <span className="text-xs">🗑️</span>
                     </motion.button>
                   </div>
                 </motion.div>
@@ -412,13 +412,13 @@ export const CalibrationView: React.FC = () => {
           <table className="w-full text-start text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-900/40 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
-                <th className="py-3.5 px-4 text-start">{isAr ? 'الجهاز والكود والموقع' : 'Equipment & Code'}</th>
-                <th className="py-3.5 px-4 text-start">{isAr ? 'القسم المسؤول' : 'Department'}</th>
-                <th className="py-3.5 px-4 text-start">{isAr ? 'شهادة المعايرة وجهة الفحص' : 'Cert & Lab'}</th>
-                <th className="py-3.5 px-4 text-center">{isAr ? 'نسبة السماحية' : 'Tolerance'}</th>
-                <th className="py-3.5 px-4 text-start">{isAr ? 'تاريخ الاستحقاق' : 'Calibration Dates'}</th>
-                <th className="py-3.5 px-4 text-center">{isAr ? 'الحالة' : 'Status'}</th>
-                <th className="py-3.5 px-4 text-center">{isAr ? 'إجراءات وملصق المعايرة' : 'Actions & Tag'}</th>
+                <th className="py-3.5 px-4 text-start">{isAr ? '🔬 الجهاز والكود والموقع' : '🔬 Equipment & Code'}</th>
+                <th className="py-3.5 px-4 text-start">{isAr ? '🏢 القسم المسؤول' : '🏢 Department'}</th>
+                <th className="py-3.5 px-4 text-start">{isAr ? '📜 شهادة المعايرة وجهة الفحص' : '📜 Cert & Lab'}</th>
+                <th className="py-3.5 px-4 text-center">{isAr ? '📏 نسبة السماحية' : '📏 Tolerance'}</th>
+                <th className="py-3.5 px-4 text-start">{isAr ? '📅 تاريخ الاستحقاق' : '📅 Calibration Dates'}</th>
+                <th className="py-3.5 px-4 text-center">{isAr ? '🛡️ الحالة' : '🛡️ Status'}</th>
+                <th className="py-3.5 px-4 text-center">{isAr ? '🏷️ إجراءات وملصق المعايرة' : '🏷️ Actions & Tag'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60 font-medium">
@@ -426,7 +426,7 @@ export const CalibrationView: React.FC = () => {
                 <tr>
                   <td colSpan={7} className="py-12 text-center text-slate-400">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <i className="fa-solid fa-compass-drafting text-3xl opacity-40"></i>
+                      <span className="text-3xl opacity-40">⚖️</span>
                       <p>{isAr ? 'لا توجد أجهزة قياس مطابقة للبحث' : 'No calibration records found'}</p>
                     </div>
                   </td>
@@ -446,18 +446,18 @@ export const CalibrationView: React.FC = () => {
                         <div className="space-y-0.5">
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-slate-900 dark:text-white text-sm">
-                              {cal.equipmentName}
+                              🔬 {cal.equipmentName}
                             </span>
                             <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-sky-50 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 font-bold border border-sky-200 dark:border-sky-800">
-                              {cal.equipmentCode}
+                              #{cal.equipmentCode}
                             </span>
                           </div>
                           <p className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                            <i className="fa-solid fa-location-dot text-[9px]"></i>
+                            <span>📍</span>
                             <span>{cal.location}</span>
                           </p>
                           {cal.notes && (
-                            <p className="text-[10px] text-slate-400 italic">{cal.notes}</p>
+                            <p className="text-[10px] text-slate-400 italic">📝 {cal.notes}</p>
                           )}
                         </div>
                       </td>
@@ -465,7 +465,7 @@ export const CalibrationView: React.FC = () => {
                       {/* Dept */}
                       <td className="py-4 px-4">
                         <span className="text-slate-800 dark:text-slate-200 font-semibold">
-                          {cal.dept}
+                          🏢 {cal.dept}
                         </span>
                       </td>
 
@@ -473,10 +473,10 @@ export const CalibrationView: React.FC = () => {
                       <td className="py-4 px-4">
                         <div className="space-y-0.5 text-[11px]">
                           <p className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
-                            {cal.certificateNumber}
+                            📜 {cal.certificateNumber}
                           </p>
                           <p className="text-slate-500 dark:text-slate-400">
-                            {cal.calibratedBy}
+                            🏛️ {cal.calibratedBy}
                           </p>
                         </div>
                       </td>
@@ -484,7 +484,7 @@ export const CalibrationView: React.FC = () => {
                       {/* Tolerance */}
                       <td className="py-4 px-4 text-center">
                         <span className="font-mono font-bold text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-                          {cal.acceptableTolerance}
+                          ±{cal.acceptableTolerance}
                         </span>
                       </td>
 
@@ -493,7 +493,7 @@ export const CalibrationView: React.FC = () => {
                         <div className="space-y-0.5 text-[11px]">
                           <p className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
                             <span>{isAr ? 'آخر فحص:' : 'Last:'}</span>
-                            <span className="font-mono text-slate-700 dark:text-slate-300">{cal.lastCalibrationDate}</span>
+                            <span className="font-mono text-slate-700 dark:text-slate-300">📅 {cal.lastCalibrationDate}</span>
                           </p>
                           <p
                             className={`font-bold flex items-center gap-1 ${
@@ -505,7 +505,7 @@ export const CalibrationView: React.FC = () => {
                             }`}
                           >
                             <span>{isAr ? 'الموعد القادم:' : 'Next Due:'}</span>
-                            <span className="font-mono">{cal.nextCalibrationDate}</span>
+                            <span className="font-mono">📅 {cal.nextCalibrationDate}</span>
                           </p>
                         </div>
                       </td>
@@ -522,7 +522,7 @@ export const CalibrationView: React.FC = () => {
                           }
                           size="md"
                         >
-                          {cal.status}
+                          {cal.status === 'VALID' ? '✅ VALID' : cal.status === 'DUE_SOON' ? '⏳ DUE SOON' : '⚠️ OVERDUE'}
                         </Badge>
                       </td>
 
@@ -536,7 +536,7 @@ export const CalibrationView: React.FC = () => {
                             title={isAr ? 'معاينة وطباعة ملصق المعايرة المعتمد' : 'Calibration Tag Sticker'}
                             className="px-2.5 py-1 rounded-lg bg-sky-50 hover:bg-sky-100 dark:bg-sky-900/30 dark:hover:bg-sky-900/50 text-sky-600 dark:text-sky-400 text-xs font-bold transition-all flex items-center gap-1 shadow-sm"
                           >
-                            <i className="fa-solid fa-tag"></i>
+                            <span>🏷️</span>
                             <span>{isAr ? 'الملصق' : 'Tag'}</span>
                           </motion.button>
 
@@ -547,7 +547,7 @@ export const CalibrationView: React.FC = () => {
                             title={isAr ? 'توثيق إجراء إعادة المعايرة' : 'Log Re-calibration'}
                             className="w-7 h-7 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all shadow-sm"
                           >
-                            <i className="fa-solid fa-rotate-right text-xs"></i>
+                            <span className="text-xs">🔄</span>
                           </motion.button>
 
                           {(isOverdue || isDueSoon) && (
@@ -558,7 +558,7 @@ export const CalibrationView: React.FC = () => {
                               title={isAr ? 'إرسال تنبيه واتساب لفريق الصيانة' : 'WhatsApp Alert'}
                               className="w-7 h-7 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/30 dark:hover:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center transition-all shadow-sm"
                             >
-                              <i className="fa-brands fa-whatsapp text-xs"></i>
+                              <span>📲</span>
                             </motion.button>
                           )}
 
@@ -572,7 +572,7 @@ export const CalibrationView: React.FC = () => {
                             }}
                             className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-rose-50 dark:bg-slate-700 dark:hover:bg-rose-900/30 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-all"
                           >
-                            <i className="fa-solid fa-trash text-xs"></i>
+                            <span className="text-xs">🗑️</span>
                           </motion.button>
                         </div>
                       </td>
@@ -591,7 +591,7 @@ export const CalibrationView: React.FC = () => {
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-sky-600 text-white flex items-center justify-center shadow-md">
-                <i className="fa-solid fa-scale-balanced"></i>
+                <span className="text-sm">⚖️</span>
               </div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 {isAr ? 'قيد جهاز قياس جديد في سجل المعايرة الدورية' : 'Log New Equipment for Calibration'}
@@ -609,7 +609,7 @@ export const CalibrationView: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'اسم الجهاز / الأداة *' : 'Equipment Name *'}
+                  {isAr ? '🔬 اسم الجهاز / الأداة *' : '🔬 Equipment Name *'}
                 </label>
                 <input
                   type="text"
@@ -623,7 +623,7 @@ export const CalibrationView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'كود الجهاز / الرقم التسلسلي *' : 'Equipment Code / Serial *'}
+                  {isAr ? '🆔 كود الجهاز / الرقم التسلسلي *' : '🆔 Equipment Code / Serial *'}
                 </label>
                 <input
                   type="text"
@@ -637,7 +637,7 @@ export const CalibrationView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'القسم المسؤول *' : 'Department *'}
+                  {isAr ? '🏢 القسم المسؤول *' : '🏢 Department *'}
                 </label>
                 <select
                   required
@@ -656,7 +656,7 @@ export const CalibrationView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'مكان التواجد / الخط التشغيلي' : 'Physical Location'}
+                  {isAr ? '📍 مكان التواجد / الخط التشغيلي' : '📍 Physical Location'}
                 </label>
                 <input
                   type="text"
@@ -669,7 +669,7 @@ export const CalibrationView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'تاريخ آخر معايرة' : 'Last Calibration Date'}
+                  {isAr ? '📅 تاريخ آخر معايرة' : '📅 Last Calibration Date'}
                 </label>
                 <input
                   type="date"
@@ -681,7 +681,7 @@ export const CalibrationView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'تاريخ المعايرة القادمة' : 'Next Due Date'}
+                  {isAr ? '📅 تاريخ المعايرة القادمة' : '📅 Next Due Date'}
                 </label>
                 <input
                   type="date"
@@ -693,7 +693,7 @@ export const CalibrationView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'جهة المعايرة المعتمدة' : 'Calibration Lab / Agency'}
+                  {isAr ? '🏛️ جهة المعايرة المعتمدة' : '🏛️ Calibration Lab / Agency'}
                 </label>
                 <input
                   type="text"
@@ -706,7 +706,7 @@ export const CalibrationView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'نسبة السماحية المقبولة' : 'Acceptable Tolerance'}
+                  {isAr ? '📏 نسبة السماحية المقبولة' : '📏 Acceptable Tolerance'}
                 </label>
                 <input
                   type="text"
@@ -720,7 +720,7 @@ export const CalibrationView: React.FC = () => {
 
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                {isAr ? 'ملاحظات المعايرة' : 'Notes'}
+                {isAr ? '📝 ملاحظات المعايرة' : '📝 Notes'}
               </label>
               <textarea
                 rows={2}
@@ -737,15 +737,17 @@ export const CalibrationView: React.FC = () => {
                 onClick={() => setIsAddModalOpen(false)}
                 className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
-                {isAr ? 'إلغاء' : 'Cancel'}
+                <span>❌</span>
+                <span>{isAr ? 'إلغاء' : 'Cancel'}</span>
               </button>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
                 type="submit"
-                className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-md shadow-sky-500/20"
+                className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-md shadow-sky-500/20 flex items-center gap-1.5"
               >
-                {isAr ? 'قيد الجهاز واعتماد السجل' : 'Save & Log Equipment'}
+                <span>💾</span>
+                <span>{isAr ? 'قيد الجهاز واعتماد السجل' : 'Save & Log Equipment'}</span>
               </motion.button>
             </div>
           </form>
@@ -758,7 +760,7 @@ export const CalibrationView: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-5 sm:p-6 shadow-2xl space-y-5 max-h-[85dvh] overflow-y-auto overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch]">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
               <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <i className="fa-solid fa-tag text-sky-500"></i>
+                <span>🏷️</span>
                 {isAr ? 'ملصق المعايرة المعتمد (Sticker)' : 'Official Calibration Tag'}
               </h3>
               <button
@@ -773,33 +775,33 @@ export const CalibrationView: React.FC = () => {
             <div className="bg-emerald-600 text-white p-5 rounded-2xl border-2 border-emerald-400 shadow-xl space-y-3 font-sans">
               <div className="flex items-center justify-between border-b border-emerald-500/80 pb-2">
                 <div>
-                  <h4 className="text-xs font-black tracking-wider uppercase">CALIBRATED</h4>
+                  <h4 className="text-xs font-black tracking-wider uppercase">✅ CALIBRATED</h4>
                   <p className="text-[9px] text-emerald-100">لوحة الجودة والتدقيق الرقمية</p>
                 </div>
                 <span className="text-xs font-mono font-black px-2 py-0.5 rounded bg-white text-emerald-800">
-                  {tagModalRecord.equipmentCode}
+                  #{tagModalRecord.equipmentCode}
                 </span>
               </div>
 
               <div className="space-y-1 text-xs">
-                <p className="font-black text-sm">{tagModalRecord.equipmentName}</p>
-                <p className="text-[11px] text-emerald-100">{tagModalRecord.dept} - {tagModalRecord.location}</p>
+                <p className="font-black text-sm">🔬 {tagModalRecord.equipmentName}</p>
+                <p className="text-[11px] text-emerald-100">🏢 {tagModalRecord.dept} - 📍 {tagModalRecord.location}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-2 bg-emerald-700/60 p-2.5 rounded-xl text-[10px] font-mono">
                 <div>
-                  <span className="text-emerald-200 uppercase block text-[9px]">CAL DATE</span>
+                  <span className="text-emerald-200 uppercase block text-[9px]">📅 CAL DATE</span>
                   <span className="font-bold">{tagModalRecord.lastCalibrationDate}</span>
                 </div>
                 <div>
-                  <span className="text-emerald-200 uppercase block text-[9px]">NEXT DUE</span>
+                  <span className="text-emerald-200 uppercase block text-[9px]">⏳ NEXT DUE</span>
                   <span className="font-bold text-amber-200">{tagModalRecord.nextCalibrationDate}</span>
                 </div>
               </div>
 
               <div className="flex items-center justify-between text-[9px] text-emerald-100 pt-1">
-                <span>CERT: {tagModalRecord.certificateNumber}</span>
-                <span>TOL: {tagModalRecord.acceptableTolerance}</span>
+                <span>📜 CERT: {tagModalRecord.certificateNumber}</span>
+                <span>📏 TOL: ±{tagModalRecord.acceptableTolerance}</span>
               </div>
             </div>
 
@@ -808,7 +810,8 @@ export const CalibrationView: React.FC = () => {
                 onClick={() => setTagModalRecord(null)}
                 className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
-                {isAr ? 'إغلاق' : 'Close'}
+                <span>❌</span>
+                <span>{isAr ? 'إغلاق' : 'Close'}</span>
               </button>
               <motion.button
                 whileHover={{ scale: 1.03 }}
@@ -818,8 +821,8 @@ export const CalibrationView: React.FC = () => {
                 }}
                 className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-sky-500/20"
               >
-                <i className="fa-solid fa-print"></i>
-                {isAr ? 'طباعة الملصق' : 'Print Sticker'}
+                <span>🖨️</span>
+                <span>{isAr ? 'طباعة الملصق' : 'Print Sticker'}</span>
               </motion.button>
             </div>
           </div>

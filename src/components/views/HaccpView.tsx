@@ -59,12 +59,12 @@ export const HaccpView: React.FC = () => {
 
   return (
     <AnimatedPage>
-      {/* Header */}
+      {/* Header Banner */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
-              <i className="fa-solid fa-shield-halved"></i>
+              <span>🛡️</span>
             </span>
             <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
               {isAr ? 'مسار الهاسب ونقاط التحكم الحرجة (HACCP & CCPs)' : 'HACCP Flow & Critical Control Points (CCP)'}
@@ -85,7 +85,7 @@ export const HaccpView: React.FC = () => {
             onClick={printReport}
             className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
           >
-            <i className="fa-solid fa-print"></i>
+            <span>🖨️</span>
             <span>{isAr ? 'طباعة خطة HACCP' : 'Print Plan'}</span>
           </motion.button>
 
@@ -96,7 +96,7 @@ export const HaccpView: React.FC = () => {
             onClick={handleShareHaccpWhatsApp}
             className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-1.5"
           >
-            <i className="fa-brands fa-whatsapp text-sm"></i>
+            <span>📲</span>
             <span>{isAr ? 'مشاركة الوثيقة' : 'Share WhatsApp'}</span>
           </motion.button>
         </div>
@@ -105,7 +105,7 @@ export const HaccpView: React.FC = () => {
       {/* Sector Switcher */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 transition-colors">
         <span className="text-xs font-bold text-slate-600 dark:text-slate-300 flex items-center gap-2">
-          <i className="fa-solid fa-industry text-sky-500"></i>
+          <span>🏭</span>
           <span>{isAr ? 'تحديد قطاع خط الإنتاج والتجهيز:' : 'Select Industry Production Stream:'}</span>
         </span>
 
@@ -137,34 +137,34 @@ export const HaccpView: React.FC = () => {
       {/* HACCP KPI Summary */}
       <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          title={isAr ? 'إجمالي مراحل التدفق' : 'Total Process Steps'}
+          title={isAr ? '🔄 إجمالي مراحل التدفق' : '🔄 Total Process Steps'}
           value={flowSteps.length}
           subtitle={isAr ? 'مخطط تسلسل العمليات' : 'Sequential process chain'}
-          icon={<i className="fa-solid fa-arrows-split-up-and-left text-xl"></i>}
+          icon={<span className="text-xl">🔄</span>}
           variant="sky"
         />
 
         <StatCard
-          title={isAr ? 'نقاط التحكم الحرجة (CCPs)' : 'Critical Control Points'}
+          title={isAr ? '🚨 نقاط التحكم الحرجة (CCPs)' : '🚨 Critical Control Points'}
           value={ccpSteps.length}
           subtitle={isAr ? 'تتطلب مراقبة مستمرة' : 'Mandatory monitoring'}
-          icon={<i className="fa-solid fa-triangle-exclamation text-xl"></i>}
+          icon={<span className="text-xl">🚨</span>}
           variant="rose"
         />
 
         <StatCard
-          title={isAr ? 'برامج الاشتراطات المسبقة (PRPs)' : 'Prerequisite Programs'}
+          title={isAr ? '🧼 برامج الاشتراطات المسبقة (PRPs)' : '🧼 Prerequisite Programs'}
           value={flowSteps.length - ccpSteps.length}
           subtitle={isAr ? 'إجراءات النظافة والتعقيم' : 'GHP & Sanitation baseline'}
-          icon={<i className="fa-solid fa-list-check text-xl"></i>}
+          icon={<span className="text-xl">🧼</span>}
           variant="emerald"
         />
 
         <StatCard
-          title={isAr ? 'مطابقة معيار الأيزو' : 'ISO 22000 Compliance'}
+          title={isAr ? '📜 مطابقة معيار الأيزو' : '📜 ISO 22000 Compliance'}
           value="100%"
           subtitle={isAr ? 'معتمد وفق الكود الدولي' : 'Codex validated'}
-          icon={<i className="fa-solid fa-stamp text-xl"></i>}
+          icon={<span className="text-xl">📜</span>}
           variant="indigo"
         />
       </StaggerGrid>
@@ -173,7 +173,7 @@ export const HaccpView: React.FC = () => {
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 transition-colors">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
-            <i className="fa-solid fa-diagram-project text-sky-500"></i>
+            <span>🗺️</span>
             <span>{isAr ? 'مخطط تسلسل العمليات التشغيلية (Process Flow)' : 'Process Flow Hierarchy'}</span>
           </h3>
           <span className="text-xs text-slate-400 font-bold">
@@ -208,11 +208,11 @@ export const HaccpView: React.FC = () => {
                     </span>
                     {step.isCCP ? (
                       <span className="px-2 py-0.5 rounded-full bg-rose-600 text-white font-black text-[9px] shadow-sm animate-pulse">
-                        CCP
+                        🚨 CCP
                       </span>
                     ) : (
                       <span className="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-[9px]">
-                        PRP
+                        🧼 PRP
                       </span>
                     )}
                   </div>
@@ -261,7 +261,7 @@ export const HaccpView: React.FC = () => {
                     <span>{isAr ? selectedStep.label.ar : selectedStep.label.en}</span>
                     {selectedStep.isCCP && (
                       <span className="px-2.5 py-0.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-black">
-                        {isAr ? 'نقطة تحكم حرجة معتمدة (Critical Control Point)' : 'Certified CCP'}
+                        {isAr ? '🚨 نقطة تحكم حرجة معتمدة (Critical Control Point)' : '🚨 Certified CCP'}
                       </span>
                     )}
                   </h3>
@@ -285,7 +285,7 @@ export const HaccpView: React.FC = () => {
                   onClick={() => handleLogCcpDeviation(selectedStep)}
                   className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5"
                 >
-                  <i className="fa-solid fa-triangle-exclamation"></i>
+                  <span>🚨</span>
                   <span>{isAr ? 'قيد حيود CCP عاجل' : 'Log CCP Deviation'}</span>
                 </motion.button>
               )}
@@ -295,7 +295,7 @@ export const HaccpView: React.FC = () => {
               {/* 1. Hazard Identification */}
               <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-2">
                 <span className="text-xs font-black text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
-                  <i className="fa-solid fa-virus"></i>
+                  <span>🦠</span>
                   {isAr ? '1. تحليل المخاطر المحتملة (Hazards)' : '1. Potential Hazards'}
                 </span>
                 <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-relaxed">
@@ -312,7 +312,7 @@ export const HaccpView: React.FC = () => {
               {/* 2. Critical Limits */}
               <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 space-y-2">
                 <span className="text-xs font-black text-rose-700 dark:text-rose-300 flex items-center gap-1.5">
-                  <i className="fa-solid fa-ruler-combined"></i>
+                  <span>📏</span>
                   {isAr ? '2. الحدود الحرجة (Critical Limits)' : '2. Critical Limits'}
                 </span>
                 <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-relaxed">
@@ -329,7 +329,7 @@ export const HaccpView: React.FC = () => {
               {/* 3. Monitoring & Corrective Action */}
               <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 space-y-2">
                 <span className="text-xs font-black text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
-                  <i className="fa-solid fa-list-check"></i>
+                  <span>📋</span>
                   {isAr ? '3. المراقبة والإجراء التصحيحي' : '3. Monitoring & Corrective Action'}
                 </span>
                 <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-relaxed">

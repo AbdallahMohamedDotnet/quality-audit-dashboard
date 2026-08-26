@@ -200,7 +200,7 @@ export const CapaTrackerView: React.FC = () => {
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center text-lg">
-            <i className="fa-solid fa-arrows-spin"></i>
+            <span>🔄</span>
           </div>
           <div>
             <h2 className="text-xl font-black text-slate-900 dark:text-white">
@@ -221,7 +221,7 @@ export const CapaTrackerView: React.FC = () => {
             onClick={handleExportCsv}
             className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
           >
-            <i className="fa-solid fa-file-csv text-emerald-500"></i>
+            <span>📊</span>
             {isAr ? 'تصدير CSV' : 'Export CSV'}
           </motion.button>
 
@@ -231,7 +231,7 @@ export const CapaTrackerView: React.FC = () => {
             onClick={() => setIsAddModalOpen(true)}
             className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-700 hover:to-amber-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-rose-500/20"
           >
-            <i className="fa-solid fa-plus"></i>
+            <span>➕</span>
             {isAr ? 'فتح إجراء CAPA جديد' : 'New CAPA Ticket'}
           </motion.button>
         </div>
@@ -240,31 +240,31 @@ export const CapaTrackerView: React.FC = () => {
       {/* KPI Cards */}
       <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          title={isAr ? 'قيد المعالجة والتحقيق' : 'Active / In-Progress'}
+          title={isAr ? '🔍 قيد المعالجة والتحقيق' : '🔍 Active / In-Progress'}
           value={totalOpen}
           subtitle={isAr ? 'مطلوب إنجاز خطة 5-Whys' : 'Requires 5-Whys root cause'}
-          icon={<i className="fa-solid fa-magnifying-glass-chart text-xl"></i>}
+          icon={<span className="text-xl">🔍</span>}
           variant="amber"
         />
         <StatCard
-          title={isAr ? 'تم التنفيذ (بانتظار التحقق)' : 'Implemented (Pending Audit)'}
+          title={isAr ? '⚙️ تم التنفيذ (بانتظار التحقق)' : '⚙️ Implemented (Pending Audit)'}
           value={totalImplemented}
           subtitle={isAr ? 'تم تطبيق الإجراء وبانتظار قياس الأثر' : 'Ready for effectiveness check'}
-          icon={<i className="fa-solid fa-clock-rotate-left text-xl"></i>}
+          icon={<span className="text-xl">⚙️</span>}
           variant="sky"
         />
         <StatCard
-          title={isAr ? 'تم الإغلاق والتحقق بنجاح' : 'Closed & Verified'}
+          title={isAr ? '✅ تم الإغلاق والتحقق بنجاح' : '✅ Closed & Verified'}
           value={totalClosed}
           subtitle={isAr ? 'إجراءات مكتملة وموثقة' : 'Completed actions'}
-          icon={<i className="fa-solid fa-circle-check text-xl"></i>}
+          icon={<span className="text-xl">✅</span>}
           variant="emerald"
         />
         <StatCard
-          title={isAr ? 'حالات حرجة مفتوحة (SLA)' : 'Critical Active SLA'}
+          title={isAr ? '🚨 حالات حرجة مفتوحة (SLA)' : '🚨 Critical Active SLA'}
           value={criticalCount}
           subtitle={isAr ? 'مهلة قصوى 48 ساعة' : 'Requires 48h resolution'}
-          icon={<i className="fa-solid fa-fire text-xl"></i>}
+          icon={<span className="text-xl">🚨</span>}
           variant={criticalCount > 0 ? 'rose' : 'indigo'}
         />
       </StaggerGrid>
@@ -272,15 +272,15 @@ export const CapaTrackerView: React.FC = () => {
       {/* Search & Filtering Bar */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm transition-colors">
         <div className="relative flex-1">
-          <i className="fa-solid fa-magnifying-glass absolute top-3.5 left-3.5 rtl:left-auto rtl:right-3.5 text-slate-400 text-sm"></i>
+          <span className="absolute top-3 left-3.5 rtl:left-auto rtl:right-3.5 text-slate-400 text-sm">🔍</span>
           <input
             type="text"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             placeholder={
               isAr
-                ? 'بحث برقم CAPA، العنوان، القسم، المسؤول، أو المرجع...'
-                : 'Search by CAPA ID, title, dept, owner, or source ref...'
+                ? '🔍 بحث برقم CAPA، العنوان، القسم، المسؤول، أو المرجع...'
+                : '🔍 Search by CAPA ID, title, dept, owner, or source ref...'
             }
             className="w-full pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition-colors"
           />
@@ -292,12 +292,12 @@ export const CapaTrackerView: React.FC = () => {
             onChange={e => setFilterStatus(e.target.value)}
             className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none transition-colors"
           >
-            <option value="ALL">{isAr ? 'جميع المراحل' : 'All Stages'}</option>
-            <option value="OPEN">{isAr ? 'مفتوح (Open)' : 'Open'}</option>
-            <option value="INVESTIGATION">{isAr ? 'قيد التحقيق (Investigation)' : 'Investigation'}</option>
-            <option value="IMPLEMENTED">{isAr ? 'تم التنفيذ (Implemented)' : 'Implemented'}</option>
-            <option value="VERIFIED">{isAr ? 'تم التحقق (Verified)' : 'Verified'}</option>
-            <option value="CLOSED">{isAr ? 'مغلق نهائياً (Closed)' : 'Closed'}</option>
+            <option value="ALL">{isAr ? '📑 جميع المراحل' : '📑 All Stages'}</option>
+            <option value="OPEN">{isAr ? '⏳ مفتوح (Open)' : '⏳ Open'}</option>
+            <option value="INVESTIGATION">{isAr ? '🔍 قيد التحقيق (Investigation)' : '🔍 Investigation'}</option>
+            <option value="IMPLEMENTED">{isAr ? '⚙️ تم التنفيذ (Implemented)' : '⚙️ Implemented'}</option>
+            <option value="VERIFIED">{isAr ? '✅ تم التحقق (Verified)' : '✅ Verified'}</option>
+            <option value="CLOSED">{isAr ? '🔒 مغلق نهائياً (Closed)' : '🔒 Closed'}</option>
           </select>
 
           <select
@@ -305,11 +305,11 @@ export const CapaTrackerView: React.FC = () => {
             onChange={e => setFilterPriority(e.target.value)}
             className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none transition-colors"
           >
-            <option value="ALL">{isAr ? 'جميع درجات الأولوية' : 'All Priorities'}</option>
-            <option value="CRITICAL">{isAr ? 'حرجة جداً (Critical)' : 'Critical'}</option>
-            <option value="HIGH">{isAr ? 'عالية (High)' : 'High'}</option>
-            <option value="MEDIUM">{isAr ? 'متوسطة (Medium)' : 'Medium'}</option>
-            <option value="LOW">{isAr ? 'منخفضة (Low)' : 'Low'}</option>
+            <option value="ALL">{isAr ? '🚨 جميع درجات الأولوية' : '🚨 All Priorities'}</option>
+            <option value="CRITICAL">{isAr ? '🚨 حرجة جداً (Critical)' : '🚨 Critical'}</option>
+            <option value="HIGH">{isAr ? '⚠️ عالية (High)' : '⚠️ High'}</option>
+            <option value="MEDIUM">{isAr ? '⚡ متوسطة (Medium)' : '⚡ Medium'}</option>
+            <option value="LOW">{isAr ? '🛡️ منخفضة (Low)' : '🛡️ Low'}</option>
           </select>
 
           <select
@@ -317,11 +317,11 @@ export const CapaTrackerView: React.FC = () => {
             onChange={e => setFilterSource(e.target.value)}
             className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none transition-colors"
           >
-            <option value="ALL">{isAr ? 'جميع المصادر' : 'All Sources'}</option>
-            <option value="NCR">NCR</option>
-            <option value="COMPLAINT">{isAr ? 'شكاوى النزلاء / الذكاء الاصطناعي' : 'Complaints / AI'}</option>
-            <option value="AUDIT">{isAr ? 'تدقيق الجودة' : 'Quality Audit'}</option>
-            <option value="INCIDENT">{isAr ? 'حادث تشغيلي' : 'Incident'}</option>
+            <option value="ALL">{isAr ? '📑 جميع المصادر' : '📑 All Sources'}</option>
+            <option value="NCR">{isAr ? '⚠️ NCR' : '⚠️ NCR'}</option>
+            <option value="COMPLAINT">{isAr ? '🤖 شكاوى / ذكاء اصطناعي' : '🤖 Complaints / AI'}</option>
+            <option value="AUDIT">{isAr ? '📋 تدقيق الجودة' : '📋 Quality Audit'}</option>
+            <option value="INCIDENT">{isAr ? '🚨 حادث تشغيلي' : '🚨 Incident'}</option>
           </select>
         </div>
       </div>
@@ -330,7 +330,7 @@ export const CapaTrackerView: React.FC = () => {
       <div className="grid grid-cols-1 gap-4">
         {filteredCapas.length === 0 ? (
           <div className="bg-white dark:bg-slate-800/80 p-12 rounded-2xl border border-slate-200 dark:border-slate-700 text-center text-slate-400">
-            <i className="fa-solid fa-clipboard-check text-4xl mb-3 opacity-30"></i>
+            <span className="text-4xl mb-3 block opacity-30">✅</span>
             <p className="font-bold text-sm">
               {isAr ? 'لا توجد سجلات CAPA مطابقة للتصفية' : 'No CAPA records found matching criteria'}
             </p>
@@ -356,7 +356,7 @@ export const CapaTrackerView: React.FC = () => {
                           {capa.title}
                         </span>
                         <span className="font-mono text-xs px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold">
-                          {capa.id}
+                          #{capa.id}
                         </span>
                         <Badge
                           variant={
@@ -368,24 +368,24 @@ export const CapaTrackerView: React.FC = () => {
                           }
                           size="sm"
                         >
-                          {capa.source} {capa.sourceRefId ? `(${capa.sourceRefId})` : ''}
+                          {capa.source === 'NCR' ? '⚠️ NCR' : capa.source === 'COMPLAINT' ? '🤖 AI COMPLAINT' : '📋 ' + capa.source} {capa.sourceRefId ? `(${capa.sourceRefId})` : ''}
                         </Badge>
                       </div>
 
                       <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
-                        <span>
-                          <i className="fa-solid fa-layer-group text-[10px] me-1 text-slate-400"></i>
-                          {capa.dept}
+                        <span className="flex items-center gap-1">
+                          <span>🏢</span>
+                          <span>{capa.dept}</span>
                         </span>
                         <span>•</span>
-                        <span>
-                          <i className="fa-solid fa-user-shield text-[10px] me-1 text-slate-400"></i>
-                          {capa.assignedTo}
+                        <span className="flex items-center gap-1">
+                          <span>👤</span>
+                          <span>{capa.assignedTo}</span>
                         </span>
                         <span>•</span>
-                        <span>
-                          <i className="fa-regular fa-clock text-[10px] me-1 text-slate-400"></i>
-                          {isAr ? 'المهلة:' : 'Target:'} {capa.targetDate}
+                        <span className="flex items-center gap-1">
+                          <span>📅</span>
+                          <span>{isAr ? 'المهلة:' : 'Target:'} {capa.targetDate}</span>
                         </span>
                       </div>
                     </div>
@@ -403,7 +403,7 @@ export const CapaTrackerView: React.FC = () => {
                         }
                         size="md"
                       >
-                        {capa.priority} PRIORITY
+                        {isCritical ? '🚨 CRITICAL' : capa.priority === 'HIGH' ? '⚠️ HIGH' : capa.priority === 'MEDIUM' ? '⚡ MEDIUM' : '🛡️ LOW'}
                       </Badge>
 
                       <Badge
@@ -420,7 +420,7 @@ export const CapaTrackerView: React.FC = () => {
                         }
                         size="md"
                       >
-                        {capa.status}
+                        {capa.status === 'CLOSED' ? '🔒 CLOSED' : capa.status === 'VERIFIED' ? '✅ VERIFIED' : capa.status === 'IMPLEMENTED' ? '⚙️ IMPLEMENTED' : capa.status === 'INVESTIGATION' ? '🔍 INVESTIGATION' : '⏳ OPEN'}
                       </Badge>
                     </div>
                   </div>
@@ -429,11 +429,11 @@ export const CapaTrackerView: React.FC = () => {
                   <div className="py-2">
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 relative">
                       {[
-                        { key: 'OPEN', labelAr: '1. فتح التذكرة', labelEn: '1. Open' },
-                        { key: 'INVESTIGATION', labelAr: '2. تحليل الأسباب (5-Whys)', labelEn: '2. Root Cause' },
-                        { key: 'IMPLEMENTED', labelAr: '3. تنفيذ الإجراء', labelEn: '3. Implemented' },
-                        { key: 'VERIFIED', labelAr: '4. التحقق والقياس', labelEn: '4. Verified' },
-                        { key: 'CLOSED', labelAr: '5. إغلاق نهائي', labelEn: '5. Closed' },
+                        { key: 'OPEN', labelAr: '1. ⏳ فتح التذكرة', labelEn: '1. ⏳ Open' },
+                        { key: 'INVESTIGATION', labelAr: '2. 🔍 تحليل الأسباب (5-Whys)', labelEn: '2. 🔍 Root Cause' },
+                        { key: 'IMPLEMENTED', labelAr: '3. ⚙️ تنفيذ الإجراء', labelEn: '3. ⚙️ Implemented' },
+                        { key: 'VERIFIED', labelAr: '4. ✅ التحقق والقياس', labelEn: '4. ✅ Verified' },
+                        { key: 'CLOSED', labelAr: '5. 🔒 إغلاق نهائي', labelEn: '5. 🔒 Closed' },
                       ].map((step, idx) => {
                         const isPassed = currentStageIdx >= idx;
                         const isCurrent = currentStageIdx === idx;
@@ -448,7 +448,7 @@ export const CapaTrackerView: React.FC = () => {
                                   : 'bg-slate-100 dark:bg-slate-700 text-slate-400'
                               } ${isCurrent ? 'ring-4 ring-emerald-500/20 scale-110' : ''}`}
                             >
-                              {isPassed ? <i className="fa-solid fa-check text-[10px]"></i> : idx + 1}
+                              {isPassed ? <span>✓</span> : idx + 1}
                             </motion.div>
                             <span
                               className={`text-[10px] font-bold tracking-tight truncate max-w-full ${
@@ -469,8 +469,8 @@ export const CapaTrackerView: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-50/80 dark:bg-slate-900/40 p-4 rounded-xl text-xs border border-slate-200/50 dark:border-slate-700/50">
                     <div className="space-y-1">
                       <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                        <i className="fa-solid fa-microscope text-amber-500 text-[11px]"></i>
-                        {isAr ? 'السبب الجذري (Root Cause):' : 'Root Cause (5-Whys):'}
+                        <span>🔍</span>
+                        <span>{isAr ? 'السبب الجذري (Root Cause):' : 'Root Cause (5-Whys):'}</span>
                       </span>
                       <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
                         {capa.rootCause}
@@ -479,8 +479,8 @@ export const CapaTrackerView: React.FC = () => {
 
                     <div className="space-y-1">
                       <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                        <i className="fa-solid fa-bolt text-rose-500 text-[11px]"></i>
-                        {isAr ? 'التصحيح الفوري (Corrective):' : 'Immediate Corrective:'}
+                        <span>⚡</span>
+                        <span>{isAr ? 'التصحيح الفوري (Corrective):' : 'Immediate Corrective:'}</span>
                       </span>
                       <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
                         {capa.correctiveAction}
@@ -489,8 +489,8 @@ export const CapaTrackerView: React.FC = () => {
 
                     <div className="space-y-1">
                       <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                        <i className="fa-solid fa-shield-halved text-emerald-500 text-[11px]"></i>
-                        {isAr ? 'الإجراء الوقائي طويل المدى (Preventive):' : 'Long-Term Preventive:'}
+                        <span>🛡️</span>
+                        <span>{isAr ? 'الإجراء الوقائي طويل المدى (Preventive):' : 'Long-Term Preventive:'}</span>
                       </span>
                       <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
                         {capa.preventiveAction}
@@ -503,14 +503,14 @@ export const CapaTrackerView: React.FC = () => {
                     <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                       {capa.closedAt && (
                         <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
-                          <i className="fa-solid fa-circle-check"></i>
-                          {isAr ? `أغلق في ${capa.closedAt} بواسطة (${capa.verifiedBy})` : `Closed on ${capa.closedAt} by ${capa.verifiedBy}`}
+                          <span>✅</span>
+                          <span>{isAr ? `أغلق في ${capa.closedAt} بواسطة (${capa.verifiedBy})` : `Closed on ${capa.closedAt} by ${capa.verifiedBy}`}</span>
                         </span>
                       )}
                       {capa.effectivenessRating && (
                         <div className="flex items-center gap-0.5 text-amber-500 text-xs">
                           {[...Array(capa.effectivenessRating)].map((_, i) => (
-                            <i key={i} className="fa-solid fa-star"></i>
+                            <span key={i}>⭐</span>
                           ))}
                         </div>
                       )}
@@ -522,8 +522,8 @@ export const CapaTrackerView: React.FC = () => {
                         onClick={() => handleShareWhatsApp(capa)}
                         className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
                       >
-                        <i className="fa-brands fa-whatsapp"></i>
-                        {isAr ? 'واتساب' : 'Share'}
+                        <span>📲</span>
+                        <span>{isAr ? 'واتساب' : 'Share'}</span>
                       </motion.button>
 
                       {/* Progress Workflow Buttons */}
@@ -534,8 +534,8 @@ export const CapaTrackerView: React.FC = () => {
                           onClick={() => updateCapaStatus(capa.id, 'INVESTIGATION')}
                           className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
                         >
-                          <i className="fa-solid fa-arrow-right rtl:rotate-180"></i>
-                          {isAr ? 'بدء التحقيق (5-Whys)' : 'Start Investigation'}
+                          <span>🔍</span>
+                          <span>{isAr ? 'بدء التحقيق (5-Whys)' : 'Start Investigation'}</span>
                         </motion.button>
                       )}
 
@@ -546,8 +546,8 @@ export const CapaTrackerView: React.FC = () => {
                           onClick={() => updateCapaStatus(capa.id, 'IMPLEMENTED')}
                           className="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
                         >
-                          <i className="fa-solid fa-wrench"></i>
-                          {isAr ? 'تم تطبيق الإجراءات' : 'Mark Implemented'}
+                          <span>⚙️</span>
+                          <span>{isAr ? 'تم تطبيق الإجراءات' : 'Mark Implemented'}</span>
                         </motion.button>
                       )}
 
@@ -558,8 +558,8 @@ export const CapaTrackerView: React.FC = () => {
                           onClick={() => setVerifyModalCapa(capa)}
                           className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
                         >
-                          <i className="fa-solid fa-check-double"></i>
-                          {isAr ? 'تدقيق الفعالية والإغلاق' : 'Verify & Close'}
+                          <span>✅</span>
+                          <span>{isAr ? 'تدقيق الفعالية والإغلاق' : 'Verify & Close'}</span>
                         </motion.button>
                       )}
 
@@ -570,8 +570,8 @@ export const CapaTrackerView: React.FC = () => {
                           onClick={() => updateCapaStatus(capa.id, 'CLOSED')}
                           className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
                         >
-                          <i className="fa-solid fa-lock"></i>
-                          {isAr ? 'إغلاق نهائي' : 'Final Close'}
+                          <span>🔒</span>
+                          <span>{isAr ? 'إغلاق نهائي' : 'Final Close'}</span>
                         </motion.button>
                       )}
 
@@ -581,8 +581,8 @@ export const CapaTrackerView: React.FC = () => {
                           onClick={() => updateCapaStatus(capa.id, 'OPEN')}
                           className="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                         >
-                          <i className="fa-solid fa-rotate-left me-1"></i>
-                          {isAr ? 'إعادة فتح' : 'Re-Open'}
+                          <span>🔄</span>
+                          <span>{isAr ? 'إعادة فتح' : 'Re-Open'}</span>
                         </motion.button>
                       )}
 
@@ -595,7 +595,7 @@ export const CapaTrackerView: React.FC = () => {
                         }}
                         className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-rose-50 dark:bg-slate-700 dark:hover:bg-rose-900/30 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-all"
                       >
-                        <i className="fa-solid fa-trash text-xs"></i>
+                        <span className="text-xs">🗑️</span>
                       </motion.button>
                     </div>
                   </div>
@@ -612,7 +612,7 @@ export const CapaTrackerView: React.FC = () => {
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-md">
-                <i className="fa-solid fa-arrows-spin"></i>
+                <span className="text-sm">➕</span>
               </div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 {isAr ? 'فتح تذكرة إجراء تصحيحي ووقائي (CAPA Master Record)' : 'Create CAPA Master Record'}
@@ -630,7 +630,7 @@ export const CapaTrackerView: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1 sm:col-span-2">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'عنوان الإجراء التصحيحي *' : 'CAPA Title / Summary *'}
+                  {isAr ? '📝 عنوان الإجراء التصحيحي *' : '📝 CAPA Title / Summary *'}
                 </label>
                 <input
                   type="text"
@@ -644,24 +644,24 @@ export const CapaTrackerView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'المصدر' : 'Source'}
+                  {isAr ? '📑 المصدر' : '📑 Source'}
                 </label>
                 <select
                   value={newCapaForm.source}
                   onChange={e => setNewCapaForm({ ...newCapaForm, source: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
                 >
-                  <option value="NCR">NCR (مذكرة عدم مطابقة)</option>
-                  <option value="COMPLAINT">COMPLAINT (شكوى عميل / ذكاء اصطناعي)</option>
-                  <option value="AUDIT">AUDIT (تدقيق دوري)</option>
-                  <option value="INCIDENT">INCIDENT (حادث تشغيلي / طارئ)</option>
-                  <option value="INSPECTION">INSPECTION (تفتيش خارجي)</option>
+                  <option value="NCR">{isAr ? '⚠️ NCR (مذكرة عدم مطابقة)' : '⚠️ NCR'}</option>
+                  <option value="COMPLAINT">{isAr ? '🤖 COMPLAINT (شكوى عميل / ذكاء اصطناعي)' : '🤖 COMPLAINT'}</option>
+                  <option value="AUDIT">{isAr ? '📋 AUDIT (تدقيق دوري)' : '📋 AUDIT'}</option>
+                  <option value="INCIDENT">{isAr ? '🚨 INCIDENT (حادث تشغيلي / طارئ)' : '🚨 INCIDENT'}</option>
+                  <option value="INSPECTION">{isAr ? '🔍 INSPECTION (تفتيش خارجي)' : '🔍 INSPECTION'}</option>
                 </select>
               </div>
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'رقم التذكرة المرجعية' : 'Source Reference ID'}
+                  {isAr ? '📜 رقم التذكرة المرجعية' : '📜 Source Reference ID'}
                 </label>
                 <input
                   type="text"
@@ -674,7 +674,7 @@ export const CapaTrackerView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'القسم المعني *' : 'Department *'}
+                  {isAr ? '🏢 القسم المعني *' : '🏢 Department *'}
                 </label>
                 <select
                   required
@@ -682,7 +682,7 @@ export const CapaTrackerView: React.FC = () => {
                   onChange={e => setNewCapaForm({ ...newCapaForm, deptKey: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
                 >
-                  <option value="">{isAr ? '-- اختر القسم --' : '-- Select Dept --'}</option>
+                  <option value="">{isAr ? '🏢 -- اختر القسم --' : '🏢 -- Select Dept --'}</option>
                   {sectorDeptKeys.map(key => (
                     <option key={key} value={key}>
                       {DEPARTMENTS[key]?.[isAr ? 'ar' : 'en'] || key}
@@ -693,7 +693,7 @@ export const CapaTrackerView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'المسؤول المكلف بالتنفيذ' : 'Assigned Owner'}
+                  {isAr ? '👤 المسؤول المكلف بالتنفيذ' : '👤 Assigned Owner'}
                 </label>
                 <input
                   type="text"
@@ -706,23 +706,23 @@ export const CapaTrackerView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'درجة الأولوية' : 'Priority Level'}
+                  {isAr ? 'Priority Level' : 'Priority Level'}
                 </label>
                 <select
                   value={newCapaForm.priority}
                   onChange={e => setNewCapaForm({ ...newCapaForm, priority: e.target.value as any })}
                   className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-rose-500"
                 >
-                  <option value="CRITICAL">{isAr ? 'حرجة للغاية (Critical 24-48h)' : 'Critical (24-48h)'}</option>
-                  <option value="HIGH">{isAr ? 'عالية (High 5-7 Days)' : 'High (5-7 Days)'}</option>
-                  <option value="MEDIUM">{isAr ? 'متوسطة (Medium 14 Days)' : 'Medium (14 Days)'}</option>
-                  <option value="LOW">{isAr ? 'منخفضة (Low 30 Days)' : 'Low (30 Days)'}</option>
+                  <option value="CRITICAL">{isAr ? '🚨 حرجة للغاية (Critical 24-48h)' : 'Critical (24-48h)'}</option>
+                  <option value="HIGH">{isAr ? '⚠️ عالية (High 5-7 Days)' : 'High (5-7 Days)'}</option>
+                  <option value="MEDIUM">{isAr ? '⚡ متوسطة (Medium 14 Days)' : 'Medium (14 Days)'}</option>
+                  <option value="LOW">{isAr ? '🛡️ منخفضة (Low 30 Days)' : 'Low (30 Days)'}</option>
                 </select>
               </div>
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'الموعد المستهدف للإغلاق' : 'Target SLA Date'}
+                  {isAr ? '📅 الموعد المستهدف للإغلاق' : '📅 Target SLA Date'}
                 </label>
                 <input
                   type="date"
@@ -735,7 +735,7 @@ export const CapaTrackerView: React.FC = () => {
 
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                {isAr ? 'تحليل السبب الجذري (Root Cause Analysis / 5-Whys)' : 'Root Cause Analysis (5-Whys)'}
+                {isAr ? '🔍 تحليل السبب الجذري (Root Cause Analysis / 5-Whys)' : '🔍 Root Cause Analysis (5-Whys)'}
               </label>
               <textarea
                 rows={2}
@@ -749,7 +749,7 @@ export const CapaTrackerView: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'الإجراء التصحيحي العاجل (Corrective)' : 'Immediate Corrective Action'}
+                  {isAr ? '⚡ الإجراء التصحيحي العاجل (Corrective)' : '⚡ Immediate Corrective Action'}
                 </label>
                 <textarea
                   rows={2}
@@ -762,7 +762,7 @@ export const CapaTrackerView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'الإجراء الوقائي الدائم (Preventive)' : 'Permanent Preventive Action'}
+                  {isAr ? '🛡️ الإجراء الوقائي الدائم (Preventive)' : '🛡️ Permanent Preventive Action'}
                 </label>
                 <textarea
                   rows={2}
@@ -780,15 +780,17 @@ export const CapaTrackerView: React.FC = () => {
                 onClick={() => setIsAddModalOpen(false)}
                 className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
-                {isAr ? 'إلغاء' : 'Cancel'}
+                <span>❌</span>
+                <span>{isAr ? 'إلغاء' : 'Cancel'}</span>
               </button>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
                 type="submit"
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 text-white text-xs font-bold shadow-md shadow-rose-500/20"
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 text-white text-xs font-bold shadow-md shadow-rose-500/20 flex items-center gap-1.5"
               >
-                {isAr ? 'إنشاء وقيد ملف CAPA' : 'Create & Assign CAPA'}
+                <span>💾</span>
+                <span>{isAr ? 'إنشاء وقيد ملف CAPA' : 'Create & Assign CAPA'}</span>
               </motion.button>
             </div>
           </form>
@@ -802,7 +804,7 @@ export const CapaTrackerView: React.FC = () => {
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center shadow-md">
-                  <i className="fa-solid fa-check-double"></i>
+                  <span className="text-sm">✅</span>
                 </div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
                   {isAr ? 'التحقق من الفعالية والإغلاق النهائي' : 'Effectiveness Verification & Closure'}
@@ -822,13 +824,13 @@ export const CapaTrackerView: React.FC = () => {
                   {verifyModalCapa.title}
                 </p>
                 <p className="text-slate-500 font-mono text-[11px]">
-                  {verifyModalCapa.id} | {verifyModalCapa.dept}
+                  #{verifyModalCapa.id} | 🏢 {verifyModalCapa.dept}
                 </p>
               </div>
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'اسم المدقق / المعتمد المسؤول *' : 'Lead Auditor / Verifier Name *'}
+                  {isAr ? '✍️ اسم المدقق / المعتمد المسؤول *' : '✍️ Lead Auditor / Verifier Name *'}
                 </label>
                 <input
                   type="text"
@@ -842,7 +844,7 @@ export const CapaTrackerView: React.FC = () => {
 
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'تقييم فعالية الإجراء المطبق (Effectiveness Rating)' : 'Effectiveness Score'}
+                  {isAr ? '⭐ تقييم فعالية الإجراء المطبق (Effectiveness Rating)' : '⭐ Effectiveness Score'}
                 </label>
                 <div className="flex items-center justify-center gap-3 py-2 bg-slate-50 dark:bg-slate-900 rounded-xl">
                   {[1, 2, 3, 4, 5].map(star => (
@@ -881,15 +883,17 @@ export const CapaTrackerView: React.FC = () => {
                   onClick={() => setVerifyModalCapa(null)}
                   className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                 >
-                  {isAr ? 'إلغاء' : 'Cancel'}
+                  <span>❌</span>
+                  <span>{isAr ? 'إلغاء' : 'Cancel'}</span>
                 </button>
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.96 }}
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-500/20"
+                  className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-500/20 flex items-center gap-1.5"
                 >
-                  {isAr ? 'اعتماد الإغلاق النهائي وتوثيقه' : 'Confirm Closure'}
+                  <span>✅</span>
+                  <span>{isAr ? 'اعتماد الإغلاق النهائي وتوثيقه' : 'Confirm Closure'}</span>
                 </motion.button>
               </div>
             </form>
