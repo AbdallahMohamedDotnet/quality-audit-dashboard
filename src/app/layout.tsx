@@ -5,8 +5,14 @@ import { AuditProvider } from '../context/AuditContext';
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 5,
   viewportFit: 'cover',
   colorScheme: 'dark light',
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#020617' },
+    { media: '(prefers-color-scheme: light)', color: '#f8fafc' },
+  ],
+  interactiveWidget: 'resizes-visual',
 };
 
 export const metadata: Metadata = {
@@ -41,7 +47,7 @@ export default function RootLayout({
           referrerPolicy="no-referrer"
         />
       </head>
-      <body className="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 antialiased selection:bg-sky-500 selection:text-white min-h-screen">
+      <body className="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 antialiased selection:bg-sky-500 selection:text-white min-h-[100dvh]">
         <AuditProvider>
           {children}
         </AuditProvider>

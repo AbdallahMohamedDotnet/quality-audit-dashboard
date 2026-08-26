@@ -47,7 +47,7 @@ export function AnimatedModal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch]">
           {/* Backdrop */}
           <motion.div
             className={`fixed inset-0 ${backdropClassName}`}
@@ -63,7 +63,7 @@ export function AnimatedModal({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className={`relative z-10 w-full my-auto ${className}`}
+            className={`relative z-10 w-full my-auto transform-gpu ${className}`}
           >
             {children}
           </motion.div>

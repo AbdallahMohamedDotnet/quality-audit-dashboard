@@ -10,7 +10,7 @@ export default function AuthGroupLayout({ children }: { children: ReactNode }) {
   return (
     <div
       dir={dir}
-      className={`min-h-screen flex flex-col items-center justify-center p-4 font-sans transition-colors duration-300 relative overflow-hidden ${
+      className={`min-h-[100dvh] flex flex-col items-center justify-center p-4 font-sans relative overflow-hidden ${
         isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-800'
       }`}
     >
