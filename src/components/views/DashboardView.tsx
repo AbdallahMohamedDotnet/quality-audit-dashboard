@@ -73,7 +73,7 @@ export const DashboardView: React.FC = () => {
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
         <div className="flex items-center justify-between gap-3 mb-3 px-1">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-300">
-            <i className="fa-solid fa-industry text-sky-500"></i>
+            <span className="text-sky-500 text-sm">🏭</span>
             <span>{isAr ? 'اختر قطاع التشغيل والتدقيق:' : 'Select Industry Sector:'}</span>
           </div>
           <div className="flex items-center gap-2">
@@ -84,7 +84,7 @@ export const DashboardView: React.FC = () => {
               onClick={handleShareExecutiveSummary}
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shadow-sm transition-colors"
             >
-              <i className="fa-brands fa-whatsapp text-sm"></i>
+              <span className="text-xs">📲</span>
               <span className="hidden sm:inline">{isAr ? 'مشاركة الملخص' : 'Share Summary'}</span>
             </motion.button>
             <motion.button
@@ -94,7 +94,7 @@ export const DashboardView: React.FC = () => {
               onClick={printReport}
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-300 dark:border-slate-700 transition-colors"
             >
-              <i className="fa-solid fa-print"></i>
+              <span className="text-xs">🖨️</span>
               <span className="hidden sm:inline">{isAr ? 'طباعة تقرير A4' : 'Print A4 PDF'}</span>
             </motion.button>
           </div>
@@ -115,29 +115,6 @@ export const DashboardView: React.FC = () => {
                     : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <i
-                  className={`fa-solid ${
-                    sec.val === 'hotels'
-                      ? 'fa-hotel'
-                      : sec.val === 'restaurants'
-                      ? 'fa-utensils'
-                      : sec.val === 'hospitals'
-                      ? 'fa-hospital'
-                      : sec.val === 'clinics'
-                      ? 'fa-stethoscope'
-                      : sec.val.includes('food')
-                      ? 'fa-bowl-food'
-                      : sec.val.includes('pharma')
-                      ? 'fa-pills'
-                      : sec.val.includes('chemical')
-                      ? 'fa-flask'
-                      : sec.val.includes('textile')
-                      ? 'fa-shirt'
-                      : sec.val.includes('metal')
-                      ? 'fa-gears'
-                      : 'fa-helmet-safety'
-                  }`}
-                />
                 <span>{isAr ? sec.ar : sec.en}</span>
               </motion.button>
             );
@@ -152,10 +129,10 @@ export const DashboardView: React.FC = () => {
           value={`${metrics.averageScore}%`}
           subtitle={
             isAr
-              ? `${metrics.auditedCount} من ${metrics.totalDepts} قسماً مدققاً`
-              : `${metrics.auditedCount} of ${metrics.totalDepts} depts audited`
+              ? `🎯 ${metrics.auditedCount} من ${metrics.totalDepts} قسماً مدققاً`
+              : `🎯 ${metrics.auditedCount} of ${metrics.totalDepts} depts audited`
           }
-          icon={<i className="fa-solid fa-chart-pie text-xl"></i>}
+          icon={<span className="text-xl select-none">📊</span>}
           variant={metrics.averageScore >= 85 ? 'emerald' : metrics.averageScore >= 70 ? 'amber' : 'rose'}
           trend={metrics.averageScore >= 80 ? '+4.2%' : undefined}
         />
@@ -165,18 +142,18 @@ export const DashboardView: React.FC = () => {
           value={`${metrics.coveragePercent}%`}
           subtitle={
             isAr
-              ? `${metrics.totalDepts - metrics.auditedCount} أقسام متبقية`
-              : `${metrics.totalDepts - metrics.auditedCount} pending audits`
+              ? `⏳ ${metrics.totalDepts - metrics.auditedCount} أقسام متبقية`
+              : `⏳ ${metrics.totalDepts - metrics.auditedCount} pending audits`
           }
-          icon={<i className="fa-solid fa-list-check text-xl"></i>}
+          icon={<span className="text-xl select-none">📋</span>}
           variant="sky"
         />
 
         <StatCard
           title={isAr ? 'الوفورات المحققة تقديرياً' : 'Estimated Cost Savings'}
           value={`$${metrics.estimatedSavings.toLocaleString()}`}
-          subtitle={isAr ? 'عبر معالجة الهدر والحيود' : 'Via waste & deviation fixes'}
-          icon={<i className="fa-solid fa-sack-dollar text-xl"></i>}
+          subtitle={isAr ? '💡 عبر معالجة الهدر والحيود' : '💡 Via waste & deviation fixes'}
+          icon={<span className="text-xl select-none">💰</span>}
           variant="emerald"
         />
 
@@ -185,10 +162,10 @@ export const DashboardView: React.FC = () => {
           value={`$${metrics.penaltiesAvoided.toLocaleString()}`}
           subtitle={
             isAr
-              ? `إغلاق ${metrics.closedNcrs} مذكرة حيود (NCR)`
-              : `${metrics.closedNcrs} resolved NCR tickets`
+              ? `✅ إغلاق ${metrics.closedNcrs} مذكرة حيود (NCR)`
+              : `✅ ${metrics.closedNcrs} resolved NCR tickets`
           }
-          icon={<i className="fa-solid fa-shield-halved text-xl"></i>}
+          icon={<span className="text-xl select-none">🛡️</span>}
           variant="indigo"
         />
       </StaggerGrid>
@@ -217,7 +194,7 @@ export const DashboardView: React.FC = () => {
             </div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-            <i className="fa-solid fa-truck-field text-base"></i>
+            <span className="text-lg">🚚</span>
           </div>
         </motion.div>
 
@@ -243,7 +220,7 @@ export const DashboardView: React.FC = () => {
             </div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-            <i className="fa-solid fa-arrows-spin text-base"></i>
+            <span className="text-lg">🔄</span>
           </div>
         </motion.div>
 
@@ -269,7 +246,7 @@ export const DashboardView: React.FC = () => {
             </div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-            <i className="fa-solid fa-graduation-cap text-base"></i>
+            <span className="text-lg">🎓</span>
           </div>
         </motion.div>
 
@@ -295,7 +272,7 @@ export const DashboardView: React.FC = () => {
             </div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-            <i className="fa-solid fa-scale-balanced text-base"></i>
+            <span className="text-lg">⚖️</span>
           </div>
         </motion.div>
       </StaggerGrid>
@@ -320,7 +297,7 @@ export const DashboardView: React.FC = () => {
                   />
                 </span>
                 <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
-                  {isAr ? 'حساسات المراقبة المباشرة (Live IoT Telemetry)' : 'Live IoT Telemetry Sensors'}
+                  {isAr ? '📡 حساسات المراقبة المباشرة (Live IoT Telemetry)' : '📡 Live IoT Telemetry Sensors'}
                 </h4>
               </div>
 
@@ -330,7 +307,7 @@ export const DashboardView: React.FC = () => {
                   onClick={() => setActiveTab('iot')}
                   className="text-[11px] font-bold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1 transition-all hover:scale-105"
                 >
-                  <span>{isAr ? 'محطة المراقبة الكاملة' : 'Full Stream Station'}</span>
+                  <span>{isAr ? '📡 محطة المراقبة الكاملة' : '📡 Full Stream Station'}</span>
                   <i className="fa-solid fa-arrow-left text-[9px] rtl:inline ltr:hidden"></i>
                   <i className="fa-solid fa-arrow-right text-[9px] ltr:inline rtl:hidden"></i>
                 </button>
@@ -341,14 +318,16 @@ export const DashboardView: React.FC = () => {
                   onClick={toggleTelemetrySimulation}
                   className="text-[11px] font-bold text-slate-500 hover:text-sky-500 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 transition-colors"
                 >
-                  <i className={`fa-solid ${isTelemetrySimulating ? 'fa-pause' : 'fa-play'}`}></i>
-                  {isAr
-                    ? isTelemetrySimulating
-                      ? 'إيقاف'
-                      : 'تشغيل'
-                    : isTelemetrySimulating
-                    ? 'Pause'
-                    : 'Play'}
+                  <span>{isTelemetrySimulating ? '⏸️' : '▶️'}</span>
+                  <span>
+                    {isAr
+                      ? isTelemetrySimulating
+                        ? 'إيقاف'
+                        : 'تشغيل'
+                      : isTelemetrySimulating
+                      ? 'Pause'
+                      : 'Play'}
+                  </span>
                 </motion.button>
               </div>
             </div>
@@ -387,30 +366,30 @@ export const DashboardView: React.FC = () => {
           <div className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 flex flex-col justify-between">
             <div>
               <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-1 flex items-center gap-2">
-                <i className="fa-solid fa-certificate text-amber-500"></i>
-                {isAr ? 'أطر ومعايير الاعتماد للقطاع' : 'Certified Standards Framework'}
+                <span className="text-amber-500">📜</span>
+                <span>{isAr ? 'أطر ومعايير الاعتماد للقطاع' : 'Certified Standards Framework'}</span>
               </h4>
               <p className="text-[11px] text-slate-500 mb-3">
                 {isAr
-                  ? `${sectorStandards.length} معياراً تشغيلياً نشطاً لهذا القطاع`
-                  : `${sectorStandards.length} active standards mapped to sector`}
+                  ? `🎯 ${sectorStandards.length} معياراً تشغيلياً نشطاً لهذا القطاع`
+                  : `🎯 ${sectorStandards.length} active standards mapped to sector`}
               </p>
 
               <div className="grid grid-cols-2 gap-2 text-center text-xs">
                 <div className="p-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 space-y-0.5 transition-transform hover:scale-105">
-                  <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase block">ISO Standards</span>
+                  <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase block">🏛️ ISO Standards</span>
                   <span className="text-lg font-black font-mono text-indigo-700 dark:text-indigo-300">{isoStandardsCount}</span>
                 </div>
                 <div className="p-3 rounded-2xl bg-sky-500/10 border border-sky-500/20 space-y-0.5 transition-transform hover:scale-105">
-                  <span className="text-[10px] font-bold text-sky-600 dark:text-sky-400 uppercase block">OSHA Safety</span>
+                  <span className="text-[10px] font-bold text-sky-600 dark:text-sky-400 uppercase block">⛑️ OSHA Safety</span>
                   <span className="text-lg font-black font-mono text-sky-700 dark:text-sky-300">{oshaStandardsCount}</span>
                 </div>
                 <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-0.5 transition-transform hover:scale-105">
-                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase block">HACCP / Food</span>
+                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase block">🛡️ HACCP / Food</span>
                   <span className="text-lg font-black font-mono text-emerald-700 dark:text-emerald-300">{haccpStandardsCount}</span>
                 </div>
                 <div className="p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 space-y-0.5 transition-transform hover:scale-105">
-                  <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase block">SFDA / GMP</span>
+                  <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase block">💊 SFDA / GMP</span>
                   <span className="text-lg font-black font-mono text-purple-700 dark:text-purple-300">{Math.max(1, otherStandardsCount)}</span>
                 </div>
               </div>
@@ -418,8 +397,8 @@ export const DashboardView: React.FC = () => {
 
             <div className="pt-2 text-center">
               <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1">
-                <i className="fa-solid fa-shield-check"></i>
-                {isAr ? 'معايير ممتثلة للمواصفات الدولية 2026' : '100% Compliant with 2026 Specifications'}
+                <span>✅</span>
+                <span>{isAr ? 'معايير ممتثلة للمواصفات الدولية 2026' : '100% Compliant with 2026 Specifications'}</span>
               </span>
             </div>
           </div>
@@ -434,7 +413,7 @@ export const DashboardView: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
               <div>
                 <h4 className="text-sm font-black text-slate-900 dark:text-white">
-                  {isAr ? 'توزيع درجات الامتثال حسب الأقسام' : 'Department Compliance Distribution'}
+                  {isAr ? '📊 توزيع درجات الامتثال حسب الأقسام' : '📊 Department Compliance Distribution'}
                 </h4>
                 <p className="text-[11px] text-slate-500">
                   {isAr
@@ -443,7 +422,7 @@ export const DashboardView: React.FC = () => {
                 </p>
               </div>
               <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
-                {isAr ? `${metrics.auditedCount} تم تدقيقها` : `${metrics.auditedCount} Audited`}
+                {isAr ? `✅ ${metrics.auditedCount} تم تدقيقها` : `✅ ${metrics.auditedCount} Audited`}
               </span>
             </div>
 
@@ -455,7 +434,7 @@ export const DashboardView: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
               <div>
                 <h4 className="text-sm font-black text-slate-900 dark:text-white">
-                  {isAr ? 'بدء جولة تدقيق فورية' : 'Start Instant Audit Session'}
+                  {isAr ? '⚡ بدء جولة تدقيق فورية' : '⚡ Start Instant Audit Session'}
                 </h4>
                 <p className="text-[11px] text-slate-500">
                   {isAr ? 'اختر القسم لتحميل المعايير وبدء الفحص' : 'Select a department to load standards'}
@@ -491,13 +470,13 @@ export const DashboardView: React.FC = () => {
                         {name}
                       </span>
                       <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block">
-                        {isAr ? `${standardsCount} معياراً تشغيلياً` : `${standardsCount} Standards`}
+                        {isAr ? `📋 ${standardsCount} معياراً تشغيلياً` : `📋 ${standardsCount} Standards`}
                       </span>
                     </div>
 
                     <div className="flex items-center justify-between pt-3 mt-2 border-t border-slate-200/60 dark:border-slate-800/60 w-full">
                       <span className="text-[10px] font-bold text-sky-600 dark:text-sky-400 flex items-center gap-1">
-                        {isAr ? 'بدء الفحص' : 'Start Audit'}
+                        <span>{isAr ? '⚡ بدء الفحص' : '⚡ Start Audit'}</span>
                         <i className="fa-solid fa-arrow-left text-[9px] rtl:inline ltr:hidden"></i>
                         <i className="fa-solid fa-arrow-right text-[9px] ltr:inline rtl:hidden"></i>
                       </span>

@@ -68,12 +68,12 @@ export const ArchiveView: React.FC = () => {
 
   return (
     <AnimatedPage>
-      {/* Header */}
+      {/* Header Banner */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-500 flex items-center justify-center">
-              <i className="fa-solid fa-box-archive"></i>
+              <span>🗄️</span>
             </span>
             <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
               {isAr ? 'أرشيف وسجلات التدقيق المعتمدة' : 'Certified Audit Archives & Certificates'}
@@ -94,7 +94,7 @@ export const ArchiveView: React.FC = () => {
             onClick={handleExportCsv}
             className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
           >
-            <i className="fa-solid fa-file-excel text-emerald-500"></i>
+            <span>📊</span>
             <span>{isAr ? 'تصدير الأرشيف CSV' : 'Export CSV'}</span>
           </motion.button>
 
@@ -105,7 +105,7 @@ export const ArchiveView: React.FC = () => {
             onClick={printReport}
             className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-1.5"
           >
-            <i className="fa-solid fa-print"></i>
+            <span>🖨️</span>
             <span>{isAr ? 'طباعة تقرير A4' : 'Print A4 PDF'}</span>
           </motion.button>
         </div>
@@ -113,20 +113,20 @@ export const ArchiveView: React.FC = () => {
 
       {/* Search Filter */}
       <div className="relative">
+        <span className="absolute top-3.5 ltr:left-3 rtl:right-3 text-xs text-slate-400">🔍</span>
         <input
           type="text"
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           placeholder={
             isAr
-              ? 'بحث في الأرشيف بالقسم أو المدقق أو التاريخ أو النسبة...'
-              : 'Filter archive by department, auditor, date, or score...'
+              ? '🔍 بحث في الأرشيف بالقسم أو المدقق أو التاريخ أو النسبة...'
+              : '🔍 Filter archive by department, auditor, date, or score...'
           }
           className={`w-full p-3 rounded-xl border text-xs font-bold outline-none px-9 transition-colors ${
             isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
           }`}
         />
-        <i className="fa-solid fa-magnifying-glass absolute top-3.5 ltr:left-3 rtl:right-3 text-xs text-slate-400"></i>
       </div>
 
       {/* Mobile Card List (< md) */}
@@ -144,7 +144,7 @@ export const ArchiveView: React.FC = () => {
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-0.5">
                     <div className="font-black text-slate-900 dark:text-white flex items-center gap-1.5">
-                      <i className="fa-solid fa-clipboard-check text-sky-500 text-xs"></i>
+                      <span>🏢</span>
                       <span className="text-sm">{audit.dept}</span>
                     </div>
                     <span className="text-[10px] font-mono text-slate-400">REF #{audit.id}</span>
@@ -157,24 +157,24 @@ export const ArchiveView: React.FC = () => {
                         : 'bg-rose-500/10 text-rose-600 border border-rose-500/30'
                     }`}
                   >
-                    <i className={`fa-solid ${isPassed ? 'fa-circle-check' : 'fa-triangle-exclamation'} text-[10px]`}></i>
+                    <span>{isPassed ? '✅' : '⚠️'}</span>
                     {audit.score}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
                   <div>
-                    <span className="text-[10px] text-slate-400 block">{isAr ? 'المدقق المعتمد:' : 'Auditor:'}</span>
+                    <span className="text-[10px] text-slate-400 block">{isAr ? '👤 المدقق المعتمد:' : '👤 Auditor:'}</span>
                     <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">{audit.user}</span>
                     <span className="text-[10px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                      <i className="fa-solid fa-signature text-[9px]"></i>
+                      <span>✍️</span>
                       <span>{isAr ? 'موقّع' : 'Signed'}</span>
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 block">{isAr ? 'التاريخ والوقت:' : 'Timestamp:'}</span>
-                    <span className="font-mono text-slate-900 dark:text-white block">{audit.date}</span>
-                    <span className="font-mono text-[10px] text-slate-400 block">{audit.time}</span>
+                    <span className="text-[10px] text-slate-400 block">{isAr ? '⏰ التاريخ والوقت:' : '⏰ Timestamp:'}</span>
+                    <span className="font-mono text-slate-900 dark:text-white block">📅 {audit.date}</span>
+                    <span className="font-mono text-[10px] text-slate-400 block">⏰ {audit.time}</span>
                   </div>
                 </div>
 
@@ -185,7 +185,7 @@ export const ArchiveView: React.FC = () => {
                     onClick={() => setSelectedAuditModal(audit)}
                     className="px-3 py-1.5 rounded-xl bg-sky-500/10 hover:bg-sky-500 text-sky-600 hover:text-white text-xs font-bold transition-all flex items-center gap-1"
                   >
-                    <i className="fa-solid fa-eye"></i>
+                    <span>👁️</span>
                     <span>{isAr ? 'معاينة' : 'View'}</span>
                   </motion.button>
                   <motion.button
@@ -195,7 +195,7 @@ export const ArchiveView: React.FC = () => {
                     className="p-1.5 rounded-xl text-[#25D366] bg-emerald-50 dark:bg-emerald-950/30"
                     title={isAr ? 'واتساب' : 'WhatsApp'}
                   >
-                    <i className="fa-brands fa-whatsapp text-sm"></i>
+                    <span>📲</span>
                   </motion.button>
                   <motion.button
                     whileTap={{ scale: 0.95 }}
@@ -204,7 +204,7 @@ export const ArchiveView: React.FC = () => {
                     className="p-1.5 rounded-xl text-slate-400 hover:text-rose-500"
                     title={isAr ? 'حذف' : 'Delete'}
                   >
-                    <i className="fa-solid fa-trash text-xs"></i>
+                    <span className="text-xs">🗑️</span>
                   </motion.button>
                 </div>
               </motion.div>
@@ -219,11 +219,11 @@ export const ArchiveView: React.FC = () => {
           <table className="w-full text-xs text-start">
             <thead className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase font-black text-[10px] tracking-wider">
               <tr>
-                <th className="p-4 text-start">{isAr ? 'القسم محل الفحص' : 'Audited Department'}</th>
-                <th className="p-4 text-center">{isAr ? 'درجة الامتثال' : 'Compliance Score'}</th>
-                <th className="p-4 text-start">{isAr ? 'المدقق المعتمد' : 'Auditor'}</th>
-                <th className="p-4 text-center">{isAr ? 'التاريخ والوقت' : 'Timestamp'}</th>
-                <th className="p-4 text-end">{isAr ? 'الإجراءات' : 'Actions'}</th>
+                <th className="p-4 text-start">{isAr ? '🏢 القسم محل الفحص' : '🏢 Audited Department'}</th>
+                <th className="p-4 text-center">{isAr ? '🎯 درجة الامتثال' : '🎯 Compliance Score'}</th>
+                <th className="p-4 text-start">{isAr ? '👤 المدقق المعتمد' : '👤 Auditor'}</th>
+                <th className="p-4 text-center">{isAr ? '📅 التاريخ والوقت' : '📅 Timestamp'}</th>
+                <th className="p-4 text-end">{isAr ? '⚙️ الإجراءات' : '⚙️ Actions'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800 font-bold">
@@ -238,7 +238,7 @@ export const ArchiveView: React.FC = () => {
                   >
                     <td className="p-4">
                       <div className="font-black text-slate-900 dark:text-white flex items-center gap-2">
-                        <i className="fa-solid fa-clipboard-check text-sky-500"></i>
+                        <span>🏢</span>
                         <span>{audit.dept}</span>
                       </div>
                       <div className="text-[10px] font-mono text-slate-400">REF #{audit.id}</div>
@@ -252,22 +252,22 @@ export const ArchiveView: React.FC = () => {
                             : 'bg-rose-500/10 text-rose-600 border border-rose-500/30'
                         }`}
                       >
-                        <i className={`fa-solid ${isPassed ? 'fa-circle-check' : 'fa-triangle-exclamation'}`}></i>
+                        <span>{isPassed ? '✅' : '⚠️'}</span>
                         {audit.score}
                       </span>
                     </td>
 
                     <td className="p-4">
-                      <div className="text-slate-800 dark:text-slate-200">{audit.user}</div>
+                      <div className="text-slate-800 dark:text-slate-200 font-bold">👤 {audit.user}</div>
                       <div className="text-[10px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                        <i className="fa-solid fa-signature"></i>
+                        <span>✍️</span>
                         <span>{isAr ? 'موقّع رقمياً' : 'Digitally Signed'}</span>
                       </div>
                     </td>
 
                     <td className="p-4 text-center font-mono">
-                      <div className="text-slate-900 dark:text-white">{audit.date}</div>
-                      <div className="text-[10px] text-slate-400">{audit.time}</div>
+                      <div className="text-slate-900 dark:text-white">📅 {audit.date}</div>
+                      <div className="text-[10px] text-slate-400">⏰ {audit.time}</div>
                     </td>
 
                     <td className="p-4 text-end">
@@ -280,7 +280,7 @@ export const ArchiveView: React.FC = () => {
                           className="px-2.5 py-1.5 rounded-xl bg-sky-500/10 hover:bg-sky-500 text-sky-600 hover:text-white text-[11px] font-bold transition-all"
                           title={isAr ? 'عرض التقرير' : 'View Certificate'}
                         >
-                          <i className="fa-solid fa-eye mx-1"></i>
+                          <span>👁️</span>
                           <span>{isAr ? 'معاينة' : 'View'}</span>
                         </motion.button>
 
@@ -292,7 +292,7 @@ export const ArchiveView: React.FC = () => {
                           className="p-1.5 rounded-xl text-[#25D366] hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-colors"
                           title={isAr ? 'إرسال عبر واتساب' : 'Share via WhatsApp'}
                         >
-                          <i className="fa-brands fa-whatsapp text-sm"></i>
+                          <span>📲</span>
                         </motion.button>
 
                         <motion.button
@@ -303,7 +303,7 @@ export const ArchiveView: React.FC = () => {
                           className="p-1.5 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
                           title={isAr ? 'حذف من الأرشيف' : 'Delete Record'}
                         >
-                          <i className="fa-solid fa-trash-can text-xs"></i>
+                          <span className="text-xs">🗑️</span>
                         </motion.button>
                       </div>
                     </td>
@@ -317,7 +317,7 @@ export const ArchiveView: React.FC = () => {
 
       {filteredAudits.length === 0 && (
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-12 text-center border border-dashed border-slate-300 dark:border-slate-800">
-          <i className="fa-solid fa-folder-open text-4xl text-slate-400 mb-2 block"></i>
+          <span className="text-4xl text-slate-400 mb-2 block">🗄️</span>
           <p className="text-xs font-bold text-slate-500">
             {isAr ? 'لا توجد سجلات تدقيق محفوظة في الأرشيف.' : 'No audit records found in archive.'}
           </p>
@@ -335,7 +335,7 @@ export const ArchiveView: React.FC = () => {
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-slate-800">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center text-white">
-                  <i className="fa-solid fa-certificate"></i>
+                  <span>📜</span>
                 </div>
                 <h3 className="text-base font-black">
                   {isAr ? 'شهادة توثيق جولة التدقيق' : 'Certified Audit Summary Certificate'}
@@ -353,38 +353,38 @@ export const ArchiveView: React.FC = () => {
             <div className="space-y-4">
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-bold">{isAr ? 'القسم محل التدقيق:' : 'Audited Dept:'}</span>
+                  <span className="text-slate-500 font-bold">{isAr ? '🏢 القسم محل التدقيق:' : '🏢 Audited Dept:'}</span>
                   <span className="font-black text-slate-900 dark:text-white">{selectedAuditModal.dept}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-bold">{isAr ? 'نسبة الامتثال المحققة:' : 'Compliance Score:'}</span>
+                  <span className="text-slate-500 font-bold">{isAr ? '🎯 نسبة الامتثال المحققة:' : '🎯 Compliance Score:'}</span>
                   <span className="font-mono font-black text-emerald-600 dark:text-emerald-400 text-sm">
                     {selectedAuditModal.score}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-bold">{isAr ? 'المدقق المعتمد:' : 'Certified Auditor:'}</span>
+                  <span className="text-slate-500 font-bold">{isAr ? '👤 المدقق المعتمد:' : '👤 Certified Auditor:'}</span>
                   <span className="font-bold text-slate-800 dark:text-slate-200">{selectedAuditModal.user}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-bold">{isAr ? 'الختم الزمني:' : 'Timestamp:'}</span>
+                  <span className="text-slate-500 font-bold">{isAr ? '⏰ الختم الزمني:' : '⏰ Timestamp:'}</span>
                   <span className="font-mono text-slate-600 dark:text-slate-400">
-                    {selectedAuditModal.date} - {selectedAuditModal.time}
+                    📅 {selectedAuditModal.date} - ⏰ {selectedAuditModal.time}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-bold">{isAr ? 'الرقم المرجعي:' : 'Reference ID:'}</span>
+                  <span className="text-slate-500 font-bold">{isAr ? '🆔 الرقم المرجعي:' : '🆔 Reference ID:'}</span>
                   <span className="font-mono text-slate-400">#{selectedAuditModal.id}</span>
                 </div>
               </div>
 
               <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-1">
                 <div className="flex items-center justify-center gap-1.5 text-xs font-black text-emerald-600 dark:text-emerald-400">
-                  <i className="fa-solid fa-circle-check"></i>
+                  <span>✅</span>
                   <span>{isAr ? 'تقرير موثق ومختوم رقمياً' : 'Authenticated & Digitally Signed'}</span>
                 </div>
                 <p className="text-[10px] text-slate-500">
@@ -402,7 +402,7 @@ export const ArchiveView: React.FC = () => {
                   onClick={() => handleShareAuditWhatsApp(selectedAuditModal)}
                   className="flex-1 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-1.5"
                 >
-                  <i className="fa-brands fa-whatsapp text-sm"></i>
+                  <span>📲</span>
                   <span>{isAr ? 'إرسال واتساب' : 'WhatsApp'}</span>
                 </motion.button>
 
@@ -416,7 +416,7 @@ export const ArchiveView: React.FC = () => {
                   }}
                   className="flex-1 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-1.5"
                 >
-                  <i className="fa-solid fa-print text-sm"></i>
+                  <span>🖨️</span>
                   <span>{isAr ? 'طباعة تقرير' : 'Print PDF'}</span>
                 </motion.button>
               </div>

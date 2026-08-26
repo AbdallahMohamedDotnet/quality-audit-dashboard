@@ -125,7 +125,7 @@ export const AuditFormView: React.FC = () => {
               {currentSectorObj ? (isAr ? currentSectorObj.ar : currentSectorObj.en) : currentSector}
             </span>
             <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
-              {isAr ? 'جلسة التدقيق والفحص التشغيلي' : 'Operational Audit Checklist'}
+              {isAr ? '📋 جلسة التدقيق والفحص التشغيلي' : '📋 Operational Audit Checklist'}
             </h2>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -138,7 +138,7 @@ export const AuditFormView: React.FC = () => {
         {/* Department Switcher Dropdown */}
         <div className="w-full md:w-96">
           <label className="text-[11px] font-bold text-slate-500 block mb-1">
-            {isAr ? 'القسم محل الفحص:' : 'Audited Department:'}
+            {isAr ? '🏢 القسم محل الفحص:' : '🏢 Audited Department:'}
           </label>
           <select
             value={selectedDept}
@@ -151,7 +151,7 @@ export const AuditFormView: React.FC = () => {
             className="w-full p-2.5 rounded-xl border font-bold text-xs bg-slate-50 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none focus:border-sky-500 cursor-pointer transition-colors"
           >
             <option value="">
-              {isAr ? '-- اختر القسم للبدء في التدقيق --' : '-- Select Department to Audit --'}
+              {isAr ? '🏢 -- اختر القسم للبدء في التدقيق --' : '🏢 -- Select Department to Audit --'}
             </option>
             {sectorDeptKeys.map(key => {
               const deptInfo = DEPARTMENTS[key];
@@ -176,7 +176,7 @@ export const AuditFormView: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-sky-600 flex items-center justify-center text-white font-black text-sm shadow-md shrink-0">
-                <i className="fa-solid fa-clipboard-check"></i>
+                <span className="text-base">📋</span>
               </div>
               <div className="min-w-0">
                 <span className="text-xs font-black block text-slate-900 dark:text-white truncate">
@@ -184,8 +184,8 @@ export const AuditFormView: React.FC = () => {
                 </span>
                 <span className="text-[11px] text-slate-500 font-bold">
                   {isAr
-                    ? `تم تقييم ${evaluatedCount} من ${relevantStandards.length} معياراً (${progressPercent}%)`
-                    : `Evaluated ${evaluatedCount} of ${relevantStandards.length} standards (${progressPercent}%)`}
+                    ? `📊 تم تقييم ${evaluatedCount} من ${relevantStandards.length} معياراً (${progressPercent}%)`
+                    : `📊 Evaluated ${evaluatedCount} of ${relevantStandards.length} standards (${progressPercent}%)`}
                 </span>
               </div>
             </div>
@@ -200,13 +200,13 @@ export const AuditFormView: React.FC = () => {
                 className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500 text-emerald-600 hover:text-white dark:text-emerald-400 dark:hover:text-white text-xs font-bold border border-emerald-500/30 transition-all flex items-center gap-1.5"
                 title={isAr ? 'تعيين كافة البنود كمطابقة' : 'Mark all compliant'}
               >
-                <i className="fa-solid fa-check-double"></i>
+                <span>✅</span>
                 <span className="hidden sm:inline">{isAr ? 'مطابقة الكل' : 'Pass All'}</span>
               </motion.button>
 
               <div className="flex items-center gap-2 border-l border-r px-3 border-slate-200 dark:border-slate-800">
                 <span className="text-[10px] font-bold text-slate-400 block uppercase">
-                  {isAr ? 'الدرجة:' : 'Score:'}
+                  {isAr ? '🎯 الدرجة:' : '🎯 Score:'}
                 </span>
                 <span
                   className={`text-xl sm:text-2xl font-mono font-black transition-colors ${
@@ -246,7 +246,7 @@ export const AuditFormView: React.FC = () => {
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
               }`}
             >
-              {isAr ? `الكل (${relevantStandards.length})` : `All (${relevantStandards.length})`}
+              {isAr ? `📑 الكل (${relevantStandards.length})` : `📑 All (${relevantStandards.length})`}
             </button>
             <button
               type="button"
@@ -257,8 +257,7 @@ export const AuditFormView: React.FC = () => {
                   : 'bg-slate-100 dark:bg-slate-800 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30'
               }`}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-              <span>{isAr ? `الحيود (${deviationCount})` : `Deviations (${deviationCount})`}</span>
+              <span>{isAr ? `⚠️ الحيود (${deviationCount})` : `⚠️ Deviations (${deviationCount})`}</span>
             </button>
             <button
               type="button"
@@ -269,8 +268,7 @@ export const AuditFormView: React.FC = () => {
                   : 'bg-slate-100 dark:bg-slate-800 text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/30'
               }`}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              <span>{isAr ? `المطابق (${compliantCount})` : `Compliant (${compliantCount})`}</span>
+              <span>{isAr ? `✅ المطابق (${compliantCount})` : `✅ Compliant (${compliantCount})`}</span>
             </button>
             <button
               type="button"
@@ -281,7 +279,7 @@ export const AuditFormView: React.FC = () => {
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700'
               }`}
             >
-              <span>{isAr ? `المتبقي (${relevantStandards.length - evaluatedCount})` : `Pending (${relevantStandards.length - evaluatedCount})`}</span>
+              <span>{isAr ? `⏳ المتبقي (${relevantStandards.length - evaluatedCount})` : `⏳ Pending (${relevantStandards.length - evaluatedCount})`}</span>
             </button>
           </div>
         </motion.div>
@@ -290,9 +288,9 @@ export const AuditFormView: React.FC = () => {
       {/* Standards List */}
       {!selectedDept ? (
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-12 text-center border border-dashed border-slate-300 dark:border-slate-800 space-y-3">
-          <i className="fa-solid fa-list-check text-4xl text-slate-400 dark:text-slate-600 block animate-bounce"></i>
+          <span className="text-4xl block animate-bounce">📋</span>
           <h3 className="text-base font-black text-slate-700 dark:text-slate-300">
-            {isAr ? 'اختر القسم للبدء في استعراض المعايير' : 'Select a department to load standards'}
+            {isAr ? '🏢 اختر القسم للبدء في استعراض المعايير' : '🏢 Select a department to load standards'}
           </h3>
           <p className="text-xs text-slate-500 max-w-md mx-auto">
             {isAr
@@ -304,8 +302,8 @@ export const AuditFormView: React.FC = () => {
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 text-center border border-slate-200 dark:border-slate-800">
           <p className="text-xs font-bold text-slate-500">
             {isAr
-              ? 'لا توجد بنود معايير مطابقة للتصفية الحالية.'
-              : 'No standards match the selected filter.'}
+              ? '🔍 لا توجد بنود معايير مطابقة للتصفية الحالية.'
+              : '🔍 No standards match the selected filter.'}
           </p>
         </div>
       ) : (
@@ -355,7 +353,7 @@ export const AuditFormView: React.FC = () => {
 
                       {std.autoAction && (
                         <div className="text-[11px] text-amber-600 dark:text-amber-400 font-bold flex items-center gap-1.5">
-                          <i className="fa-solid fa-lightbulb"></i>
+                          <span>💡</span>
                           <span>
                             {isAr ? 'الإجراء المقترح:' : 'Recommended Action:'}{' '}
                             {isAr ? std.autoAction.ar : std.autoAction.en}
@@ -367,7 +365,7 @@ export const AuditFormView: React.FC = () => {
                     {/* Baseline info badge */}
                     <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shrink-0 text-center min-w-[120px]">
                       <span className="text-[10px] font-bold text-slate-500 block uppercase">
-                        {isAr ? 'الحد القياسي' : 'Baseline Limit'}
+                        {isAr ? '📏 الحد القياسي' : '📏 Baseline Limit'}
                       </span>
                       <span className="text-xs font-mono font-black text-slate-800 dark:text-slate-200">
                         {std.operator} {std.baseline} {std.unit}
@@ -414,11 +412,7 @@ export const AuditFormView: React.FC = () => {
                               : 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
                           }`}
                         >
-                          <i
-                            className={`fa-solid ${
-                              isDeviation ? 'fa-triangle-exclamation' : 'fa-check'
-                            }`}
-                          />
+                          <span>{isDeviation ? '⚠️' : '✅'}</span>
                           <span>
                             {isDeviation
                               ? isAr
@@ -442,7 +436,7 @@ export const AuditFormView: React.FC = () => {
                           onClick={() => setPreviewPhoto(answer.photo)}
                           className="px-2.5 py-1.5 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 font-bold text-xs hover:bg-sky-500 hover:text-white transition-all flex items-center gap-1"
                         >
-                          <i className="fa-solid fa-magnifying-glass-plus"></i>
+                          <span>🔍</span>
                           <span>{isAr ? 'تكبير الصورة' : 'Zoom'}</span>
                         </motion.button>
                       )}
@@ -467,7 +461,7 @@ export const AuditFormView: React.FC = () => {
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-xs font-black text-rose-600 dark:text-rose-400">
-                            <i className="fa-solid fa-wrench"></i>
+                            <span>🔧</span>
                             <span>
                               {isAr
                                 ? 'تحليل السبب الجذري والإجراء التصحيحي الفوري (RCA / CAPA)'
@@ -482,7 +476,7 @@ export const AuditFormView: React.FC = () => {
                             onClick={() => handleQuickCreateNcrFromItem(std, answer)}
                             className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold shadow-sm transition-all flex items-center gap-1"
                           >
-                            <i className="fa-solid fa-triangle-exclamation"></i>
+                            <span>⚠️</span>
                             <span>{isAr ? 'قيد مذكرة NCR رسمية' : 'Create NCR Ticket'}</span>
                           </motion.button>
                         </div>
@@ -512,8 +506,8 @@ export const AuditFormView: React.FC = () => {
                           />
                           <span>
                             {isAr
-                              ? 'تم التحقق من تنفيذ الإجراء التصحيحي واعتماده'
-                              : 'CAPA execution verified and approved by lead auditor'}
+                              ? '✅ تم التحقق من تنفيذ الإجراء التصحيحي واعتماده'
+                              : '✅ CAPA execution verified and approved by lead auditor'}
                           </span>
                         </label>
                       </motion.div>
@@ -534,10 +528,12 @@ export const AuditFormView: React.FC = () => {
 
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-200 dark:border-slate-800">
                 <div className="text-xs text-slate-500 font-bold text-center sm:text-start">
-                  <i className="fa-solid fa-stamp text-sky-500 mr-1 ml-1"></i>
-                  {isAr
-                    ? 'سيتم ختم التقرير آلياً بالتوقيت الزمني وإدراجه في الأرشيف المعتمد'
-                    : 'Report will be timestamped and permanently archived upon signing'}
+                  <span className="text-sky-500 mr-1 ml-1">🛡️</span>
+                  <span>
+                    {isAr
+                      ? 'سيتم ختم التقرير آلياً بالتوقيت الزمني وإدراجه في الأرشيف المعتمد'
+                      : 'Report will be timestamped and permanently archived upon signing'}
+                  </span>
                 </div>
 
                 <motion.button
@@ -546,7 +542,7 @@ export const AuditFormView: React.FC = () => {
                   type="submit"
                   className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-black text-sm shadow-xl shadow-sky-600/30 transition-all flex items-center justify-center gap-2"
                 >
-                  <i className="fa-solid fa-file-signature"></i>
+                  <span className="text-base">✍️</span>
                   <span>{isAr ? 'اعتماد التقرير وتوثيق الأرشيف' : 'Finalize & Authenticate Audit'}</span>
                 </motion.button>
               </div>

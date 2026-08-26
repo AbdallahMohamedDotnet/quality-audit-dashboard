@@ -44,7 +44,7 @@ export const PrintReportTemplate: React.FC = () => {
           />
           <div>
             <h1 className="text-xl font-black tracking-tight">
-              {isAr ? 'تقرير التدقيق والجودة الرقمي المعتمد' : 'Certified Digital Quality Audit Report'}
+              {isAr ? '📋 تقرير التدقيق والجودة الرقمي المعتمد' : '📋 Certified Digital Quality Audit Report'}
             </h1>
             <p className="text-xs text-slate-600 font-bold">
               {isAr
@@ -56,9 +56,9 @@ export const PrintReportTemplate: React.FC = () => {
 
         <div className="text-end text-xs space-y-0.5" suppressHydrationWarning>
           <div className="font-bold" suppressHydrationWarning>
-            {isAr ? 'التاريخ:' : 'Date:'} {printClocks.gregorianDate}
+            {isAr ? '📅 التاريخ:' : '📅 Date:'} {printClocks.gregorianDate}
           </div>
-          <div className="font-mono text-[11px] text-slate-600" suppressHydrationWarning>{printClocks.time}</div>
+          <div className="font-mono text-[11px] text-slate-600" suppressHydrationWarning>⏰ {printClocks.time}</div>
           <div className="font-mono text-[10px] text-slate-500" suppressHydrationWarning>REF #AUDIT-CERT</div>
         </div>
       </div>
@@ -67,7 +67,7 @@ export const PrintReportTemplate: React.FC = () => {
       <div className="grid grid-cols-3 gap-3 p-4 rounded-xl border border-slate-300 bg-slate-50 text-xs">
         <div>
           <span className="text-[10px] text-slate-500 font-bold block uppercase">
-            {isAr ? 'القطاع التشغيلي' : 'Sector'}
+            {isAr ? '🏭 القطاع التشغيلي' : '🏭 Sector'}
           </span>
           <span className="font-black">
             {currentSectorObj ? (isAr ? currentSectorObj.ar : currentSectorObj.en) : currentSector}
@@ -76,7 +76,7 @@ export const PrintReportTemplate: React.FC = () => {
 
         <div>
           <span className="text-[10px] text-slate-500 font-bold block uppercase">
-            {isAr ? 'القسم المفحوص' : 'Department'}
+            {isAr ? '🏢 القسم المفحوص' : '🏢 Department'}
           </span>
           <span className="font-black">
             {selectedDept
@@ -89,7 +89,7 @@ export const PrintReportTemplate: React.FC = () => {
 
         <div>
           <span className="text-[10px] text-slate-500 font-bold block uppercase">
-            {isAr ? 'المدقق المعتمد' : 'Lead Auditor'}
+            {isAr ? '🎖️ المدقق المعتمد' : '🎖️ Lead Auditor'}
           </span>
           <span className="font-black">{currentRole}</span>
         </div>
@@ -99,28 +99,28 @@ export const PrintReportTemplate: React.FC = () => {
       <div className="grid grid-cols-4 gap-3 text-center">
         <div className="p-3 border rounded-xl bg-slate-50">
           <span className="text-[10px] text-slate-500 font-bold block">
-            {isAr ? 'نسبة الامتثال' : 'Compliance'}
+            {isAr ? '🎯 نسبة الامتثال' : '🎯 Compliance'}
           </span>
           <span className="text-lg font-black font-mono">{metrics.averageScore}%</span>
         </div>
 
         <div className="p-3 border rounded-xl bg-slate-50">
           <span className="text-[10px] text-slate-500 font-bold block">
-            {isAr ? 'المعايير المفحوصة' : 'Standards Evaluated'}
+            {isAr ? '📜 المعايير المفحوصة' : '📜 Standards Evaluated'}
           </span>
           <span className="text-lg font-black font-mono">{relevantStandards.length}</span>
         </div>
 
         <div className="p-3 border rounded-xl bg-slate-50">
           <span className="text-[10px] text-slate-500 font-bold block">
-            {isAr ? 'مذكرات NCR المفتوحة' : 'Open NCRs'}
+            {isAr ? '⚠️ مذكرات NCR المفتوحة' : '⚠️ Open NCRs'}
           </span>
           <span className="text-lg font-black font-mono">{metrics.openNcrs}</span>
         </div>
 
         <div className="p-3 border rounded-xl bg-slate-50">
           <span className="text-[10px] text-slate-500 font-bold block">
-            {isAr ? 'الوفورات التقديرية' : 'Estimated Savings'}
+            {isAr ? '💰 الوفورات التقديرية' : '💰 Estimated Savings'}
           </span>
           <span className="text-lg font-black font-mono">${metrics.estimatedSavings}</span>
         </div>
@@ -129,18 +129,18 @@ export const PrintReportTemplate: React.FC = () => {
       {/* Standards Evaluation Checklist Table */}
       <div className="space-y-2">
         <h3 className="text-sm font-black border-b pb-1">
-          {isAr ? 'بنود الفحص والمعايير المعتمدة' : 'Evaluated Standards & Checklist Readings'}
+          {isAr ? '📋 بنود الفحص والمعايير المعتمدة' : '📋 Evaluated Standards & Checklist Readings'}
         </h3>
 
         <table className="w-full text-xs border border-slate-300">
           <thead className="bg-slate-100 border-b border-slate-300 font-black text-[10px]">
             <tr>
               <th className="p-2 text-start">#</th>
-              <th className="p-2 text-start">{isAr ? 'المعيار / الكود' : 'Standard / Code'}</th>
-              <th className="p-2 text-start">{isAr ? 'الوصف' : 'Description'}</th>
-              <th className="p-2 text-center">{isAr ? 'الحد القياسي' : 'Baseline'}</th>
-              <th className="p-2 text-center">{isAr ? 'القراءة الفعلية' : 'Actual'}</th>
-              <th className="p-2 text-center">{isAr ? 'الحالة' : 'Result'}</th>
+              <th className="p-2 text-start">{isAr ? '📜 المعيار / الكود' : '📜 Standard / Code'}</th>
+              <th className="p-2 text-start">{isAr ? '📝 الوصف' : '📝 Description'}</th>
+              <th className="p-2 text-center">{isAr ? '📏 الحد القياسي' : '📏 Baseline'}</th>
+              <th className="p-2 text-center">{isAr ? '⚡ القراءة الفعلية' : '⚡ Actual'}</th>
+              <th className="p-2 text-center">{isAr ? '🚦 الحالة' : '🚦 Result'}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200">
@@ -168,7 +168,7 @@ export const PrintReportTemplate: React.FC = () => {
                         isDev ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'
                       }`}
                     >
-                      {isDev ? (isAr ? 'حيود' : 'Deviation') : isAr ? 'مطابق' : 'Compliant'}
+                      {isDev ? (isAr ? '⚠️ حيود' : '⚠️ Deviation') : isAr ? '✅ مطابق' : '✅ Compliant'}
                     </span>
                   </td>
                 </tr>
@@ -181,7 +181,7 @@ export const PrintReportTemplate: React.FC = () => {
       {/* Signature and Seal Section */}
       <div className="pt-6 border-t-2 border-slate-900 flex items-center justify-between text-xs print-break-inside-avoid">
         <div className="space-y-1">
-          <p className="font-bold">{isAr ? 'اعتماد مدقق الجودة والسلامة:' : 'Lead Auditor Approval:'}</p>
+          <p className="font-bold">{isAr ? '✍️ اعتماد مدقق الجودة والسلامة:' : '✍️ Lead Auditor Approval:'}</p>
           <div className="w-48 h-16 border border-slate-300 rounded flex items-center justify-center text-slate-400 font-mono text-[10px]">
             [ Digitally Authenticated Seal ]
           </div>
@@ -191,7 +191,7 @@ export const PrintReportTemplate: React.FC = () => {
         </div>
 
         <div className="space-y-1 text-end">
-          <p className="font-bold">{isAr ? 'ختم الإدارة العامة للجودة:' : 'Corporate QA Stamp:'}</p>
+          <p className="font-bold">{isAr ? '🏛️ ختم الإدارة العامة للجودة:' : '🏛️ Corporate QA Stamp:'}</p>
           <div className="w-48 h-16 border border-slate-300 rounded flex items-center justify-center text-slate-400 font-mono text-[10px]">
             [ Official Quality Seal ]
           </div>
