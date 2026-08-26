@@ -16,7 +16,7 @@ export const MainLayoutShell: React.FC<{ children: ReactNode }> = ({ children })
   return (
     <div
       dir={dir}
-      className={`h-screen flex flex-col font-sans transition-colors duration-300 overflow-hidden ${
+      className={`h-[100dvh] min-h-[100dvh] max-h-[100dvh] flex flex-col font-sans overflow-hidden ${
         isDark ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'
       }`}
     >
@@ -31,11 +31,9 @@ export const MainLayoutShell: React.FC<{ children: ReactNode }> = ({ children })
           onClose={() => setIsMobileMenuOpen(false)}
         />
 
-
-
         {/* Scrollable Main Content & Footer Area */}
-        <div className="flex-1 min-w-0 flex flex-col h-full overflow-y-auto overflow-x-hidden no-print">
-          <main className="flex-1 p-3 sm:p-4 md:p-5 lg:p-6">
+        <div className="flex-1 min-w-0 flex flex-col h-full overflow-y-auto overflow-x-hidden no-print overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch]">
+          <main className="flex-1 p-2.5 sm:p-4 md:p-5 lg:p-6 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
             <div className="max-w-[1440px] w-full mx-auto">
               {children}
             </div>

@@ -8,6 +8,7 @@ import { getRiskLevel } from '../../utils/calculations';
 import { StatCard } from '../common/StatCard';
 import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
 import { ScrollReveal } from '../common/ScrollReveal';
+import { formatLiveClocks } from '../../utils/date';
 
 export const RecallView: React.FC = () => {
   const {
@@ -23,7 +24,6 @@ export const RecallView: React.FC = () => {
     dispatchEmail,
     printReport,
     showToast,
-    clocks,
   } = useAudit();
 
   const currentSectorObj = SECTORS.find(s => s.val === currentSector);
@@ -41,10 +41,11 @@ export const RecallView: React.FC = () => {
     : recallRisk.item;
 
   const handleShareRecallWhatsApp = () => {
+    const nowClocks = formatLiveClocks(new Date(), isAr);
     const sectorName = currentSectorObj ? (isAr ? currentSectorObj.ar : currentSectorObj.en) : currentSector;
     const msg = isAr
-      ? `*🚨 إنذار استدعاء وسحب فوري (URGENT RECALL & QUARANTINE)*\nالقطاع: ${sectorName}\nالتاريخ والتوقيت: ${clocks.gregorianDate} - ${clocks.time}\n------------------------\n• المادة/المعدة المستهدفة: ${selectedItemName}\n• مؤشر الخطورة (RPN): ${rpnScore} / 25 [${riskInfo.labelAr}]\n• معامل الشدة (Severity): ${recallRisk.severity} / 5\n• معامل الاحتمالية (Probability): ${recallRisk.probability} / 5\n------------------------\n⚠️ الإجراء المطلوب: تفعيل الحظر الفوري، عزل الدفعة بالمستودع، ووقف التوزيع لحين استكمال التحقيق الفني.\n------------------------\nصادر عن منصة التدقيق وضمان الجودة الرقمية.`
-      : `*🚨 IMMEDIATE RECALL & QUARANTINE PROTOCOL*\nSector: ${sectorName}\nTimestamp: ${clocks.gregorianDate} - ${clocks.time}\n------------------------\n• Suspect Item/Equipment: ${selectedItemName}\n• Risk Priority Index (RPN): ${rpnScore} / 25 [${riskInfo.labelEn}]\n• Severity: ${recallRisk.severity} / 5\n• Probability: ${recallRisk.probability} / 5\n------------------------\n⚠️ Required Action: Lock inventory immediately, initiate quarantine zone, and pause delivery.\n------------------------\nCertified Digital Quality Platform.`;
+      ? `*🚨 إنذار استدعاء وسحب فوري (URGENT RECALL & QUARANTINE)*\nالقطاع: ${sectorName}\nالتاريخ والتوقيت: ${nowClocks.gregorianDate} - ${nowClocks.time}\n------------------------\n• المادة/المعدة المستهدفة: ${selectedItemName}\n• مؤشر الخطورة (RPN): ${rpnScore} / 25 [${riskInfo.labelAr}]\n• معامل الشدة (Severity): ${recallRisk.severity} / 5\n• معامل الاحتمالية (Probability): ${recallRisk.probability} / 5\n------------------------\n⚠️ الإجراء المطلوب: تفعيل الحظر الفوري، عزل الدفعة بالمستودع، ووقف التوزيع لحين استكمال التحقيق الفني.\n------------------------\nصادر عن منصة التدقيق وضمان الجودة الرقمية.`
+      : `*🚨 IMMEDIATE RECALL & QUARANTINE PROTOCOL*\nSector: ${sectorName}\nTimestamp: ${nowClocks.gregorianDate} - ${nowClocks.time}\n------------------------\n• Suspect Item/Equipment: ${selectedItemName}\n• Risk Priority Index (RPN): ${rpnScore} / 25 [${riskInfo.labelEn}]\n• Severity: ${recallRisk.severity} / 5\n• Probability: ${recallRisk.probability} / 5\n------------------------\n⚠️ Required Action: Lock inventory immediately, initiate quarantine zone, and pause delivery.\n------------------------\nCertified Digital Quality Platform.`;
 
     dispatchWhatsApp(msg);
   };

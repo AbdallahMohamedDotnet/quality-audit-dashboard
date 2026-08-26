@@ -49,7 +49,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
       )}
 
       {/* Desktop / Tablet Table View (>= md) */}
-      <div className={`${mobileCards ? 'hidden md:block' : 'block'} overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm transition-colors`}>
+      <div className={`${mobileCards ? 'hidden md:block' : 'block'} overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm transition-colors [touch-action:pan-x] [-webkit-overflow-scrolling:touch]`}>
         <table className={`w-full text-start text-xs border-collapse ${tableClassName}`}>
           {headerRow && (
             <thead className="bg-slate-100/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-800 uppercase tracking-wider text-[11px]">

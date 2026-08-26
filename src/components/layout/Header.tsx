@@ -6,6 +6,51 @@ import { motion } from 'framer-motion';
 import { useAudit } from '../../context/AuditContext';
 import { SECTORS } from '../../data';
 import { useScrollProgress } from '../../hooks/useScrollProgress';
+import { formatLiveClocks, LiveClocks } from '../../utils/date';
+
+/** Isolated Clock Pill that ticks locally every second without re-rendering parent components */
+const HeaderTimePill: React.FC<{ isAr: boolean; isDark: boolean }> = React.memo(({ isAr, isDark }) => {
+  const [clocks, setClocks] = React.useState<LiveClocks>(() => formatLiveClocks(new Date(), isAr));
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+    const interval = setInterval(() => {
+      setClocks(formatLiveClocks(new Date(), isAr));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isAr]);
+
+  return (
+    <div
+      suppressHydrationWarning
+      className={`hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border
+        text-[10px] font-semibold shrink-0 transition-colors ${
+          isDark
+            ? 'bg-slate-900 border-slate-700/60 text-slate-400'
+            : 'bg-slate-50 border-slate-200 text-slate-500'
+        }`}
+    >
+      <span suppressHydrationWarning className="flex items-center gap-1 text-sky-500 font-mono">
+        <i className="fa-regular fa-clock text-[9px]" />
+        {mounted ? clocks.time : ''}
+      </span>
+      <span className="opacity-25">|</span>
+      <span suppressHydrationWarning>
+        {mounted ? clocks.gregorianDate : ''}
+      </span>
+      <span
+        suppressHydrationWarning
+        className="hidden lg:flex items-center gap-1 text-emerald-500"
+      >
+        <span className="opacity-25 mx-0.5">|</span>
+        <i className="fa-solid fa-moon text-[9px]" />
+        {mounted ? clocks.hijriDate : ''}
+      </span>
+    </div>
+  );
+});
+HeaderTimePill.displayName = 'HeaderTimePill';
 
 export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobileMenu }) => {
   const router = useRouter();
@@ -14,7 +59,6 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
     isDark,
     toggleTheme,
     setLanguage,
-    clocks,
     isLoggedIn,
     currentSector,
     logoSvg,
@@ -158,32 +202,7 @@ export const Header: React.FC<{ onOpenMobileMenu?: () => void }> = ({ onOpenMobi
         <div className="flex items-center gap-2 shrink-0">
 
           {/* Date / Time pill — hidden below md */}
-          <div
-            suppressHydrationWarning
-            className={`hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border
-              text-[10px] font-semibold shrink-0 transition-colors ${
-                isDark
-                  ? 'bg-slate-900 border-slate-700/60 text-slate-400'
-                  : 'bg-slate-50 border-slate-200 text-slate-500'
-              }`}
-          >
-            <span suppressHydrationWarning className="flex items-center gap-1 text-sky-500 font-mono">
-              <i className="fa-regular fa-clock text-[9px]" />
-              {mounted ? clocks.time : ''}
-            </span>
-            <span className="opacity-25">|</span>
-            <span suppressHydrationWarning>
-              {mounted ? clocks.gregorianDate : ''}
-            </span>
-            <span
-              suppressHydrationWarning
-              className="hidden lg:flex items-center gap-1 text-emerald-500"
-            >
-              <span className="opacity-25 mx-0.5">|</span>
-              <i className="fa-solid fa-moon text-[9px]" />
-              {mounted ? clocks.hijriDate : ''}
-            </span>
-          </div>
+          <HeaderTimePill isAr={isAr} isDark={isDark} />
 
           {/* Divider */}
           <div className={divider} />

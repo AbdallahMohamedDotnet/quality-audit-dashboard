@@ -397,13 +397,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className={`fixed top-0 bottom-0 z-50 w-[280px] max-w-[85vw] shrink-0 no-print ${
+              className={`fixed top-0 bottom-0 z-50 w-[290px] max-w-[86vw] shrink-0 no-print transform-gpu ${
                 isAr ? 'right-0' : 'left-0'
               } ${
                 isDark
                   ? 'bg-slate-950 border-slate-800'
                   : 'bg-white border-slate-200'
-              } border-e shadow-2xl flex flex-col h-[100dvh]`}
+              } border-e shadow-2xl flex flex-col h-[100dvh] pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]`}
             >
               {navContent}
               {statusFooter}

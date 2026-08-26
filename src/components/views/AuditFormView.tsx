@@ -327,7 +327,7 @@ export const AuditFormView: React.FC = () => {
                 <motion.div
                   key={std.id}
                   variants={staggerChild}
-                  className={`bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border-2 transition-all duration-300 shadow-sm ${
+                  className={`bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border-2 transition-all duration-300 shadow-sm content-visibility-auto transform-gpu ${
                     hasAnswer
                       ? isDeviation
                         ? 'border-rose-500/60 bg-rose-500/5 shadow-rose-500/5'
@@ -381,6 +381,7 @@ export const AuditFormView: React.FC = () => {
                       <div className="relative flex-1 sm:max-w-xs">
                         <input
                           type="text"
+                          inputMode="decimal"
                           value={answer.actual}
                           onChange={e =>
                             setAuditAnswerValue(std.id, e.target.value, std.baseline, std.operator)

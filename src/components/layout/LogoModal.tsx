@@ -33,7 +33,7 @@ export const LogoModal: React.FC = () => {
   return (
     <AnimatedModal isOpen={isLogoModalOpen} onClose={() => setIsLogoModalOpen(false)} className="max-w-lg">
       <div
-        className={`w-full rounded-3xl p-5 sm:p-6 shadow-2xl border transition-colors max-h-[90vh] overflow-y-auto ${
+        className={`w-full rounded-3xl p-5 sm:p-6 shadow-2xl border transition-colors max-h-[85dvh] overflow-y-auto overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch] ${
           isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
         }`}
       >
