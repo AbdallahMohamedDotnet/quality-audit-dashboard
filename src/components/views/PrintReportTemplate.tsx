@@ -18,10 +18,21 @@ export const PrintReportTemplate: React.FC = () => {
     ncrs,
   } = useAudit();
 
-  const [printClocks, setPrintClocks] = React.useState(() => formatLiveClocks(new Date(), isAr));
+  const [mounted, setMounted] = React.useState(false);
+  const [printClocks, setPrintClocks] = React.useState<ReturnType<typeof formatLiveClocks> | null>(null);
+  const [isoTimestamp, setIsoTimestamp] = React.useState<string>('');
 
   React.useEffect(() => {
-    setPrintClocks(formatLiveClocks(new Date(), isAr));
+    setMounted(true);
+    const updateTime = () => {
+      const now = new Date();
+      setPrintClocks(formatLiveClocks(now, isAr));
+      setIsoTimestamp(now.toISOString());
+    };
+    updateTime();
+
+    window.addEventListener('beforeprint', updateTime);
+    return () => window.removeEventListener('beforeprint', updateTime);
   }, [isAr]);
 
   const currentSectorObj = SECTORS.find(s => s.val === currentSector);
@@ -56,10 +67,14 @@ export const PrintReportTemplate: React.FC = () => {
 
         <div className="text-end text-xs space-y-0.5" suppressHydrationWarning>
           <div className="font-bold" suppressHydrationWarning>
-            {isAr ? '📅 التاريخ:' : '📅 Date:'} {printClocks.gregorianDate}
+            {isAr ? '📅 التاريخ:' : '📅 Date:'} {mounted && printClocks ? printClocks.gregorianDate : ''}
           </div>
-          <div className="font-mono text-[11px] text-slate-600" suppressHydrationWarning>⏰ {printClocks.time}</div>
-          <div className="font-mono text-[10px] text-slate-500" suppressHydrationWarning>REF #AUDIT-CERT</div>
+          <div className="font-mono text-[11px] text-slate-600" suppressHydrationWarning>
+            ⏰ {mounted && printClocks ? printClocks.time : ''}
+          </div>
+          <div className="font-mono text-[10px] text-slate-500" suppressHydrationWarning>
+            REF #AUDIT-CERT
+          </div>
         </div>
       </div>
 
@@ -185,8 +200,8 @@ export const PrintReportTemplate: React.FC = () => {
           <div className="w-48 h-16 border border-slate-300 rounded flex items-center justify-center text-slate-400 font-mono text-[10px]">
             [ Digitally Authenticated Seal ]
           </div>
-          <p className="text-[10px] text-slate-500 font-mono">
-            TIMESTAMP: {new Date().toISOString()}
+          <p className="text-[10px] text-slate-500 font-mono" suppressHydrationWarning>
+            {mounted && isoTimestamp ? `TIMESTAMP: ${isoTimestamp}` : 'TIMESTAMP: --'}
           </p>
         </div>
 
