@@ -89,7 +89,7 @@ interface AuditContextType {
   setAuditAnswerValue: (standardId: string, actual: string, baseline: number | string, operator: string) => void;
   setAuditAnswerRca: (standardId: string, rca: string) => void;
   toggleAuditCapaApproved: (standardId: string) => void;
-  attachPhotoEvidence: (standardId: string, file: File) => void;
+  attachPhotoEvidence: (standardId: string, photo: File | string) => void;
   removePhotoEvidence: (standardId: string) => void;
   finalizeAuditSession: (hasSignature: boolean) => boolean;
   clearAuditSession: () => void;
@@ -676,9 +676,8 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, []);
 
   const attachPhotoEvidence = useCallback(
-    (standardId: string, file: File) => {
-      const reader = new FileReader();
-      reader.onload = () => {
+    (standardId: string, photo: File | string) => {
+      if (typeof photo === 'string') {
         setAuditAnswers(prev => ({
           ...prev,
           [standardId]: {
@@ -687,15 +686,34 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             isDeviation: prev[standardId]?.isDeviation || false,
             rca: prev[standardId]?.rca || '',
             capaApproved: prev[standardId]?.capaApproved || false,
-            photo: reader.result as string,
+            photo,
           },
         }));
         showToast(
-          isAr ? 'تم إرفاق صورة التوثيق بنجاح' : 'Evidence photo attached successfully',
+          isAr ? 'تم توثيق صورة المعاينة بنجاح' : 'Evidence photo attached successfully',
           'success'
         );
-      };
-      reader.readAsDataURL(file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setAuditAnswers(prev => ({
+            ...prev,
+            [standardId]: {
+              ...prev[standardId],
+              actual: prev[standardId]?.actual || '',
+              isDeviation: prev[standardId]?.isDeviation || false,
+              rca: prev[standardId]?.rca || '',
+              capaApproved: prev[standardId]?.capaApproved || false,
+              photo: reader.result as string,
+            },
+          }));
+          showToast(
+            isAr ? 'تم إرفاق صورة التوثيق بنجاح' : 'Evidence photo attached successfully',
+            'success'
+          );
+        };
+        reader.readAsDataURL(photo);
+      }
     },
     [isAr, showToast]
   );

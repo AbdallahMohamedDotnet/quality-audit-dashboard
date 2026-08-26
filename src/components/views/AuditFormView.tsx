@@ -426,25 +426,15 @@ export const AuditFormView: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Photo Evidence Uploader */}
+                    {/* Photo Evidence Capture with Live Camera */}
                     <div className="flex items-center gap-2">
-                      {answer.photo && (
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          type="button"
-                          onClick={() => setPreviewPhoto(answer.photo)}
-                          className="px-2.5 py-1.5 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 font-bold text-xs hover:bg-sky-500 hover:text-white transition-all flex items-center gap-1"
-                        >
-                          <span>🔍</span>
-                          <span>{isAr ? 'تكبير الصورة' : 'Zoom'}</span>
-                        </motion.button>
-                      )}
-
                       <PhotoUploader
                         photo={answer.photo}
-                        onUpload={file => attachPhotoEvidence(std.id, file)}
+                        onUpload={photo => attachPhotoEvidence(std.id, photo)}
                         onRemove={() => removePhotoEvidence(std.id)}
+                        standardTitle={isAr ? std.desc.ar : std.desc.en}
+                        standardCode={`${std.standard} - ${std.code}`}
+                        onPreview={url => setPreviewPhoto(url)}
                       />
                     </div>
                   </div>
