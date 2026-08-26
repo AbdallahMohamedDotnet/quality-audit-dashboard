@@ -23,6 +23,7 @@ interface NavItem {
   id: TabKey;
   labelAr: string;
   labelEn: string;
+  emoji: string;
   icon: string;
   badge?: number | string;
   badgeColor?: string;
@@ -63,24 +64,28 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           id: 'dashboard',
           labelAr: 'لوحة التحكم الرئيسية',
           labelEn: 'Executive Dashboard',
+          emoji: '📊',
           icon: 'fa-gauge-high',
         },
         {
           id: 'audit_form',
           labelAr: 'بدء التدقيق والفحص الميداني',
           labelEn: 'Conduct Audit Session',
+          emoji: '📋',
           icon: 'fa-clipboard-check',
         },
         {
           id: 'kpi',
           labelAr: 'دليل المعايير والـ KPIs',
           labelEn: 'Standards & KPIs',
+          emoji: '🎯',
           icon: 'fa-list-check',
         },
         {
           id: 'ncr',
           labelAr: 'إدارة مذكرات الحيود (NCR)',
           labelEn: 'NCR Incident Manager',
+          emoji: '⚠️',
           icon: 'fa-triangle-exclamation',
           badge: openNcrsCount > 0 ? openNcrsCount : undefined,
           badgeColor: 'bg-rose-500 text-white',
@@ -89,6 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           id: 'capa',
           labelAr: 'سجل إجراءات CAPA',
           labelEn: 'CAPA Master Tracker',
+          emoji: '🔄',
           icon: 'fa-arrows-spin',
           badge: activeCapasCount > 0 ? activeCapasCount : undefined,
           badgeColor: 'bg-rose-600 text-white',
@@ -97,6 +103,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           id: 'suppliers',
           labelAr: 'سجل الموردين المعتمدين (AVL)',
           labelEn: 'Suppliers & Vendor AVL',
+          emoji: '🚚',
           icon: 'fa-truck-field',
           badge: suppliers.length > 0 ? suppliers.length : undefined,
           badgeColor: 'bg-indigo-600 text-white',
@@ -105,6 +112,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           id: 'training',
           labelAr: 'كفاءة وتدريب الطاقم',
           labelEn: 'Staff Training & Pass',
+          emoji: '🎓',
           icon: 'fa-graduation-cap',
           badge: trainings.length > 0 ? trainings.length : undefined,
           badgeColor: 'bg-emerald-600 text-white',
@@ -113,6 +121,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           id: 'calibration',
           labelAr: 'معايرة الأجهزة والمجسات',
           labelEn: 'Equipment Calibration',
+          emoji: '⚖️',
           icon: 'fa-scale-balanced',
           badge: dueCalibrationCount > 0 ? dueCalibrationCount : undefined,
           badgeColor: 'bg-amber-600 text-white',
@@ -127,30 +136,35 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           id: 'iot',
           labelAr: 'المراقبة اللحظية للمجسات',
           labelEn: 'Live IoT Telemetry',
+          emoji: '📡',
           icon: 'fa-tower-broadcast',
         },
         {
           id: 'haccp',
           labelAr: 'مسار الهاسب والـ CCPs',
           labelEn: 'HACCP & CCP Flow',
+          emoji: '🛡️',
           icon: 'fa-shield-halved',
         },
         {
           id: 'recall',
           labelAr: 'استدعاء وعزل المنتجات',
           labelEn: 'Recall & Quarantine',
+          emoji: '📦',
           icon: 'fa-boxes-packing',
         },
         {
           id: 'ai',
           labelAr: 'محلل الشكاوى بالذكاء الاصطناعي',
           labelEn: 'AI Complaint & CAPA',
+          emoji: '🤖',
           icon: 'fa-brain',
         },
         {
           id: 'visitors',
           labelAr: 'سجل الزوار وتصاريح الـ PPE',
           labelEn: 'Visitor Pass & PPE',
+          emoji: '🪪',
           icon: 'fa-id-card-clip',
           badge: activeVisitorsCount > 0 ? activeVisitorsCount : undefined,
           badgeColor: 'bg-emerald-500 text-white',
@@ -165,12 +179,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           id: 'sustainability',
           labelAr: 'الاستدامة وخفض الكربون (ESG)',
           labelEn: 'ESG & Carbon Footprint',
+          emoji: '🌱',
           icon: 'fa-leaf',
         },
         {
           id: 'emergency',
           labelAr: 'إدارة الطوارئ والأزمات الفورية',
           labelEn: 'Emergency Crisis Action',
+          emoji: '🚨',
           icon: 'fa-bell-concierge',
         },
       ],
@@ -183,6 +199,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           id: 'archive',
           labelAr: 'أرشيف التدقيق المعتمد',
           labelEn: 'Certified Audit Archives',
+          emoji: '📁',
           icon: 'fa-box-archive',
           badge: archivedAudits.length > 0 ? archivedAudits.length : undefined,
           badgeColor: 'bg-sky-600 text-white',
@@ -191,6 +208,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           id: 'settings',
           labelAr: 'إعدادات النظام وقنوات الاتصال',
           labelEn: 'System Settings',
+          emoji: '⚙️',
           icon: 'fa-sliders',
         },
       ],
@@ -218,8 +236,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       {/* Mobile Close Header */}
       <div className="flex items-center justify-between pb-3 mb-1 lg:hidden border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-sky-600 flex items-center justify-center text-white text-xs">
-            <i className="fa-solid fa-layer-group" />
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-white text-xs shadow-md">
+            <span>📑</span>
           </div>
           <span className="text-xs font-black text-slate-800 dark:text-slate-200">
             {isAr ? 'القائمة الرئيسية' : 'Navigation Menu'}
@@ -229,13 +247,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           type="button"
           onClick={onClose}
           aria-label={isAr ? 'إغلاق القائمة' : 'Close Menu'}
-          className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
+          className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-all active:scale-95 shadow-sm ${
             isDark
-              ? 'text-slate-400 hover:text-white hover:bg-slate-800'
-              : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
+              ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 hover:border-slate-700'
+              : 'bg-white border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-100 hover:border-slate-300'
           }`}
         >
-          <i className="fa-solid fa-xmark text-sm" />
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
         </button>
       </div>
 
@@ -280,17 +301,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                         <span className="absolute inset-y-2 start-0 w-1 rounded-e-full bg-sky-500 shadow-sm shadow-sky-500/50" />
                       )}
 
-                      {/* Icon */}
-                      <div className="w-5 h-5 flex items-center justify-center shrink-0 text-center">
-                        <i
-                          className={`fa-solid ${item.icon} text-xs transition-transform duration-150 group-hover:scale-110 ${
-                            isActive
-                              ? 'text-sky-500 dark:text-sky-400 scale-105'
-                              : isDark
-                              ? 'text-slate-500 group-hover:text-sky-400'
-                              : 'text-slate-400 group-hover:text-sky-600'
-                          }`}
-                        />
+                      {/* Emoji + Icon */}
+                      <div className="w-5 h-5 flex items-center justify-center shrink-0 text-center select-none">
+                        <span className="text-sm transition-transform duration-150 group-hover:scale-115">
+                          {item.emoji}
+                        </span>
                       </div>
 
                       {/* Label Text */}
