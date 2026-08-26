@@ -57,12 +57,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
   const navSections: { titleAr: string; titleEn: string; items: NavItem[] }[] = [
     {
-      titleAr: 'التدقيق والتشغيل',
-      titleEn: 'Audit & Operations',
+      titleAr: '📋 التدقيق والتشغيل الميداني',
+      titleEn: '📋 Field Audit & Operations',
       items: [
         {
           id: 'dashboard',
-          labelAr: 'لوحة التحكم الرئيسية',
+          labelAr: 'لوحة التحكم والقيادة',
           labelEn: 'Executive Dashboard',
           emoji: '📊',
           icon: 'fa-gauge-high',
@@ -129,8 +129,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       ],
     },
     {
-      titleAr: 'المراقبة والاستجابة الذكية',
-      titleEn: 'Monitoring & Response',
+      titleAr: '📡 المراقبة والاستجابة الذكية',
+      titleEn: '📡 Monitoring & Response',
       items: [
         {
           id: 'iot',
@@ -172,8 +172,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       ],
     },
     {
-      titleAr: 'الاستدامة والطوارئ',
-      titleEn: 'Sustainability & Emergency',
+      titleAr: '🌱 الاستدامة وإدارة الطوارئ',
+      titleEn: '🌱 Sustainability & Emergency',
       items: [
         {
           id: 'sustainability',
@@ -192,8 +192,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       ],
     },
     {
-      titleAr: 'الأرشيف والإعدادات',
-      titleEn: 'System & Governance',
+      titleAr: '⚙️ الأرشيف والحوكمة والنظام',
+      titleEn: '⚙️ System & Governance',
       items: [
         {
           id: 'archive',

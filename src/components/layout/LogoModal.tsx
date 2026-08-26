@@ -40,7 +40,7 @@ export const LogoModal: React.FC = () => {
         <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center text-white">
-              <i className="fa-solid fa-pen-ruler text-sm"></i>
+              <span>🖼️</span>
             </div>
             <h3 className="text-base font-black">
               {isAr ? 'تخصيص شعار المنشأة (SVG Code)' : 'Customize Facility Logo (SVG)'}
@@ -58,7 +58,7 @@ export const LogoModal: React.FC = () => {
         <form onSubmit={handleSave} className="space-y-4">
           <div>
             <label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-2">
-              {isAr ? 'معاينة الشعار المباشرة' : 'Live Logo Preview'}
+              {isAr ? '👁️ معاينة الشعار المباشرة' : '👁️ Live Logo Preview'}
             </label>
             <div className="flex items-center justify-center p-6 rounded-2xl bg-gradient-to-tr from-sky-600 to-emerald-500 w-20 h-20 mx-auto shadow-lg">
               <div dangerouslySetInnerHTML={{ __html: svgInput }} />
@@ -67,7 +67,7 @@ export const LogoModal: React.FC = () => {
 
           <div>
             <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1.5">
-              {isAr ? 'كود SVG' : 'SVG Markup'}
+              {isAr ? '💻 كود SVG' : '💻 SVG Markup'}
             </label>
             <textarea
               rows={4}
@@ -84,24 +84,27 @@ export const LogoModal: React.FC = () => {
             <button
               type="button"
               onClick={handleReset}
-              className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-center"
+              className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-center flex items-center justify-center gap-1.5"
             >
-              {isAr ? 'استعادة الافتراضي' : 'Reset to Default'}
+              <span>🔄</span>
+              <span>{isAr ? 'استعادة الافتراضي' : 'Reset to Default'}</span>
             </button>
 
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setIsLogoModalOpen(false)}
-                className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-center"
+                className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-center flex items-center justify-center gap-1.5"
               >
-                {isAr ? 'إلغاء' : 'Cancel'}
+                <span>❌</span>
+                <span>{isAr ? 'إلغاء' : 'Cancel'}</span>
               </button>
               <button
                 type="submit"
-                className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-black shadow-md transition-all active:scale-95 text-center"
+                className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-black shadow-md transition-all active:scale-95 text-center flex items-center justify-center gap-1.5"
               >
-                {isAr ? 'حفظ وتطبيق' : 'Save & Apply'}
+                <span>💾</span>
+                <span>{isAr ? 'حفظ وتطبيق' : 'Save & Apply'}</span>
               </button>
             </div>
           </div>

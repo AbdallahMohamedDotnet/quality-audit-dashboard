@@ -62,7 +62,7 @@ export default function LoginPage() {
               : 'bg-white/80 border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300'
           } shadow-sm backdrop-blur-sm`}
         >
-          <i className={`fa-solid ${isAr ? 'fa-arrow-right' : 'fa-arrow-left'} text-[11px]`} />
+          <span>🏠</span>
           <span>{isAr ? 'الرئيسية' : 'Home'}</span>
         </Link>
 
@@ -95,7 +95,7 @@ export default function LoginPage() {
                 : 'bg-white/80 border-slate-200 text-slate-600 hover:text-slate-900'
             } shadow-sm backdrop-blur-sm`}
           >
-            {isAr ? 'EN' : 'عر'}
+            {isAr ? '🌐 EN' : '🌐 عر'}
           </motion.button>
         </div>
       </div>
@@ -119,7 +119,7 @@ export default function LoginPage() {
             dangerouslySetInnerHTML={{ __html: logoSvg }}
           />
           <h2 className="text-xl font-black tracking-tight">
-            {isAr ? 'تسجيل دخول التنفيذيين' : 'Executive Sign In'}
+            {isAr ? '🔐 تسجيل دخول التنفيذيين' : '🔐 Executive Sign In'}
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
             {isAr
@@ -180,11 +180,13 @@ export default function LoginPage() {
                 placeholder="123"
                 required
               />
-              <i
-                className={`fa-solid fa-key absolute top-4 text-xs text-slate-400 ${
+              <span
+                className={`absolute top-3.5 text-xs text-slate-400 ${
                   dir === 'rtl' ? 'right-3.5' : 'left-3.5'
                 }`}
-              />
+              >
+                🔑
+              </span>
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -193,7 +195,7 @@ export default function LoginPage() {
                 }`}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
-                <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-xs`}></i>
+                <span>{showPassword ? '🙈' : '👁️'}</span>
               </button>
             </div>
           </div>
@@ -206,15 +208,15 @@ export default function LoginPage() {
             disabled={isLoading}
             className="w-full bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white font-black py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider cursor-pointer"
           >
-            <i className={`fa-solid ${isLoading ? 'fa-spinner fa-spin' : 'fa-right-to-bracket'}`}></i>
-            {isAr ? 'دخول مساحة العمل' : 'Enter Workspace'}
+            <span>{isLoading ? '⏳' : '🚀'}</span>
+            <span>{isAr ? 'دخول مساحة العمل' : 'Enter Workspace'}</span>
           </motion.button>
         </form>
 
         {/* Quick Demo Access Roles */}
         <div className="mt-6 pt-5 border-t border-slate-200 dark:border-slate-800 relative z-10">
           <p className="text-center text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-widest">
-            {isAr ? 'الدخول السريع للأدوار التجريبية' : 'Quick Demo Access Roles'}
+            {isAr ? '⚡ الدخول السريع للأدوار التجريبية' : '⚡ Quick Demo Access Roles'}
           </p>
           <div className="grid grid-cols-2 gap-2 max-h-[140px] overflow-y-auto pe-1">
             {ROLES.map(role => (
