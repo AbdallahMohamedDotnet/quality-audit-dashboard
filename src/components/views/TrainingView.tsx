@@ -184,11 +184,11 @@ export const TrainingView: React.FC = () => {
 
   return (
     <AnimatedPage>
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm backdrop-blur-sm transition-colors">
+      {/* Header Banner */}
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md">
-            <i className="fa-solid fa-graduation-cap text-lg"></i>
+          <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg">
+            <span>🎓</span>
           </div>
           <div>
             <h2 className="text-xl font-black text-slate-900 dark:text-white">
@@ -209,7 +209,7 @@ export const TrainingView: React.FC = () => {
             onClick={handleExportCsv}
             className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
           >
-            <i className="fa-solid fa-file-csv text-emerald-500"></i>
+            <span>📊</span>
             {isAr ? 'تصدير CSV' : 'Export CSV'}
           </motion.button>
 
@@ -219,7 +219,7 @@ export const TrainingView: React.FC = () => {
             onClick={() => setIsAddModalOpen(true)}
             className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20"
           >
-            <i className="fa-solid fa-user-plus"></i>
+            <span>➕</span>
             {isAr ? 'تسجيل دورة تدريبية' : 'Log Training'}
           </motion.button>
         </div>
@@ -228,31 +228,31 @@ export const TrainingView: React.FC = () => {
       {/* KPI Cards */}
       <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          title={isAr ? 'نسبة الامتثال للتدريب' : 'Training Compliance'}
+          title={isAr ? '📈 نسبة الامتثال للتدريب' : '📈 Training Compliance'}
           value={`${complianceRate}%`}
           subtitle={isAr ? `إجمالي السجلات: ${totalEmployees}` : `Total records: ${totalEmployees}`}
-          icon={<i className="fa-solid fa-chart-line text-xl"></i>}
+          icon={<span className="text-xl">📈</span>}
           variant="emerald"
         />
         <StatCard
-          title={isAr ? 'شهادات سارية المفعول' : 'Active Certifications'}
+          title={isAr ? '🪪 شهادات سارية المفعول' : '🪪 Active Certifications'}
           value={validCerts}
           subtitle={isAr ? 'كفاءة معتمدة واجتياز للاختبار' : 'Valid and compliant'}
-          icon={<i className="fa-solid fa-id-card-clip text-xl"></i>}
+          icon={<span className="text-xl">🪪</span>}
           variant="teal"
         />
         <StatCard
-          title={isAr ? 'تستحق التجديد قريباً (<30 يوم)' : 'Expiring Soon (<30d)'}
+          title={isAr ? '⏳ تستحق التجديد قريباً (<30 يوم)' : '⏳ Expiring Soon (<30d)'}
           value={expiringSoon}
           subtitle={isAr ? 'يتطلب جدولة دورة تنشيطية' : 'Refresher needed'}
-          icon={<i className="fa-solid fa-hourglass-half text-xl"></i>}
+          icon={<span className="text-xl">⏳</span>}
           variant="amber"
         />
         <StatCard
-          title={isAr ? 'شهادات منتهية الصلاحية' : 'Expired / Non-Compliant'}
+          title={isAr ? '⚠️ شهادات منتهية الصلاحية' : '⚠️ Expired / Non-Compliant'}
           value={expiredCount}
           subtitle={isAr ? 'حظر العمل المباشر لحين التجديد' : 'Immediate action required'}
-          icon={<i className="fa-solid fa-triangle-exclamation text-xl"></i>}
+          icon={<span className="text-xl">⚠️</span>}
           variant={expiredCount > 0 ? 'rose' : 'sky'}
         />
       </StaggerGrid>
@@ -260,15 +260,15 @@ export const TrainingView: React.FC = () => {
       {/* Search & Filter Bar */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm transition-colors">
         <div className="relative flex-1">
-          <i className="fa-solid fa-magnifying-glass absolute top-3.5 left-3.5 rtl:left-auto rtl:right-3.5 text-slate-400 text-sm"></i>
+          <span className="absolute top-3 left-3.5 rtl:left-auto rtl:right-3.5 text-slate-400 text-sm">🔍</span>
           <input
             type="text"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             placeholder={
               isAr
-                ? 'بحث باسم الموظف، الرقم الوظيفي، اسم الدورة، القسم، أو المدرب...'
-                : 'Search by employee, ID, course, dept, or trainer...'
+                ? '🔍 بحث باسم الموظف، الرقم الوظيفي، اسم الدورة، القسم، أو المدرب...'
+                : '🔍 Search by employee, ID, course, dept, or trainer...'
             }
             className="w-full pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:ring-2 focus:ring-emerald-500 outline-none transition-colors"
           />
@@ -280,12 +280,12 @@ export const TrainingView: React.FC = () => {
             onChange={e => setFilterCourseType(e.target.value)}
             className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none transition-colors"
           >
-            <option value="ALL">{isAr ? 'جميع مسارات التدريب' : 'All Course Types'}</option>
-            <option value="HACCP">HACCP (سلامة الغذاء)</option>
-            <option value="HYGIENE">{isAr ? 'النظافة الشخصية والاشتراطات الصحية' : 'GHP Hygiene'}</option>
-            <option value="OSHA">OSHA (السلامة المهنية والكيماويات)</option>
-            <option value="FIRE_SAFETY">{isAr ? 'مكافحة الحرائق والإخلاء' : 'Fire Safety'}</option>
-            <option value="FIRST_AID">{isAr ? 'الإسعافات الأولية' : 'First Aid'}</option>
+            <option value="ALL">{isAr ? '📑 جميع مسارات التدريب' : '📑 All Course Types'}</option>
+            <option value="HACCP">🛡️ HACCP (سلامة الغذاء)</option>
+            <option value="HYGIENE">{isAr ? '🧼 النظافة الشخصية والاشتراطات الصحية (GHP)' : '🧼 GHP Hygiene'}</option>
+            <option value="OSHA">⛑️ OSHA (السلامة المهنية والكيماويات)</option>
+            <option value="FIRE_SAFETY">{isAr ? '🧯 مكافحة الحرائق والإخلاء' : '🧯 Fire Safety'}</option>
+            <option value="FIRST_AID">{isAr ? '🩹 الإسعافات الأولية' : '🩹 First Aid'}</option>
           </select>
 
           <select
@@ -293,10 +293,10 @@ export const TrainingView: React.FC = () => {
             onChange={e => setFilterStatus(e.target.value)}
             className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none transition-colors"
           >
-            <option value="ALL">{isAr ? 'جميع الحالات' : 'All Statuses'}</option>
-            <option value="VALID">{isAr ? 'سارية المفعول (Valid)' : 'Valid'}</option>
-            <option value="EXPIRING_SOON">{isAr ? 'توشك على الانتهاء (Expiring)' : 'Expiring Soon'}</option>
-            <option value="EXPIRED">{isAr ? 'منتهية الصلاحية (Expired)' : 'Expired'}</option>
+            <option value="ALL">{isAr ? '📑 جميع الحالات' : '📑 All Statuses'}</option>
+            <option value="VALID">{isAr ? '✅ سارية المفعول (Valid)' : '✅ Valid'}</option>
+            <option value="EXPIRING_SOON">{isAr ? '⏳ توشك على الانتهاء (Expiring)' : '⏳ Expiring Soon'}</option>
+            <option value="EXPIRED">{isAr ? '⚠️ منتهية الصلاحية (Expired)' : '⚠️ Expired'}</option>
           </select>
         </div>
       </div>
@@ -305,7 +305,7 @@ export const TrainingView: React.FC = () => {
       <div className="block md:hidden space-y-3.5">
         {filteredTrainings.length === 0 ? (
           <div className="bg-white dark:bg-slate-800/80 rounded-2xl p-8 text-center text-slate-400 border border-slate-200/80 dark:border-slate-700/80">
-            <i className="fa-solid fa-user-graduate text-3xl opacity-40 mb-2 block"></i>
+            <span className="text-3xl opacity-40 mb-2 block">🎓</span>
             <p className="text-xs">{isAr ? 'لا توجد سجلات تدريب مطابقة لبحثك' : 'No training records found'}</p>
           </div>
         ) : (
@@ -322,12 +322,12 @@ export const TrainingView: React.FC = () => {
                   <div className="flex items-start justify-between gap-2">
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="font-bold text-slate-900 dark:text-white text-sm">{rec.employeeName}</span>
+                        <span className="font-bold text-slate-900 dark:text-white text-sm">👤 {rec.employeeName}</span>
                         <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                          {rec.employeeId}
+                          #{rec.employeeId}
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400">{rec.dept}</p>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">🏢 {rec.dept}</p>
                     </div>
                     <Badge
                       variant={
@@ -339,21 +339,21 @@ export const TrainingView: React.FC = () => {
                       }
                       size="sm"
                     >
-                      {rec.status}
+                      {rec.status === 'VALID' ? '✅ VALID' : rec.status === 'EXPIRING_SOON' ? '⏳ EXPIRING' : '⚠️ EXPIRED'}
                     </Badge>
                   </div>
 
                   <div className="bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50 space-y-1 text-xs">
                     <div className="flex items-center justify-between font-bold">
-                      <span className="text-slate-800 dark:text-slate-200">{rec.courseName}</span>
+                      <span className="text-slate-800 dark:text-slate-200">🎓 {rec.courseName}</span>
                       <span className="font-mono text-emerald-600 dark:text-emerald-400">{rec.score}%</span>
                     </div>
                     <div className="flex items-center justify-between text-[11px] text-slate-500">
-                      <span>{isAr ? 'المدرب:' : 'Trainer:'} {rec.trainer}</span>
+                      <span>{isAr ? '👨‍🏫 المدرب:' : '👨‍🏫 Trainer:'} {rec.trainer}</span>
                       <span className={`font-mono font-bold ${
                         isExpired ? 'text-rose-500' : isExpiring ? 'text-amber-500' : 'text-emerald-500'
                       }`}>
-                        EXP: {rec.expiryDate}
+                        📅 EXP: {rec.expiryDate}
                       </span>
                     </div>
                   </div>
@@ -364,7 +364,7 @@ export const TrainingView: React.FC = () => {
                       onClick={() => setPreviewPassRecord(rec)}
                       className="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs font-bold flex items-center gap-1"
                     >
-                      <i className="fa-solid fa-id-badge"></i>
+                      <span>🪪</span>
                       <span>{isAr ? 'البطاقة' : 'Pass'}</span>
                     </motion.button>
                     <motion.button
@@ -373,7 +373,7 @@ export const TrainingView: React.FC = () => {
                       className="p-1.5 rounded-lg bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400"
                       title={isAr ? 'تجديد الشهادة' : 'Renew Cert'}
                     >
-                      <i className="fa-solid fa-rotate-right text-xs"></i>
+                      <span className="text-xs">🔄</span>
                     </motion.button>
                     {(isExpired || isExpiring) && (
                       <motion.button
@@ -382,7 +382,7 @@ export const TrainingView: React.FC = () => {
                         className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
                         title={isAr ? 'واتساب' : 'WhatsApp'}
                       >
-                        <i className="fa-brands fa-whatsapp text-xs"></i>
+                        <span>📲</span>
                       </motion.button>
                     )}
                     <motion.button
@@ -411,13 +411,13 @@ export const TrainingView: React.FC = () => {
           <table className="w-full text-start text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-900/40 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
-                <th className="py-3.5 px-4 text-start">{isAr ? 'الموظف والرقم الوظيفي' : 'Employee & ID'}</th>
-                <th className="py-3.5 px-4 text-start">{isAr ? 'القسم' : 'Department'}</th>
-                <th className="py-3.5 px-4 text-start">{isAr ? 'الدورة التدريبية ومسارها' : 'Course & Module'}</th>
-                <th className="py-3.5 px-4 text-center">{isAr ? 'الدرجة' : 'Score'}</th>
-                <th className="py-3.5 px-4 text-start">{isAr ? 'تاريخ الإتمام والانتهاء' : 'Dates & Expiry'}</th>
-                <th className="py-3.5 px-4 text-center">{isAr ? 'الحالة' : 'Status'}</th>
-                <th className="py-3.5 px-4 text-center">{isAr ? 'بطاقة الكفاءة وإجراءات' : 'Digital Pass & Actions'}</th>
+                <th className="py-3.5 px-4 text-start">{isAr ? '👤 الموظف والرقم الوظيفي' : '👤 Employee & ID'}</th>
+                <th className="py-3.5 px-4 text-start">{isAr ? '🏢 القسم' : '🏢 Department'}</th>
+                <th className="py-3.5 px-4 text-start">{isAr ? '🎓 الدورة التدريبية ومسارها' : '🎓 Course & Module'}</th>
+                <th className="py-3.5 px-4 text-center">{isAr ? '🎯 الدرجة' : '🎯 Score'}</th>
+                <th className="py-3.5 px-4 text-start">{isAr ? '📅 تاريخ الإتمام والانتهاء' : '📅 Dates & Expiry'}</th>
+                <th className="py-3.5 px-4 text-center">{isAr ? '🛡️ الحالة' : '🛡️ Status'}</th>
+                <th className="py-3.5 px-4 text-center">{isAr ? '🪪 بطاقة الكفاءة وإجراءات' : '🪪 Digital Pass & Actions'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60 font-medium">
@@ -425,7 +425,7 @@ export const TrainingView: React.FC = () => {
                 <tr>
                   <td colSpan={7} className="py-12 text-center text-slate-400">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <i className="fa-solid fa-user-graduate text-3xl opacity-40"></i>
+                      <span className="text-3xl opacity-40">🎓</span>
                       <p>{isAr ? 'لا توجد سجلات تدريب مطابقة لبحثك' : 'No training records found'}</p>
                     </div>
                   </td>
@@ -445,10 +445,10 @@ export const TrainingView: React.FC = () => {
                         <div className="space-y-0.5">
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-slate-900 dark:text-white text-sm">
-                              {rec.employeeName}
+                              👤 {rec.employeeName}
                             </span>
                             <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800">
-                              {rec.employeeId}
+                              #{rec.employeeId}
                             </span>
                           </div>
                           <p className="text-[10px] text-slate-400 font-mono">
@@ -460,7 +460,7 @@ export const TrainingView: React.FC = () => {
                       {/* Dept */}
                       <td className="py-4 px-4">
                         <span className="text-slate-800 dark:text-slate-200 font-semibold">
-                          {rec.dept}
+                          🏢 {rec.dept}
                         </span>
                       </td>
 
@@ -468,13 +468,13 @@ export const TrainingView: React.FC = () => {
                       <td className="py-4 px-4">
                         <div className="space-y-0.5">
                           <p className="font-bold text-slate-900 dark:text-white">
-                            {rec.courseName}
+                            🎓 {rec.courseName}
                           </p>
                           <div className="flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400">
                             <span className="px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-700 font-bold">
-                              {rec.courseType}
+                              🏷️ {rec.courseType}
                             </span>
-                            <span>{rec.trainer}</span>
+                            <span>👨‍🏫 {rec.trainer}</span>
                           </div>
                         </div>
                       </td>
@@ -496,7 +496,7 @@ export const TrainingView: React.FC = () => {
                       <td className="py-4 px-4">
                         <div className="space-y-0.5 text-[11px]">
                           <p className="text-slate-500 dark:text-slate-400">
-                            {isAr ? 'الإتمام:' : 'Passed:'} <span className="font-mono text-slate-700 dark:text-slate-300">{rec.completionDate}</span>
+                            {isAr ? 'الإتمام:' : 'Passed:'} <span className="font-mono text-slate-700 dark:text-slate-300">📅 {rec.completionDate}</span>
                           </p>
                           <p
                             className={`font-bold ${
@@ -507,7 +507,7 @@ export const TrainingView: React.FC = () => {
                                 : 'text-emerald-600 dark:text-emerald-400'
                             }`}
                           >
-                            {isAr ? 'الانتهاء:' : 'Expiry:'} <span className="font-mono">{rec.expiryDate}</span>
+                            {isAr ? 'الانتهاء:' : 'Expiry:'} <span className="font-mono">📅 {rec.expiryDate}</span>
                           </p>
                         </div>
                       </td>
@@ -524,7 +524,7 @@ export const TrainingView: React.FC = () => {
                           }
                           size="md"
                         >
-                          {rec.status}
+                          {rec.status === 'VALID' ? '✅ VALID' : rec.status === 'EXPIRING_SOON' ? '⏳ EXPIRING' : '⚠️ EXPIRED'}
                         </Badge>
                       </td>
 
@@ -538,7 +538,7 @@ export const TrainingView: React.FC = () => {
                             title={isAr ? 'عرض وطباعة بطاقة الكفاءة الرقمية' : 'View Digital Competency Pass'}
                             className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all flex items-center gap-1 shadow-sm"
                           >
-                            <i className="fa-solid fa-id-badge"></i>
+                            <span>🪪</span>
                             <span>{isAr ? 'البطاقة' : 'Pass'}</span>
                           </motion.button>
 
@@ -549,7 +549,7 @@ export const TrainingView: React.FC = () => {
                             title={isAr ? 'تجديد الشهادة لعام إضافي' : 'Renew Certification'}
                             className="w-7 h-7 rounded-lg bg-teal-50 hover:bg-teal-100 dark:bg-teal-900/30 dark:hover:bg-teal-900/50 text-teal-600 dark:text-teal-400 flex items-center justify-center transition-all shadow-sm"
                           >
-                            <i className="fa-solid fa-rotate-right text-xs"></i>
+                            <span className="text-xs">🔄</span>
                           </motion.button>
 
                           {(isExpired || isExpiring) && (
@@ -560,7 +560,7 @@ export const TrainingView: React.FC = () => {
                               title={isAr ? 'إرسال تذكير واتساب للموظف' : 'WhatsApp Reminder'}
                               className="w-7 h-7 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/30 dark:hover:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center transition-all shadow-sm"
                             >
-                              <i className="fa-brands fa-whatsapp text-xs"></i>
+                              <span>📲</span>
                             </motion.button>
                           )}
 
@@ -574,7 +574,7 @@ export const TrainingView: React.FC = () => {
                             }}
                             className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-rose-50 dark:bg-slate-700 dark:hover:bg-rose-900/30 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-all"
                           >
-                            <i className="fa-solid fa-trash text-xs"></i>
+                            <span className="text-xs">🗑️</span>
                           </motion.button>
                         </div>
                       </td>
@@ -593,7 +593,7 @@ export const TrainingView: React.FC = () => {
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md">
-                <i className="fa-solid fa-graduation-cap"></i>
+                <span className="text-sm">🎓</span>
               </div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 {isAr ? 'تسجيل دورة تدريبية واعتماد كفاءة موظف' : 'Log Employee Training & Certification'}
@@ -611,7 +611,7 @@ export const TrainingView: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'اسم الموظف *' : 'Employee Name *'}
+                  {isAr ? '👤 اسم الموظف *' : '👤 Employee Name *'}
                 </label>
                 <input
                   type="text"
@@ -625,7 +625,7 @@ export const TrainingView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'الرقم الوظيفي' : 'Employee ID'}
+                  {isAr ? '🆔 الرقم الوظيفي' : '🆔 Employee ID'}
                 </label>
                 <input
                   type="text"
@@ -638,7 +638,7 @@ export const TrainingView: React.FC = () => {
 
               <div className="space-y-1 sm:col-span-2">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'اسم الدورة التدريبية *' : 'Course Name *'}
+                  {isAr ? '🎓 اسم الدورة التدريبية *' : '🎓 Course Name *'}
                 </label>
                 <input
                   type="text"
@@ -652,25 +652,25 @@ export const TrainingView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'نوع التدريب' : 'Course Type'}
+                  {isAr ? '🏷️ نوع التدريب' : '🏷️ Course Type'}
                 </label>
                 <select
                   value={newTraining.courseType}
                   onChange={e => setNewTraining({ ...newTraining, courseType: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500"
                 >
-                  <option value="HACCP">HACCP (سلامة الغذاء)</option>
-                  <option value="HYGIENE">GHP (النظافة والاشتراطات الصحية)</option>
-                  <option value="OSHA">OSHA (السلامة المهنية والكيماويات)</option>
-                  <option value="FIRE_SAFETY">Fire Safety (مكافحة الحرائق)</option>
-                  <option value="FIRST_AID">First Aid (الإسعافات الأولية)</option>
-                  <option value="ISO">ISO Standards (أنظمة الجودة)</option>
+                  <option value="HACCP">🛡️ HACCP (سلامة الغذاء)</option>
+                  <option value="HYGIENE">🧼 GHP (النظافة والاشتراطات الصحية)</option>
+                  <option value="OSHA">⛑️ OSHA (السلامة المهنية والكيماويات)</option>
+                  <option value="FIRE_SAFETY">🧯 Fire Safety (مكافحة الحرائق)</option>
+                  <option value="FIRST_AID">🩹 First Aid (الإسعافات الأولية)</option>
+                  <option value="ISO">📜 ISO Standards (أنظمة الجودة)</option>
                 </select>
               </div>
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'القسم التابع له *' : 'Department *'}
+                  {isAr ? '🏢 القسم التابع له *' : '🏢 Department *'}
                 </label>
                 <select
                   required
@@ -689,7 +689,7 @@ export const TrainingView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'تاريخ الإتمام' : 'Completion Date'}
+                  {isAr ? '📅 تاريخ الإتمام' : '📅 Completion Date'}
                 </label>
                 <input
                   type="date"
@@ -701,7 +701,7 @@ export const TrainingView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'تاريخ انتهاء الصلاحية' : 'Expiry Date'}
+                  {isAr ? '📅 تاريخ انتهاء الصلاحية' : '📅 Expiry Date'}
                 </label>
                 <input
                   type="date"
@@ -713,7 +713,7 @@ export const TrainingView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'درجة الاختبار (%)' : 'Score (%)'}
+                  {isAr ? '🎯 درجة الاختبار (%)' : '🎯 Score (%)'}
                 </label>
                 <input
                   type="number"
@@ -727,7 +727,7 @@ export const TrainingView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'المدرب / جهة الاعتماد' : 'Trainer / Institution'}
+                  {isAr ? '👨‍🏫 المدرب / جهة الاعتماد' : '👨‍🏫 Trainer / Institution'}
                 </label>
                 <input
                   type="text"
@@ -748,7 +748,7 @@ export const TrainingView: React.FC = () => {
                 className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
               />
               <label htmlFor="issuePass" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
-                {isAr ? 'إصدار بطاقة كفاءة صحية ومهنية رقمية فورية للموظف' : 'Issue digital competency hygiene pass'}
+                {isAr ? '🪪 إصدار بطاقة كفاءة صحية ومهنية رقمية فورية للموظف' : '🪪 Issue digital competency hygiene pass'}
               </label>
             </div>
 
@@ -758,15 +758,17 @@ export const TrainingView: React.FC = () => {
                 onClick={() => setIsAddModalOpen(false)}
                 className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
-                {isAr ? 'إلغاء' : 'Cancel'}
+                <span>❌</span>
+                <span>{isAr ? 'إلغاء' : 'Cancel'}</span>
               </button>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
                 type="submit"
-                className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-500/20"
+                className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-500/20 flex items-center gap-1.5"
               >
-                {isAr ? 'حفظ وتوثيق الكفاءة' : 'Save & Issue Certificate'}
+                <span>💾</span>
+                <span>{isAr ? 'حفظ وتوثيق الكفاءة' : 'Save & Issue Certificate'}</span>
               </motion.button>
             </div>
           </form>
@@ -779,7 +781,7 @@ export const TrainingView: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-5 sm:p-6 shadow-2xl space-y-5 max-h-[85dvh] overflow-y-auto overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch]">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
               <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <i className="fa-solid fa-id-card text-emerald-500"></i>
+                <span>🪪</span>
                 {isAr ? 'بطاقة الكفاءة والشهادة الصحية الرقمية' : 'Digital Competency & Hygiene Pass'}
               </h3>
               <button
@@ -807,14 +809,14 @@ export const TrainingView: React.FC = () => {
                   </div>
                 </div>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-slate-300">
-                  {previewPassRecord.employeeId}
+                  #{previewPassRecord.employeeId}
                 </span>
               </div>
 
               <div className="py-2 border-y border-white/10 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-black text-white">{previewPassRecord.employeeName}</p>
-                  <p className="text-xs text-slate-400">{previewPassRecord.dept}</p>
+                  <p className="text-sm font-black text-white">👤 {previewPassRecord.employeeName}</p>
+                  <p className="text-xs text-slate-400">🏢 {previewPassRecord.dept}</p>
                 </div>
                 <div className="text-end">
                   <span className="text-xl font-black font-mono text-emerald-400">
@@ -825,21 +827,21 @@ export const TrainingView: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <p className="text-xs font-bold text-slate-200">{previewPassRecord.courseName}</p>
+                <p className="text-xs font-bold text-slate-200">🎓 {previewPassRecord.courseName}</p>
                 <div className="flex items-center justify-between text-[10px] text-slate-400">
-                  <span>{isAr ? 'المدرب:' : 'Trainer:'} {previewPassRecord.trainer}</span>
+                  <span>{isAr ? '👨‍🏫 المدرب:' : '👨‍🏫 Trainer:'} {previewPassRecord.trainer}</span>
                   <span className="text-emerald-400 font-mono font-bold">
-                    EXP: {previewPassRecord.expiryDate}
+                    📅 EXP: {previewPassRecord.expiryDate}
                   </span>
                 </div>
               </div>
 
               <div className="pt-2 flex items-center justify-between text-[10px] text-slate-400">
                 <div className="flex items-center gap-1 text-emerald-400">
-                  <i className="fa-solid fa-circle-check"></i>
+                  <span>✅</span>
                   <span>{isAr ? 'مصرح بالعمل التشغيلي' : 'Authorized Personnel'}</span>
                 </div>
-                <span className="font-mono">{previewPassRecord.id}</span>
+                <span className="font-mono">REF: {previewPassRecord.id}</span>
               </div>
             </div>
 
@@ -848,7 +850,8 @@ export const TrainingView: React.FC = () => {
                 onClick={() => setPreviewPassRecord(null)}
                 className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
-                {isAr ? 'إغلاق' : 'Close'}
+                <span>❌</span>
+                <span>{isAr ? 'إغلاق' : 'Close'}</span>
               </button>
               <motion.button
                 whileHover={{ scale: 1.03 }}
@@ -858,8 +861,8 @@ export const TrainingView: React.FC = () => {
                 }}
                 className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-emerald-500/20"
               >
-                <i className="fa-solid fa-print"></i>
-                {isAr ? 'طباعة البطاقة' : 'Print Badge'}
+                <span>🖨️</span>
+                <span>{isAr ? 'طباعة البطاقة' : 'Print Badge'}</span>
               </motion.button>
             </div>
           </div>

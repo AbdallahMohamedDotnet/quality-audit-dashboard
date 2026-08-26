@@ -118,11 +118,11 @@ export const VisitorsView: React.FC = () => {
       }`}>
         <div className="flex items-start gap-3 min-w-0">
           <div className="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center shrink-0">
-            <i className="fa-solid fa-id-card-clip text-teal-500 text-sm" />
+            <span>🪪</span>
           </div>
           <div className="min-w-0">
             <h1 className="text-base font-black text-slate-900 dark:text-white leading-snug">
-              {isAr ? 'سجل الزوار وإقرارات الصحة والسلامة' : 'Visitor & Contractor Gate Pass Register'}
+              {isAr ? 'سجل الزوار وإقرارات الصحة والسلامة (Gate Pass)' : 'Visitor & Contractor Gate Pass Register'}
             </h1>
             <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
               {isAr
@@ -143,7 +143,7 @@ export const VisitorsView: React.FC = () => {
                 : 'border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
             }`}
           >
-            <i className="fa-solid fa-file-csv text-emerald-500 text-[11px]" />
+            <span>📊</span>
             <span>{isAr ? 'تصدير CSV' : 'Export CSV'}</span>
           </motion.button>
           <motion.button
@@ -153,8 +153,8 @@ export const VisitorsView: React.FC = () => {
             onClick={() => setIsCheckinModalOpen(true)}
             className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-black shadow-md shadow-teal-600/25 transition-all"
           >
-            <i className="fa-solid fa-user-plus text-[11px]" />
-            <span>{isAr ? '+ تسجيل دخول زائر' : '+ Check-In Visitor'}</span>
+            <span>➕</span>
+            <span>{isAr ? 'تسجيل دخول زائر' : 'Check-In Visitor'}</span>
           </motion.button>
         </div>
       </div>
@@ -165,33 +165,33 @@ export const VisitorsView: React.FC = () => {
       <StaggerGrid className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           {
-            label: isAr ? 'إجمالي الزوار' : 'Total Visitors',
+            label: isAr ? '👥 إجمالي الزوار' : '👥 Total Visitors',
             value: visitors.length,
-            icon: 'fa-users',
+            emoji: '👥',
             color: 'text-sky-500',
             bg: 'bg-sky-500/10 border-sky-500/20',
             pulse: false,
           },
           {
-            label: isAr ? 'نشط بالمنشأة' : 'Active On-Site',
+            label: isAr ? '🟢 نشط بالمنشأة' : '🟢 Active On-Site',
             value: activeCount,
-            icon: 'fa-circle-dot',
+            emoji: '🟢',
             color: 'text-emerald-500',
             bg: 'bg-emerald-500/10 border-emerald-500/20',
             pulse: activeCount > 0,
           },
           {
-            label: isAr ? 'امتثال PPE' : 'PPE Compliant',
+            label: isAr ? '🦺 امتثال PPE' : '🦺 PPE Compliant',
             value: visitors.length ? `${Math.round((ppeCompliantCount / visitors.length) * 100)}%` : '—',
-            icon: 'fa-hard-hat',
+            emoji: '🦺',
             color: 'text-amber-500',
             bg: 'bg-amber-500/10 border-amber-500/20',
             pulse: false,
           },
           {
-            label: isAr ? 'إقرارات صحية' : 'Health Declared',
+            label: isAr ? '🛡️ إقرارات صحية' : '🛡️ Health Declared',
             value: visitors.length ? `${Math.round((healthDeclaredCount / visitors.length) * 100)}%` : '—',
-            icon: 'fa-file-shield',
+            emoji: '🛡️',
             color: 'text-teal-500',
             bg: 'bg-teal-500/10 border-teal-500/20',
             pulse: false,
@@ -208,7 +208,7 @@ export const VisitorsView: React.FC = () => {
               {stat.pulse ? (
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
               ) : (
-                <i className={`fa-solid ${stat.icon} text-sm ${stat.color}`} />
+                <span className="text-base">{stat.emoji}</span>
               )}
             </div>
             <div className="min-w-0">
@@ -229,9 +229,9 @@ export const VisitorsView: React.FC = () => {
         <div className="flex items-center gap-1 p-0.5 rounded-xl bg-slate-100 dark:bg-slate-800 shrink-0">
           {(
             [
-              { key: 'ALL' as const, labelAr: 'الكل', labelEn: 'All', count: visitors.length },
-              { key: 'ACTIVE' as const, labelAr: 'نشط', labelEn: 'Active', count: activeCount },
-              { key: 'DEPARTED' as const, labelAr: 'مغادر', labelEn: 'Departed', count: departedCount },
+              { key: 'ALL' as const, labelAr: '📑 الكل', labelEn: '📑 All', count: visitors.length },
+              { key: 'ACTIVE' as const, labelAr: '🟢 نشط', labelEn: '🟢 Active', count: activeCount },
+              { key: 'DEPARTED' as const, labelAr: '🚪 مغادر', labelEn: '🚪 Departed', count: departedCount },
             ]
           ).map(tab => (
             <motion.button
@@ -268,12 +268,12 @@ export const VisitorsView: React.FC = () => {
         <div className={`relative flex items-center w-full sm:w-64 rounded-xl border text-xs transition-colors focus-within:ring-2 focus-within:ring-teal-500/30 focus-within:border-teal-500 ${
           isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-300'
         }`}>
-          <i className={`fa-solid fa-magnifying-glass absolute ${isAr ? 'right-3' : 'left-3'} text-slate-400 pointer-events-none text-[11px]`} />
+          <span className={`absolute ${isAr ? 'right-3' : 'left-3'} text-slate-400 pointer-events-none text-xs`}>🔍</span>
           <input
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            placeholder={isAr ? 'البحث باسم الزائر أو الشركة...' : 'Search by name or company...'}
+            placeholder={isAr ? '🔍 البحث باسم الزائر أو الشركة...' : '🔍 Search by name or company...'}
             className={`w-full bg-transparent py-2 text-[11px] font-semibold outline-none placeholder:text-slate-400 ${
               isAr ? 'pr-8 pl-3' : 'pl-8 pr-3'
             } ${isDark ? 'text-white' : 'text-slate-900'}`}
@@ -312,22 +312,22 @@ export const VisitorsView: React.FC = () => {
                     <div className="space-y-0.5 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-full shrink-0 ${isActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
-                        <span className="text-sm font-black text-slate-900 dark:text-white truncate">{v.name}</span>
+                        <span className="text-sm font-black text-slate-900 dark:text-white truncate">👤 {v.name}</span>
                       </div>
-                      <div className="text-[11px] text-slate-400 font-medium ps-4">{v.company || '—'}</div>
+                      <div className="text-[11px] text-slate-400 font-medium ps-4">🏢 {v.company || '—'}</div>
                     </div>
                     <VisitStatusBadge isActive={isActive} isAr={isAr} />
                   </div>
                   <div className={`grid grid-cols-2 gap-2 p-3 rounded-xl text-xs ${isDark ? 'bg-slate-950 border border-slate-800' : 'bg-slate-50 border border-slate-100'}`}>
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase tracking-wider font-black block">{isAr ? 'الغرض' : 'Purpose'}</span>
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider font-black block">{isAr ? '🎯 الغرض' : '🎯 Purpose'}</span>
                       <span className="font-bold text-slate-700 dark:text-slate-200 block">{v.purpose || '—'}</span>
-                      <span className="text-[10px] text-sky-500 dark:text-sky-400 font-semibold">{v.host}</span>
+                      <span className="text-[10px] text-sky-500 dark:text-sky-400 font-semibold">👔 {v.host}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase tracking-wider font-black block">{isAr ? 'التوقيت' : 'Timing'}</span>
-                      <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold block">{v.timeIn}</span>
-                      <span className="font-mono text-slate-500 text-[11px] block">{v.timeOut || (isAr ? 'متواجد حالياً' : 'On-Site')}</span>
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider font-black block">{isAr ? '⏰ التوقيت' : '⏰ Timing'}</span>
+                      <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold block">📥 {v.timeIn}</span>
+                      <span className="font-mono text-slate-500 text-[11px] block">{v.timeOut ? `📤 ${v.timeOut}` : (isAr ? '🟢 متواجد حالياً' : '🟢 On-Site')}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -343,7 +343,7 @@ export const VisitorsView: React.FC = () => {
                         isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                       }`}
                     >
-                      <i className="fa-solid fa-id-badge text-sky-500 text-[11px]" />
+                      <span>🪪</span>
                       <span>{isAr ? 'طباعة التصريح' : 'Pass Badge'}</span>
                     </motion.button>
                     {isActive && (
@@ -353,7 +353,7 @@ export const VisitorsView: React.FC = () => {
                         onClick={() => checkoutVisitor(v.id)}
                         className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black shadow-sm transition-all"
                       >
-                        <i className="fa-solid fa-arrow-right-from-bracket text-[11px]" />
+                        <span>🚪</span>
                         <span>{isAr ? 'تسجيل خروج' : 'Check-Out'}</span>
                       </motion.button>
                     )}
@@ -377,13 +377,13 @@ export const VisitorsView: React.FC = () => {
               isDark ? 'bg-slate-950 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-500'
             }`}>
               <tr>
-                <th scope="col" className="px-4 py-3 text-start">{isAr ? 'الزائر والجهة' : 'Visitor & Company'}</th>
-                <th scope="col" className="px-4 py-3 text-start">{isAr ? 'الغرض والمُضيف' : 'Purpose & Host'}</th>
-                <th scope="col" className="px-4 py-3 text-center">{isAr ? 'PPE' : 'PPE'}</th>
-                <th scope="col" className="px-4 py-3 text-center">{isAr ? 'الإقرار الصحي' : 'Health Dec.'}</th>
-                <th scope="col" className="px-4 py-3 text-center">{isAr ? 'الحالة' : 'Status'}</th>
-                <th scope="col" className="px-4 py-3 text-center">{isAr ? 'التوقيت' : 'Timing'}</th>
-                <th scope="col" className="px-4 py-3 text-end">{isAr ? 'الإجراءات' : 'Actions'}</th>
+                <th scope="col" className="px-4 py-3 text-start">{isAr ? '👤 الزائر والجهة' : '👤 Visitor & Company'}</th>
+                <th scope="col" className="px-4 py-3 text-start">{isAr ? '🎯 الغرض والمُضيف' : '🎯 Purpose & Host'}</th>
+                <th scope="col" className="px-4 py-3 text-center">{isAr ? '🦺 PPE' : '🦺 PPE'}</th>
+                <th scope="col" className="px-4 py-3 text-center">{isAr ? '🛡️ الإقرار الصحي' : '🛡️ Health Dec.'}</th>
+                <th scope="col" className="px-4 py-3 text-center">{isAr ? '🚦 الحالة' : '🚦 Status'}</th>
+                <th scope="col" className="px-4 py-3 text-center">{isAr ? '⏰ التوقيت' : '⏰ Timing'}</th>
+                <th scope="col" className="px-4 py-3 text-end">{isAr ? '⚙️ الإجراءات' : '⚙️ Actions'}</th>
               </tr>
             </thead>
             <tbody className={`divide-y ${isDark ? 'divide-slate-800' : 'divide-slate-100'}`}>
@@ -414,18 +414,17 @@ export const VisitorsView: React.FC = () => {
                             {v.name.charAt(0)}
                           </div>
                           <div className="min-w-0">
-                            <div className="font-black text-slate-900 dark:text-white text-[12px] leading-snug truncate max-w-[140px]">{v.name}</div>
-                            <div className="text-[10px] text-slate-400 font-medium mt-0.5 truncate max-w-[140px]">{v.company || '—'}</div>
+                            <div className="font-black text-slate-900 dark:text-white text-[12px] leading-snug truncate max-w-[140px]">👤 {v.name}</div>
+                            <div className="text-[10px] text-slate-400 font-medium mt-0.5 truncate max-w-[140px]">🏢 {v.company || '—'}</div>
                           </div>
                         </div>
                       </td>
 
                       {/* Purpose */}
                       <td className="px-4 py-3.5">
-                        <div className="text-[12px] font-bold text-slate-800 dark:text-slate-200 leading-snug truncate max-w-[150px]">{v.purpose || '—'}</div>
+                        <div className="text-[12px] font-bold text-slate-800 dark:text-slate-200 leading-snug truncate max-w-[150px]">🎯 {v.purpose || '—'}</div>
                         <div className="text-[10px] text-sky-500 dark:text-sky-400 font-semibold mt-0.5 truncate max-w-[150px]">
-                          <i className={`fa-solid fa-user-tie text-[9px] ${isAr ? 'ml-1' : 'mr-1'}`} />
-                          {v.host}
+                          <span>👔 {v.host}</span>
                         </div>
                       </td>
 
@@ -448,12 +447,10 @@ export const VisitorsView: React.FC = () => {
                       <td className="px-4 py-3.5 text-center">
                         <div className="font-mono text-[11px] leading-snug">
                           <div className="flex items-center justify-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold">
-                            <i className="fa-solid fa-arrow-right-to-bracket text-[9px]" />
-                            <span>{v.timeIn}</span>
+                            <span>📥 {v.timeIn}</span>
                           </div>
                           <div className="flex items-center justify-center gap-1 text-slate-400 mt-0.5">
-                            <i className="fa-solid fa-arrow-right-from-bracket text-[9px]" />
-                            <span>{v.timeOut || (isAr ? 'متواجد' : 'On-Site')}</span>
+                            <span>{v.timeOut ? `📤 ${v.timeOut}` : (isAr ? '🟢 متواجد' : '🟢 On-Site')}</span>
                           </div>
                         </div>
                       </td>
@@ -473,7 +470,7 @@ export const VisitorsView: React.FC = () => {
                             }`}
                             title={isAr ? 'طباعة تصريح الدخول' : 'Print Pass Badge'}
                           >
-                            <i className="fa-solid fa-id-badge text-sm" />
+                            <span className="text-sm">🪪</span>
                           </motion.button>
                           {isActive ? (
                             <motion.button
@@ -483,15 +480,15 @@ export const VisitorsView: React.FC = () => {
                               onClick={() => checkoutVisitor(v.id)}
                               className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-black shadow-sm transition-all"
                             >
-                              <i className="fa-solid fa-arrow-right-from-bracket text-[9px]" />
+                              <span>🚪</span>
                               <span>{isAr ? 'خروج' : 'Check-Out'}</span>
                             </motion.button>
                           ) : (
                             <span className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[10px] font-black ${
                               isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'
                             }`}>
-                              <i className="fa-solid fa-circle-check text-emerald-500 text-[9px]" />
-                              {isAr ? 'مغادر' : 'Departed'}
+                              <span>✅</span>
+                              <span>{isAr ? 'مغادر' : 'Departed'}</span>
                             </span>
                           )}
                         </div>
@@ -536,7 +533,7 @@ export const VisitorsView: React.FC = () => {
           }`}>
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center text-white shrink-0">
-                <i className="fa-solid fa-user-plus text-sm" />
+                <span className="text-sm">🪪</span>
               </div>
               <div>
                 <h3 className="text-sm font-black">
@@ -562,13 +559,13 @@ export const VisitorsView: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
-                  {isAr ? 'اسم الزائر الثلاثي' : 'Full Name'} <span className="text-rose-500">*</span>
+                  {isAr ? '👤 اسم الزائر الثلاثي' : '👤 Full Name'} <span className="text-rose-500">*</span>
                 </label>
                 <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder={isAr ? 'محمد إبراهيم' : 'e.g. Alex Hunter'} className={inputBase} />
               </div>
               <div>
                 <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
-                  {isAr ? 'الجهة أو الشركة' : 'Company / Entity'}
+                  {isAr ? '🏢 الجهة أو الشركة' : '🏢 Company / Entity'}
                 </label>
                 <input type="text" value={form.company} onChange={e => setForm({ ...form, company: e.target.value })} placeholder={isAr ? 'شركة الصيانة' : 'e.g. Apex Tech'} className={inputBase} />
               </div>
@@ -576,13 +573,13 @@ export const VisitorsView: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
-                  {isAr ? 'الغرض من الزيارة' : 'Visit Purpose'}
+                  {isAr ? '🎯 الغرض من الزيارة' : '🎯 Visit Purpose'}
                 </label>
                 <input type="text" value={form.purpose} onChange={e => setForm({ ...form, purpose: e.target.value })} placeholder={isAr ? 'صيانة طارئة / تفتيش' : 'e.g. Inspection'} className={inputBase} />
               </div>
               <div>
                 <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
-                  {isAr ? 'المُضيف أو القسم' : 'Host / Department'} <span className="text-rose-500">*</span>
+                  {isAr ? '👔 المُضيف أو القسم' : '👔 Host / Department'} <span className="text-rose-500">*</span>
                 </label>
                 <input type="text" value={form.host} onChange={e => setForm({ ...form, host: e.target.value })} placeholder={isAr ? 'م. سامي (مدير الصيانة)' : 'e.g. Eng. Sami'} className={inputBase} />
               </div>
@@ -590,14 +587,14 @@ export const VisitorsView: React.FC = () => {
 
             <div className={`space-y-2.5 p-4 rounded-xl border ${isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">
-                {isAr ? 'متطلبات الامتثال الإلزامية' : 'Mandatory Compliance Requirements'}
+                {isAr ? '🛡️ متطلبات الامتثال الإلزامية' : '🛡️ Mandatory Compliance Requirements'}
               </p>
               <label className={`flex items-start gap-3 cursor-pointer p-3 rounded-xl transition-colors border ${
                 form.ppeIssued ? 'bg-emerald-500/5 border-emerald-500/20' : isDark ? 'border-transparent hover:bg-slate-900' : 'border-transparent hover:bg-white'
               }`}>
                 <input type="checkbox" checked={form.ppeIssued} onChange={e => setForm({ ...form, ppeIssued: e.target.checked })} className="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 mt-0.5 shrink-0" />
                 <div>
-                  <div className="text-xs font-black text-slate-700 dark:text-slate-300">{isAr ? 'تسليم مهمات الوقاية الشخصية (PPE)' : 'PPE Gear Issued & Worn'}</div>
+                  <div className="text-xs font-black text-slate-700 dark:text-slate-300">{isAr ? '🦺 تسليم مهمات الوقاية الشخصية (PPE)' : '🦺 PPE Gear Issued & Worn'}</div>
                   <div className="text-[10px] text-slate-400 font-medium mt-0.5">{isAr ? 'خوذة، حذاء سلامة، سترة عالية الوضوح' : 'Helmet, Safety Shoes, High-Vis Vest'}</div>
                 </div>
               </label>
@@ -607,7 +604,7 @@ export const VisitorsView: React.FC = () => {
                 <input type="checkbox" checked={form.healthDeclared} onChange={e => setForm({ ...form, healthDeclared: e.target.checked })} className="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 mt-0.5 shrink-0" />
                 <div>
                   <div className="text-xs font-black text-slate-700 dark:text-slate-300">
-                    {isAr ? 'الإقرار الصحي وسلامة المهنية' : 'Health & Safety Declaration'}{' '}
+                    {isAr ? '🛡️ الإقرار الصحي وسلامة المهنية' : '🛡️ Health & Safety Declaration'}{' '}
                     <span className="text-rose-500 text-[10px]">{isAr ? '(مطلوب)' : '(Required)'}</span>
                   </div>
                   <div className="text-[10px] text-slate-400 font-medium mt-0.5">{isAr ? 'خلو من الأعراض المعدية والالتزام بتعليمات السلامة' : 'No communicable symptoms; safety rules acknowledged'}</div>
@@ -623,7 +620,8 @@ export const VisitorsView: React.FC = () => {
                   isDark ? 'border-slate-700 text-slate-400 hover:bg-slate-800 hover:text-white' : 'border-slate-300 text-slate-500 hover:bg-slate-100'
                 }`}
               >
-                {isAr ? 'إلغاء' : 'Cancel'}
+                <span>❌</span>
+                <span>{isAr ? 'إلغاء' : 'Cancel'}</span>
               </button>
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -631,7 +629,7 @@ export const VisitorsView: React.FC = () => {
                 type="submit"
                 className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-black shadow-md shadow-teal-600/25 transition-all flex items-center gap-1.5"
               >
-                <i className="fa-solid fa-id-card text-[11px]" />
+                <span>🪪</span>
                 <span>{isAr ? 'إصدار تصريح الدخول' : 'Issue Gate Pass'}</span>
               </motion.button>
             </div>
@@ -650,7 +648,7 @@ export const VisitorsView: React.FC = () => {
             <div className={`flex items-center justify-between px-5 py-4 border-b ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-teal-600 flex items-center justify-center text-white shrink-0">
-                  <i className="fa-solid fa-id-badge text-sm" />
+                  <span>🪪</span>
                 </div>
                 <h3 className="text-sm font-black">{isAr ? 'تصريح الدخول الرقمي' : 'Security Gate Pass'}</h3>
               </div>
@@ -673,14 +671,14 @@ export const VisitorsView: React.FC = () => {
                   </span>
                 </div>
                 <div>
-                  <h4 className="text-base font-black text-slate-900 dark:text-white">{selectedBadgeVisitor.name}</h4>
-                  <p className="text-xs font-bold text-slate-500 mt-0.5">{selectedBadgeVisitor.company || (isAr ? 'زائر مستقل' : 'Independent Visitor')}</p>
+                  <h4 className="text-base font-black text-slate-900 dark:text-white">👤 {selectedBadgeVisitor.name}</h4>
+                  <p className="text-xs font-bold text-slate-500 mt-0.5">🏢 {selectedBadgeVisitor.company || (isAr ? 'زائر مستقل' : 'Independent Visitor')}</p>
                 </div>
                 <div className={`p-3 rounded-xl border text-xs text-start space-y-2 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
                   {[
-                    { label: isAr ? 'المُضيف' : 'Host', value: selectedBadgeVisitor.host },
-                    { label: isAr ? 'الغرض' : 'Purpose', value: selectedBadgeVisitor.purpose },
-                    { label: isAr ? 'وقت الدخول' : 'Time In', value: selectedBadgeVisitor.timeIn, mono: true },
+                    { label: isAr ? '👔 المُضيف' : '👔 Host', value: selectedBadgeVisitor.host },
+                    { label: isAr ? '🎯 الغرض' : '🎯 Purpose', value: selectedBadgeVisitor.purpose },
+                    { label: isAr ? '⏰ وقت الدخول' : '⏰ Time In', value: selectedBadgeVisitor.timeIn, mono: true },
                   ].map((row, i) => (
                     <div key={i} className="flex items-center justify-between gap-2">
                       <span className="text-slate-400 font-bold">{row.label}:</span>
@@ -712,7 +710,8 @@ export const VisitorsView: React.FC = () => {
                   isDark ? 'border-slate-700 text-slate-400 hover:bg-slate-800' : 'border-slate-300 text-slate-500 hover:bg-slate-100'
                 }`}
               >
-                {isAr ? 'إغلاق' : 'Close'}
+                <span>❌</span>
+                <span>{isAr ? 'إغلاق' : 'Close'}</span>
               </button>
               <motion.button
                 whileHover={{ scale: 1.03 }}
@@ -721,7 +720,7 @@ export const VisitorsView: React.FC = () => {
                 onClick={handlePrintBadge}
                 className="flex-1 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-black shadow-md shadow-teal-600/25 transition-all flex items-center justify-center gap-1.5"
               >
-                <i className="fa-solid fa-print text-[11px]" />
+                <span>🖨️</span>
                 <span>{isAr ? 'طباعة البطاقة' : 'Print Badge'}</span>
               </motion.button>
             </div>
@@ -741,7 +740,7 @@ const PpeBadge: React.FC<{ issued: boolean; isAr: boolean }> = ({ issued, isAr }
       ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/25 dark:text-emerald-400'
       : 'bg-rose-500/10 text-rose-600 border-rose-500/25 dark:text-rose-400'
   }`}>
-    <i className={`fa-solid ${issued ? 'fa-check' : 'fa-xmark'} text-[9px]`} />
+    <span>🦺</span>
     <span>PPE: {issued ? (isAr ? 'مستلم' : 'Issued') : (isAr ? 'غير مستلم' : 'Pending')}</span>
   </span>
 );
@@ -752,7 +751,7 @@ const HealthBadge: React.FC<{ declared: boolean; isAr: boolean }> = ({ declared,
       ? 'bg-teal-500/10 text-teal-600 border-teal-500/25 dark:text-teal-400'
       : 'bg-amber-500/10 text-amber-600 border-amber-500/25 dark:text-amber-400'
   }`}>
-    <i className={`fa-solid ${declared ? 'fa-file-shield' : 'fa-clock'} text-[9px]`} />
+    <span>🛡️</span>
     <span>{declared ? (isAr ? 'موقّع ومعتمد' : 'Signed') : (isAr ? 'معلّق' : 'Pending')}</span>
   </span>
 );
@@ -773,7 +772,7 @@ const EmptyState: React.FC<{ isAr: boolean; isDark: boolean }> = ({ isAr, isDark
     isDark ? 'border-slate-800 bg-slate-950/50' : 'border-slate-200 bg-slate-50'
   }`}>
     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 ${isDark ? 'bg-slate-800' : 'bg-slate-200'}`}>
-      <i className="fa-solid fa-user-check text-2xl text-slate-400" />
+      <span className="text-2xl">🪪</span>
     </div>
     <h3 className="text-sm font-black text-slate-600 dark:text-slate-400">
       {isAr ? 'لا توجد سجلات مطابقة' : 'No Records Found'}

@@ -227,23 +227,21 @@ export const SuppliersView: React.FC = () => {
 
   return (
     <AnimatedPage>
-      {/* Header & Quick Action Buttons */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm backdrop-blur-sm transition-colors">
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md">
-              <i className="fa-solid fa-truck-field text-lg"></i>
-            </div>
-            <div>
-              <h2 className="text-xl font-black text-slate-900 dark:text-white">
-                {isAr ? 'سجل الموردين المعتمدين وضمان جودة سلاسل الإمداد (AVL)' : 'Approved Vendor List & Supply Chain Quality (AVL)'}
-              </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {isAr
-                  ? 'مراقبة تقييم الموردين، صلاحية شهادات ISO/HACCP، ونسب رفض الشحنات ومطابقة المواصفات'
-                  : 'Track vendor scores, ISO/HACCP cert validity, rejection rates, and compliance'}
-              </p>
-            </div>
+      {/* Header Banner */}
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg">
+            <span>🚚</span>
+          </div>
+          <div>
+            <h2 className="text-xl font-black text-slate-900 dark:text-white">
+              {isAr ? 'سجل الموردين المعتمدين وضمان جودة سلاسل الإمداد (AVL)' : 'Approved Vendor List & Supply Chain Quality (AVL)'}
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              {isAr
+                ? 'مراقبة تقييم الموردين، صلاحية شهادات ISO/HACCP، ونسب رفض الشحنات ومطابقة المواصفات'
+                : 'Track vendor scores, ISO/HACCP cert validity, rejection rates, and compliance'}
+            </p>
           </div>
         </div>
 
@@ -254,7 +252,7 @@ export const SuppliersView: React.FC = () => {
             onClick={handleExportCsv}
             className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
           >
-            <i className="fa-solid fa-file-csv text-emerald-500"></i>
+            <span>📊</span>
             {isAr ? 'تصدير CSV' : 'Export CSV'}
           </motion.button>
 
@@ -264,7 +262,7 @@ export const SuppliersView: React.FC = () => {
             onClick={() => setIsAddModalOpen(true)}
             className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-indigo-500/20"
           >
-            <i className="fa-solid fa-plus"></i>
+            <span>➕</span>
             {isAr ? 'إضافة مورد معتمد' : 'Add Vendor'}
           </motion.button>
         </div>
@@ -273,31 +271,31 @@ export const SuppliersView: React.FC = () => {
       {/* KPI Cards */}
       <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          title={isAr ? 'إجمالي الموردين المعتمدين' : 'Total Approved Vendors'}
+          title={isAr ? '🏢 إجمالي الموردين المعتمدين' : '🏢 Total Approved Vendors'}
           value={totalApproved}
           subtitle={isAr ? `من إجمالي ${suppliers.length} مورد مسجل` : `Out of ${suppliers.length} total vendors`}
-          icon={<i className="fa-solid fa-building-circle-check text-xl"></i>}
+          icon={<span className="text-xl">🏢</span>}
           variant="indigo"
         />
         <StatCard
-          title={isAr ? 'الموردين الفئة أ (امتياز >90%)' : 'Tier-A High Performers (>90%)'}
+          title={isAr ? '⭐ الموردين الفئة أ (امتياز >90%)' : '⭐ Tier-A High Performers (>90%)'}
           value={topRated}
           subtitle={isAr ? 'مطابقة قياسية كاملة للمواصفات' : 'Full standard compliance'}
-          icon={<i className="fa-solid fa-star text-xl"></i>}
+          icon={<span className="text-xl">⭐</span>}
           variant="emerald"
         />
         <StatCard
-          title={isAr ? 'موردين قيد الملاحظة / مشروط' : 'Conditional / High Risk'}
+          title={isAr ? '⚠️ موردين قيد الملاحظة / مشروط' : '⚠️ Conditional / High Risk'}
           value={highRiskOrConditional}
           subtitle={isAr ? 'يتطلب إجراءات تصحيحية وتدقيق' : 'Requires CAPA & monitoring'}
-          icon={<i className="fa-solid fa-triangle-exclamation text-xl"></i>}
+          icon={<span className="text-xl">⚠️</span>}
           variant="amber"
         />
         <StatCard
-          title={isAr ? 'متوسط نسبة رفض الشحنات' : 'Avg Rejection Rate'}
+          title={isAr ? '🚫 متوسط نسبة رفض الشحنات' : '🚫 Avg Rejection Rate'}
           value={`${avgRejection}%`}
           subtitle={isAr ? 'الحد الأقصى المسموح 2.0%' : 'Allowable threshold: 2.0%'}
-          icon={<i className="fa-solid fa-ban text-xl"></i>}
+          icon={<span className="text-xl">🚫</span>}
           variant={Number(avgRejection) > 2 ? 'rose' : 'sky'}
         />
       </StaggerGrid>
@@ -305,15 +303,15 @@ export const SuppliersView: React.FC = () => {
       {/* Search & Filter Bar */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm transition-colors">
         <div className="relative flex-1">
-          <i className="fa-solid fa-magnifying-glass absolute top-3.5 left-3.5 rtl:left-auto rtl:right-3.5 text-slate-400 text-sm"></i>
+          <span className="absolute top-3 left-3.5 rtl:left-auto rtl:right-3.5 text-slate-400 text-sm">🔍</span>
           <input
             type="text"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             placeholder={
               isAr
-                ? 'بحث باسم المورد، كود المورد، التصنيف، أو مسؤول الاتصال...'
-                : 'Search by supplier name, ID, category, or contact...'
+                ? '🔍 بحث باسم المورد، كود المورد، التصنيف، أو مسؤول الاتصال...'
+                : '🔍 Search by supplier name, ID, category, or contact...'
             }
             className="w-full pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 text-xs focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
           />
@@ -325,11 +323,11 @@ export const SuppliersView: React.FC = () => {
             onChange={e => setFilterStatus(e.target.value)}
             className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
           >
-            <option value="ALL">{isAr ? 'جميع الحالات' : 'All Statuses'}</option>
-            <option value="APPROVED">{isAr ? 'معتمد (Approved)' : 'Approved'}</option>
-            <option value="CONDITIONAL">{isAr ? 'مشروط (Conditional)' : 'Conditional'}</option>
-            <option value="SUSPENDED">{isAr ? 'موقوف مؤقتاً (Suspended)' : 'Suspended'}</option>
-            <option value="BLACKLISTED">{isAr ? 'محظور (Blacklisted)' : 'Blacklisted'}</option>
+            <option value="ALL">{isAr ? '📑 جميع الحالات' : '📑 All Statuses'}</option>
+            <option value="APPROVED">{isAr ? '✅ معتمد (Approved)' : '✅ Approved'}</option>
+            <option value="CONDITIONAL">{isAr ? '⚠️ مشروط (Conditional)' : '⚠️ Conditional'}</option>
+            <option value="SUSPENDED">{isAr ? '⏸️ موقوف مؤقتاً (Suspended)' : '⏸️ Suspended'}</option>
+            <option value="BLACKLISTED">{isAr ? '🚫 محظور (Blacklisted)' : '🚫 Blacklisted'}</option>
           </select>
 
           <select
@@ -337,10 +335,10 @@ export const SuppliersView: React.FC = () => {
             onChange={e => setFilterRisk(e.target.value)}
             className="px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
           >
-            <option value="ALL">{isAr ? 'جميع مستويات المخاطر' : 'All Risk Levels'}</option>
-            <option value="LOW">{isAr ? 'مخاطر منخفضة (Low)' : 'Low Risk'}</option>
-            <option value="MEDIUM">{isAr ? 'مخاطر متوسطة (Medium)' : 'Medium Risk'}</option>
-            <option value="HIGH">{isAr ? 'مخاطر عالية (High)' : 'High Risk'}</option>
+            <option value="ALL">{isAr ? '🛡️ جميع مستويات المخاطر' : '🛡️ All Risk Levels'}</option>
+            <option value="LOW">{isAr ? '✅ مخاطر منخفضة (Low)' : '✅ Low Risk'}</option>
+            <option value="MEDIUM">{isAr ? '⚠️ مخاطر متوسطة (Medium)' : '⚠️ Medium Risk'}</option>
+            <option value="HIGH">{isAr ? '🚨 مخاطر عالية (High)' : '🚨 High Risk'}</option>
           </select>
         </div>
       </div>
@@ -349,7 +347,7 @@ export const SuppliersView: React.FC = () => {
       <div className="block md:hidden space-y-3.5">
         {filteredSuppliers.length === 0 ? (
           <div className="bg-white dark:bg-slate-800/80 rounded-2xl p-8 text-center text-slate-400 border border-slate-200/80 dark:border-slate-700/80">
-            <i className="fa-solid fa-box-open text-3xl opacity-40 mb-2 block"></i>
+            <span className="text-3xl opacity-40 mb-2 block">📦</span>
             <p className="text-xs">{isAr ? 'لا توجد بيانات موردين مطابقة لبحثك' : 'No suppliers match your filter criteria'}</p>
           </div>
         ) : (
@@ -367,10 +365,10 @@ export const SuppliersView: React.FC = () => {
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="font-bold text-slate-900 dark:text-white text-sm">{sup.name}</span>
                         <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                          {sup.id}
+                          #{sup.id}
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400">{sup.category}</p>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">🏷️ {sup.category}</p>
                     </div>
                     <Badge
                       variant={
@@ -384,18 +382,18 @@ export const SuppliersView: React.FC = () => {
                       }
                       size="sm"
                     >
-                      {sup.status}
+                      {sup.status === 'APPROVED' ? '✅ APPROVED' : sup.status === 'CONDITIONAL' ? '⚠️ CONDITIONAL' : sup.status === 'SUSPENDED' ? '⏸️ SUSPENDED' : '🚫 BLACKLISTED'}
                     </Badge>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50">
                     <div>
-                      <span className="text-[10px] text-slate-400 block">{isAr ? 'المسؤول:' : 'Contact:'}</span>
+                      <span className="text-[10px] text-slate-400 block">{isAr ? '👤 المسؤول:' : '👤 Contact:'}</span>
                       <span className="font-bold text-slate-700 dark:text-slate-200 truncate block">{sup.contactPerson}</span>
                       <span className="text-[10px] font-mono text-slate-500 truncate block">{sup.phone}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block">{isAr ? 'التقييم / الرفض:' : 'Score / Reject:'}</span>
+                      <span className="text-[10px] text-slate-400 block">{isAr ? '📊 التقييم / الرفض:' : '📊 Score / Reject:'}</span>
                       <div className="flex items-center gap-1.5">
                         <span className="font-black font-mono text-emerald-600 dark:text-emerald-400">{sup.rating}%</span>
                         <span className="text-[10px] text-slate-400">({sup.rejectionRate}% {isAr ? 'رفض' : 'rej'})</span>
@@ -403,7 +401,7 @@ export const SuppliersView: React.FC = () => {
                       <span className={`text-[10px] font-bold uppercase ${
                         sup.riskLevel === 'LOW' ? 'text-emerald-500' : sup.riskLevel === 'MEDIUM' ? 'text-amber-500' : 'text-rose-500'
                       }`}>
-                        {sup.riskLevel} RISK
+                        {sup.riskLevel === 'LOW' ? '✅ LOW RISK' : sup.riskLevel === 'MEDIUM' ? '⚠️ MEDIUM RISK' : '🚨 HIGH RISK'}
                       </span>
                     </div>
                   </div>
@@ -412,12 +410,12 @@ export const SuppliersView: React.FC = () => {
                     <div className="flex flex-wrap items-center gap-1">
                       {sup.isoCerts.map((cert, idx) => (
                         <span key={idx} className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">
-                          {cert}
+                          📜 {cert}
                         </span>
                       ))}
                       {expiring && (
                         <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold text-[10px]">
-                          {isAr ? 'صلاحية قريبة' : 'Expiring'}
+                          ⚠️ {isAr ? 'صلاحية قريبة' : 'Expiring'}
                         </span>
                       )}
                     </div>
@@ -429,7 +427,7 @@ export const SuppliersView: React.FC = () => {
                       onClick={() => handleContactWhatsApp(sup)}
                       className="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs font-bold flex items-center gap-1"
                     >
-                      <i className="fa-brands fa-whatsapp"></i>
+                      <span>📲</span>
                       <span>{isAr ? 'واتساب' : 'WhatsApp'}</span>
                     </motion.button>
                     <motion.button
@@ -446,7 +444,7 @@ export const SuppliersView: React.FC = () => {
                       }}
                       className="px-2.5 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 text-xs font-bold flex items-center gap-1"
                     >
-                      <i className="fa-solid fa-chart-pie"></i>
+                      <span>📊</span>
                       <span>{isAr ? 'تقييم' : 'Eval'}</span>
                     </motion.button>
                     <motion.button
@@ -455,7 +453,7 @@ export const SuppliersView: React.FC = () => {
                       className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
                       title={isAr ? 'تعديل' : 'Edit'}
                     >
-                      <i className="fa-solid fa-pen-to-square text-xs"></i>
+                      <span className="text-xs">✏️</span>
                     </motion.button>
                     <motion.button
                       whileTap={{ scale: 0.95 }}
@@ -483,13 +481,13 @@ export const SuppliersView: React.FC = () => {
           <table className="w-full text-start text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-900/40 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
-                <th className="py-3.5 px-4 text-start">{isAr ? 'المورد والتصنيف' : 'Supplier & Category'}</th>
-                <th className="py-3.5 px-4 text-start">{isAr ? 'الاتصال والمسؤول' : 'Contact Person'}</th>
-                <th className="py-3.5 px-4 text-center">{isAr ? 'التقييم السنوي' : 'Performance Score'}</th>
-                <th className="py-3.5 px-4 text-center">{isAr ? 'المخاطر والحالة' : 'Risk & Status'}</th>
-                <th className="py-3.5 px-4 text-start">{isAr ? 'شهادات الجودة والصلاحية' : 'Certificates & Expiry'}</th>
-                <th className="py-3.5 px-4 text-center">{isAr ? 'نسبة الرفض' : 'Rejection %'}</th>
-                <th className="py-3.5 px-4 text-center">{isAr ? 'إجراءات' : 'Actions'}</th>
+                <th className="py-3.5 px-4 text-start">{isAr ? '🏢 المورد والتصنيف' : '🏢 Supplier & Category'}</th>
+                <th className="py-3.5 px-4 text-start">{isAr ? '👤 الاتصال والمسؤول' : '👤 Contact Person'}</th>
+                <th className="py-3.5 px-4 text-center">{isAr ? '⭐ التقييم السنوي' : '⭐ Performance Score'}</th>
+                <th className="py-3.5 px-4 text-center">{isAr ? '🛡️ المخاطر والحالة' : '🛡️ Risk & Status'}</th>
+                <th className="py-3.5 px-4 text-start">{isAr ? '📜 شهادات الجودة والصلاحية' : '📜 Certificates & Expiry'}</th>
+                <th className="py-3.5 px-4 text-center">{isAr ? '🚫 نسبة الرفض' : '🚫 Rejection %'}</th>
+                <th className="py-3.5 px-4 text-center">{isAr ? '⚙️ إجراءات' : '⚙️ Actions'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60 font-medium">
@@ -497,7 +495,7 @@ export const SuppliersView: React.FC = () => {
                 <tr>
                   <td colSpan={7} className="py-12 text-center text-slate-400">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <i className="fa-solid fa-box-open text-3xl opacity-40"></i>
+                      <span className="text-3xl opacity-40">📦</span>
                       <p>{isAr ? 'لا توجد بيانات موردين مطابقة لبحثك' : 'No suppliers match your filter criteria'}</p>
                     </div>
                   </td>
@@ -518,15 +516,15 @@ export const SuppliersView: React.FC = () => {
                               {sup.name}
                             </span>
                             <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                              {sup.id}
+                              #{sup.id}
                             </span>
                           </div>
                           <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                            {sup.category}
+                            🏷️ {sup.category}
                           </p>
                           {sup.notes && (
                             <p className="text-[10px] text-indigo-600 dark:text-indigo-400 italic">
-                              {sup.notes}
+                              📝 {sup.notes}
                             </p>
                           )}
                         </div>
@@ -536,13 +534,13 @@ export const SuppliersView: React.FC = () => {
                       <td className="py-4 px-4">
                         <div className="space-y-0.5">
                           <p className="text-slate-800 dark:text-slate-200 font-semibold">
-                            {sup.contactPerson}
+                            👤 {sup.contactPerson}
                           </p>
                           <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
-                            {sup.phone}
+                            📞 {sup.phone}
                           </p>
                           <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate max-w-[140px]">
-                            {sup.email}
+                            ✉️ {sup.email}
                           </p>
                         </div>
                       </td>
@@ -591,7 +589,7 @@ export const SuppliersView: React.FC = () => {
                             }
                             size="sm"
                           >
-                            {sup.status}
+                            {sup.status === 'APPROVED' ? '✅ APPROVED' : sup.status === 'CONDITIONAL' ? '⚠️ CONDITIONAL' : sup.status === 'SUSPENDED' ? '⏸️ SUSPENDED' : '🚫 BLACKLISTED'}
                           </Badge>
                           <span
                             className={`text-[10px] font-bold uppercase tracking-wider ${
@@ -602,7 +600,7 @@ export const SuppliersView: React.FC = () => {
                                 : 'text-rose-600 dark:text-rose-400'
                             }`}
                           >
-                            {sup.riskLevel} RISK
+                            {sup.riskLevel === 'LOW' ? '✅ LOW' : sup.riskLevel === 'MEDIUM' ? '⚠️ MEDIUM' : '🚨 HIGH'} RISK
                           </span>
                         </div>
                       </td>
@@ -616,16 +614,16 @@ export const SuppliersView: React.FC = () => {
                                 key={idx}
                                 className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800"
                               >
-                                {cert}
+                                📜 {cert}
                               </span>
                             ))}
                           </div>
                           <div className="flex items-center gap-1 text-[10px] text-slate-500 dark:text-slate-400">
-                            <i className="fa-regular fa-calendar-check text-[9px]"></i>
+                            <span>📅</span>
                             <span>{sup.certExpiry}</span>
                             {expiring && (
                               <span className="px-1 py-0.2 rounded bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold text-[9px]">
-                                {isAr ? 'قرب الانتهاء' : 'Expiring'}
+                                ⚠️ {isAr ? 'قرب الانتهاء' : 'Expiring'}
                               </span>
                             )}
                           </div>
@@ -655,7 +653,7 @@ export const SuppliersView: React.FC = () => {
                             title={isAr ? 'تواصل عبر واتساب' : 'WhatsApp Contact'}
                             className="w-7 h-7 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all shadow-sm"
                           >
-                            <i className="fa-brands fa-whatsapp text-xs"></i>
+                            <span>📲</span>
                           </motion.button>
 
                           <motion.button
@@ -674,7 +672,7 @@ export const SuppliersView: React.FC = () => {
                             title={isAr ? 'بطاقة تقييم الأداء والمطابقة' : 'Evaluate Performance'}
                             className="w-7 h-7 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center transition-all shadow-sm"
                           >
-                            <i className="fa-solid fa-chart-pie text-xs"></i>
+                            <span>📊</span>
                           </motion.button>
 
                           <motion.button
@@ -684,7 +682,7 @@ export const SuppliersView: React.FC = () => {
                             title={isAr ? 'تعديل البيانات' : 'Edit Supplier'}
                             className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 flex items-center justify-center transition-all shadow-sm"
                           >
-                            <i className="fa-solid fa-pen-to-square text-xs"></i>
+                            <span className="text-xs">✏️</span>
                           </motion.button>
 
                           <motion.button
@@ -698,7 +696,7 @@ export const SuppliersView: React.FC = () => {
                             title={isAr ? 'حذف المورد' : 'Delete Supplier'}
                             className="w-7 h-7 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-900/30 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center transition-all shadow-sm"
                           >
-                            <i className="fa-solid fa-trash text-xs"></i>
+                            <span className="text-xs">🗑️</span>
                           </motion.button>
                         </div>
                       </td>
@@ -717,7 +715,7 @@ export const SuppliersView: React.FC = () => {
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md">
-                <i className="fa-solid fa-truck-field"></i>
+                <span className="text-sm">🚚</span>
               </div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 {isAr ? 'إضافة مورد جديد إلى قائمة الموردين المعتمدين (AVL)' : 'Add New Approved Vendor (AVL)'}
@@ -735,7 +733,7 @@ export const SuppliersView: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'اسم الشركة / المورد *' : 'Company / Supplier Name *'}
+                  {isAr ? '🏢 اسم الشركة / المورد *' : '🏢 Company / Supplier Name *'}
                 </label>
                 <input
                   type="text"
@@ -749,7 +747,7 @@ export const SuppliersView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'التصنيف ونوع التوريد *' : 'Category / Supply Type *'}
+                  {isAr ? '🏷️ التصنيف ونوع التوريد *' : '🏷️ Category / Supply Type *'}
                 </label>
                 <input
                   type="text"
@@ -763,7 +761,7 @@ export const SuppliersView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'مسؤول الاتصال' : 'Contact Person'}
+                  {isAr ? '👤 مسؤول الاتصال' : '👤 Contact Person'}
                 </label>
                 <input
                   type="text"
@@ -775,7 +773,7 @@ export const SuppliersView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'رقم الهاتف / الواتساب' : 'Phone / WhatsApp'}
+                  {isAr ? '📞 رقم الهاتف / الواتساب' : '📞 Phone / WhatsApp'}
                 </label>
                 <input
                   type="text"
@@ -788,7 +786,7 @@ export const SuppliersView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'شهادات الجودة (مفصولة بفواصل)' : 'ISO Certifications (comma separated)'}
+                  {isAr ? '📜 شهادات الجودة (مفصولة بفواصل)' : '📜 ISO Certifications (comma separated)'}
                 </label>
                 <input
                   type="text"
@@ -801,7 +799,7 @@ export const SuppliersView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'تاريخ انتهاء الشهادة' : 'Cert Expiry Date'}
+                  {isAr ? '📅 تاريخ انتهاء الشهادة' : '📅 Cert Expiry Date'}
                 </label>
                 <input
                   type="date"
@@ -813,39 +811,39 @@ export const SuppliersView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'مستوى المخاطر' : 'Risk Level'}
+                  {isAr ? '🛡️ مستوى المخاطر' : '🛡️ Risk Level'}
                 </label>
                 <select
                   value={newSup.riskLevel}
                   onChange={e => setNewSup({ ...newSup, riskLevel: e.target.value as any })}
                   className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
                 >
-                  <option value="LOW">{isAr ? 'منخفض (Low Risk)' : 'Low Risk'}</option>
-                  <option value="MEDIUM">{isAr ? 'متوسط (Medium Risk)' : 'Medium Risk'}</option>
-                  <option value="HIGH">{isAr ? 'عالي (High Risk)' : 'High Risk'}</option>
+                  <option value="LOW">{isAr ? '✅ منخفض (Low Risk)' : '✅ Low Risk'}</option>
+                  <option value="MEDIUM">{isAr ? '⚠️ متوسط (Medium Risk)' : '⚠️ Medium Risk'}</option>
+                  <option value="HIGH">{isAr ? '🚨 عالي (High Risk)' : '🚨 High Risk'}</option>
                 </select>
               </div>
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'حالة الاعتماد' : 'AVL Status'}
+                  {isAr ? '✅ حالة الاعتماد' : '✅ AVL Status'}
                 </label>
                 <select
                   value={newSup.status}
                   onChange={e => setNewSup({ ...newSup, status: e.target.value as any })}
                   className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
                 >
-                  <option value="APPROVED">{isAr ? 'معتمد (Approved)' : 'Approved'}</option>
-                  <option value="CONDITIONAL">{isAr ? 'مشروط (Conditional)' : 'Conditional'}</option>
-                  <option value="SUSPENDED">{isAr ? 'موقوف مؤقتاً (Suspended)' : 'Suspended'}</option>
-                  <option value="BLACKLISTED">{isAr ? 'محظور (Blacklisted)' : 'Blacklisted'}</option>
+                  <option value="APPROVED">{isAr ? '✅ معتمد (Approved)' : '✅ Approved'}</option>
+                  <option value="CONDITIONAL">{isAr ? '⚠️ مشروط (Conditional)' : '⚠️ Conditional'}</option>
+                  <option value="SUSPENDED">{isAr ? '⏸️ موقوف مؤقتاً (Suspended)' : '⏸️ Suspended'}</option>
+                  <option value="BLACKLISTED">{isAr ? '🚫 محظور (Blacklisted)' : '🚫 Blacklisted'}</option>
                 </select>
               </div>
             </div>
 
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                {isAr ? 'ملاحظات تدقيق الجودة والامتثال' : 'Quality Audit & Compliance Notes'}
+                {isAr ? '📝 ملاحظات تدقيق الجودة والامتثال' : '📝 Quality Audit & Compliance Notes'}
               </label>
               <textarea
                 rows={2}
@@ -862,15 +860,17 @@ export const SuppliersView: React.FC = () => {
                 onClick={() => setIsAddModalOpen(false)}
                 className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
-                {isAr ? 'إلغاء' : 'Cancel'}
+                <span>❌</span>
+                <span>{isAr ? 'إلغاء' : 'Cancel'}</span>
               </button>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
                 type="submit"
-                className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-500/20"
+                className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-500/20 flex items-center gap-1.5"
               >
-                {isAr ? 'حفظ واعتماد المورد' : 'Save & Approve Vendor'}
+                <span>💾</span>
+                <span>{isAr ? 'حفظ واعتماد المورد' : 'Save & Approve Vendor'}</span>
               </motion.button>
             </div>
           </form>
@@ -883,7 +883,7 @@ export const SuppliersView: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-5 sm:p-6 shadow-2xl space-y-5 max-h-[85dvh] overflow-y-auto overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch]">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                {isAr ? `تعديل بيانات المورد (${editingSupplier.id})` : `Edit Supplier (${editingSupplier.id})`}
+                {isAr ? `✏️ تعديل بيانات المورد (${editingSupplier.id})` : `✏️ Edit Supplier (${editingSupplier.id})`}
               </h3>
               <button
                 onClick={() => setEditingSupplier(null)}
@@ -897,7 +897,7 @@ export const SuppliersView: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'اسم الشركة' : 'Company Name'}
+                    {isAr ? '🏢 اسم الشركة' : '🏢 Company Name'}
                   </label>
                   <input
                     type="text"
@@ -910,7 +910,7 @@ export const SuppliersView: React.FC = () => {
 
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'التصنيف' : 'Category'}
+                    {isAr ? '🏷️ التصنيف' : '🏷️ Category'}
                   </label>
                   <input
                     type="text"
@@ -923,7 +923,7 @@ export const SuppliersView: React.FC = () => {
 
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'مسؤول الاتصال' : 'Contact Person'}
+                    {isAr ? '👤 مسؤول الاتصال' : '👤 Contact Person'}
                   </label>
                   <input
                     type="text"
@@ -935,7 +935,7 @@ export const SuppliersView: React.FC = () => {
 
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'رقم الهاتف' : 'Phone'}
+                    {isAr ? '📞 رقم الهاتف' : '📞 Phone'}
                   </label>
                   <input
                     type="text"
@@ -947,23 +947,23 @@ export const SuppliersView: React.FC = () => {
 
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'حالة الاعتماد' : 'Status'}
+                    {isAr ? '✅ حالة الاعتماد' : '✅ Status'}
                   </label>
                   <select
                     value={editingSupplier.status}
                     onChange={e => setEditingSupplier({ ...editingSupplier, status: e.target.value as any })}
                     className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500"
                   >
-                    <option value="APPROVED">{isAr ? 'معتمد (Approved)' : 'Approved'}</option>
-                    <option value="CONDITIONAL">{isAr ? 'مشروط (Conditional)' : 'Conditional'}</option>
-                    <option value="SUSPENDED">{isAr ? 'موقوف مؤقتاً (Suspended)' : 'Suspended'}</option>
-                    <option value="BLACKLISTED">{isAr ? 'محظور (Blacklisted)' : 'Blacklisted'}</option>
+                    <option value="APPROVED">{isAr ? '✅ معتمد (Approved)' : '✅ Approved'}</option>
+                    <option value="CONDITIONAL">{isAr ? '⚠️ مشروط (Conditional)' : '⚠️ Conditional'}</option>
+                    <option value="SUSPENDED">{isAr ? '⏸️ موقوف مؤقتاً (Suspended)' : '⏸️ Suspended'}</option>
+                    <option value="BLACKLISTED">{isAr ? '🚫 محظور (Blacklisted)' : '🚫 Blacklisted'}</option>
                   </select>
                 </div>
 
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {isAr ? 'نسبة المرتجعات (%)' : 'Rejection Rate (%)'}
+                    {isAr ? '🚫 نسبة المرتجعات (%)' : '🚫 Rejection Rate (%)'}
                   </label>
                   <input
                     type="number"
@@ -977,7 +977,7 @@ export const SuppliersView: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isAr ? 'ملاحظات الجودة' : 'Notes'}
+                  {isAr ? '📝 ملاحظات الجودة' : '📝 Notes'}
                 </label>
                 <textarea
                   rows={2}
@@ -993,15 +993,17 @@ export const SuppliersView: React.FC = () => {
                   onClick={() => setEditingSupplier(null)}
                   className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold"
                 >
-                  {isAr ? 'إلغاء' : 'Cancel'}
+                  <span>❌</span>
+                  <span>{isAr ? 'إلغاء' : 'Cancel'}</span>
                 </button>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold"
+                  className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1.5"
                 >
-                  {isAr ? 'حفظ التعديلات' : 'Save Changes'}
+                  <span>💾</span>
+                  <span>{isAr ? 'حفظ التعديلات' : 'Save Changes'}</span>
                 </motion.button>
               </div>
             </form>
@@ -1016,10 +1018,10 @@ export const SuppliersView: React.FC = () => {
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  {isAr ? 'بطاقة التقييم السنوي والتدقيق الفني للمورد' : 'Annual Supplier Evaluation & Audit Scorecard'}
+                  {isAr ? '📊 بطاقة التقييم السنوي والتدقيق الفني للمورد' : '📊 Annual Supplier Evaluation & Audit Scorecard'}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {evalSupplier.name} ({evalSupplier.id})
+                  🏢 {evalSupplier.name} (#{evalSupplier.id})
                 </p>
               </div>
               <button
@@ -1035,7 +1037,7 @@ export const SuppliersView: React.FC = () => {
                 {/* 1. Quality Compliance */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
-                    <span>{isAr ? '1. مطابقة جودة المواد والمواصفات القياسية (35%)' : '1. Quality & Spec Compliance (35%)'}</span>
+                    <span>{isAr ? '⭐ 1. مطابقة جودة المواد والمواصفات القياسية (35%)' : '⭐ 1. Quality & Spec Compliance (35%)'}</span>
                     <span className="font-mono text-indigo-600 dark:text-indigo-400">{evalScores.qualityCompliance}%</span>
                   </div>
                   <input
@@ -1051,7 +1053,7 @@ export const SuppliersView: React.FC = () => {
                 {/* 2. Delivery Timeliness */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
-                    <span>{isAr ? '2. الالتزام بمواعيد التوريد وسلسلة التبريد (25%)' : '2. On-Time Delivery & Cold Chain (25%)'}</span>
+                    <span>{isAr ? '🚚 2. الالتزام بمواعيد التوريد وسلسلة التبريد (25%)' : '🚚 2. On-Time Delivery & Cold Chain (25%)'}</span>
                     <span className="font-mono text-indigo-600 dark:text-indigo-400">{evalScores.deliveryTimeliness}%</span>
                   </div>
                   <input
@@ -1067,7 +1069,7 @@ export const SuppliersView: React.FC = () => {
                 {/* 3. Packaging & Food Safety */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
-                    <span>{isAr ? '3. سلامة التعبئة والتغليف والباركود (20%)' : '3. Packaging Safety & Labeling (20%)'}</span>
+                    <span>{isAr ? '📦 3. سلامة التعبئة والتغليف والباركود (20%)' : '📦 3. Packaging Safety & Labeling (20%)'}</span>
                     <span className="font-mono text-indigo-600 dark:text-indigo-400">{evalScores.packagingSafety}%</span>
                   </div>
                   <input
@@ -1083,7 +1085,7 @@ export const SuppliersView: React.FC = () => {
                 {/* 4. Documentation & Traceability */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
-                    <span>{isAr ? '4. الوثائق وشهادات المنشأ والتحليل (10%)' : '4. COA & Traceability Docs (10%)'}</span>
+                    <span>{isAr ? '📜 4. الوثائق وشهادات المنشأ والتحليل (10%)' : '📜 4. COA & Traceability Docs (10%)'}</span>
                     <span className="font-mono text-indigo-600 dark:text-indigo-400">{evalScores.documentation}%</span>
                   </div>
                   <input
@@ -1099,7 +1101,7 @@ export const SuppliersView: React.FC = () => {
                 {/* 5. Pricing & Response */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
-                    <span>{isAr ? '5. سرعة الاستجابة لشكاوى الجودة (10%)' : '5. Customer Service & CAPA Response (10%)'}</span>
+                    <span>{isAr ? '⚡ 5. سرعة الاستجابة لشكاوى الجودة (10%)' : '⚡ 5. Customer Service & CAPA Response (10%)'}</span>
                     <span className="font-mono text-indigo-600 dark:text-indigo-400">{evalScores.pricingResponse}%</span>
                   </div>
                   <input
@@ -1117,7 +1119,7 @@ export const SuppliersView: React.FC = () => {
               <div className="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-2xl border border-indigo-200 dark:border-indigo-800 flex items-center justify-between">
                 <div>
                   <span className="text-xs font-bold text-indigo-900 dark:text-indigo-200">
-                    {isAr ? 'المجموع الوزني النهائي المحسوب:' : 'Weighted Total Score:'}
+                    {isAr ? '🎯 المجموع الوزني النهائي المحسوب:' : '🎯 Weighted Total Score:'}
                   </span>
                   <p className="text-[11px] text-indigo-700 dark:text-indigo-300">
                     {Math.round(
@@ -1128,8 +1130,8 @@ export const SuppliersView: React.FC = () => {
                         evalScores.pricingResponse * 0.1
                     ) >= 88
                       ? isAr
-                        ? 'مورد فئة (أ) - معتمد بدون قيود'
-                        : 'Tier-A Supplier - Full Approval'
+                        ? '⭐ مورد فئة (أ) - معتمد بدون قيود'
+                        : '⭐ Tier-A Supplier - Full Approval'
                       : Math.round(
                           evalScores.qualityCompliance * 0.35 +
                             evalScores.deliveryTimeliness * 0.25 +
@@ -1138,11 +1140,11 @@ export const SuppliersView: React.FC = () => {
                             evalScores.pricingResponse * 0.1
                         ) >= 75
                       ? isAr
-                        ? 'مورد فئة (ب) - اعتماد مشروط'
-                        : 'Tier-B Supplier - Conditional'
+                        ? '⚠️ مورد فئة (ب) - اعتماد مشروط'
+                        : '⚠️ Tier-B Supplier - Conditional'
                       : isAr
-                      ? 'مورد فئة (ج) - موقوف يستوجب تصحيح فوري'
-                      : 'Tier-C Supplier - Suspended'}
+                      ? '🚫 مورد فئة (ج) - موقوف يستوجب تصحيح فوري'
+                      : '🚫 Tier-C Supplier - Suspended'}
                   </p>
                 </div>
                 <span className="text-2xl font-black font-mono text-indigo-600 dark:text-indigo-400">
@@ -1163,15 +1165,17 @@ export const SuppliersView: React.FC = () => {
                   onClick={() => setEvalSupplier(null)}
                   className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold"
                 >
-                  {isAr ? 'إلغاء' : 'Cancel'}
+                  <span>❌</span>
+                  <span>{isAr ? 'إلغاء' : 'Cancel'}</span>
                 </button>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold shadow-md"
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold shadow-md flex items-center gap-1.5"
                 >
-                  {isAr ? 'اعتماد التقييم وتحديث الرتبة' : 'Commit & Update Rating'}
+                  <span>✅</span>
+                  <span>{isAr ? 'اعتماد التقييم وتحديث الرتبة' : 'Commit & Update Rating'}</span>
                 </motion.button>
               </div>
             </form>
