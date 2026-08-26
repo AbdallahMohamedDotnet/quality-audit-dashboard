@@ -346,7 +346,7 @@ export const CapaTrackerView: React.FC = () => {
                 <motion.div
                   key={capa.id}
                   variants={staggerChild}
-                  className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 p-5 shadow-sm hover:shadow-md transition-all space-y-4"
+                  className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 p-5 shadow-sm hover:shadow-md transition-all space-y-4 content-visibility-auto transform-gpu"
                 >
                   {/* Card Header */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-700">
@@ -608,7 +608,7 @@ export const CapaTrackerView: React.FC = () => {
 
       {/* Add New CAPA Modal with AnimatedModal */}
       <AnimatedModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} className="max-w-2xl">
-        <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-6 shadow-2xl space-y-5">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-5 sm:p-6 shadow-2xl space-y-5 max-h-[85dvh] overflow-y-auto overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch]">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-md">
@@ -798,7 +798,7 @@ export const CapaTrackerView: React.FC = () => {
       {/* Verify & Close Modal with AnimatedModal */}
       <AnimatedModal isOpen={!!verifyModalCapa} onClose={() => setVerifyModalCapa(null)} className="max-w-lg">
         {verifyModalCapa && (
-          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-6 shadow-2xl space-y-5">
+          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-5 sm:p-6 shadow-2xl space-y-5 max-h-[85dvh] overflow-y-auto overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch]">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center shadow-md">

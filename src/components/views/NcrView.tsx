@@ -205,7 +205,7 @@ export const NcrView: React.FC = () => {
             <motion.div
               key={ncr.id}
               variants={staggerChild}
-              className={`bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border-2 transition-all shadow-sm flex flex-col justify-between ${
+              className={`bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border-2 transition-all shadow-sm flex flex-col justify-between content-visibility-auto transform-gpu ${
                 isOpen
                   ? 'border-rose-500/40 bg-rose-500/5'
                   : 'border-emerald-500/40 bg-emerald-500/5'
@@ -342,7 +342,7 @@ export const NcrView: React.FC = () => {
 
       {/* Log New NCR Modal with AnimatedModal */}
       <AnimatedModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} className="max-w-lg">
-        <div className={`w-full rounded-3xl p-5 sm:p-6 shadow-2xl border transition-colors ${
+        <div className={`w-full rounded-3xl p-5 sm:p-6 shadow-2xl border transition-colors max-h-[85dvh] overflow-y-auto overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch] ${
           isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
         }`}>
           <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-slate-800">

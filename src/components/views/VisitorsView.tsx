@@ -304,7 +304,7 @@ export const VisitorsView: React.FC = () => {
                 <motion.div
                   key={v.id}
                   variants={staggerChild}
-                  className={`rounded-2xl border p-4 space-y-3 shadow-sm transition-colors ${
+                  className={`rounded-2xl border p-4 space-y-3 shadow-sm transition-colors content-visibility-auto transform-gpu ${
                     isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
                   }`}
                 >
@@ -371,7 +371,7 @@ export const VisitorsView: React.FC = () => {
       <div className={`hidden md:block rounded-2xl border overflow-hidden shadow-sm transition-colors ${
         isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
       }`}>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto [touch-action:pan-x] [-webkit-overflow-scrolling:touch]">
           <table className="w-full text-xs" style={{ minWidth: '720px' }}>
             <thead className={`border-b text-[10px] font-black uppercase tracking-wider ${
               isDark ? 'bg-slate-950 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-500'
@@ -527,7 +527,7 @@ export const VisitorsView: React.FC = () => {
       ═══════════════════════════════════════════════════════════════ */}
       <AnimatedModal isOpen={isCheckinModalOpen} onClose={() => setIsCheckinModalOpen(false)} className="max-w-lg">
         <div
-          className={`w-full rounded-2xl shadow-2xl border max-h-[92vh] overflow-y-auto ${
+          className={`w-full rounded-2xl shadow-2xl border max-h-[85dvh] overflow-y-auto overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch] ${
             isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
           }`}
         >
@@ -644,7 +644,7 @@ export const VisitorsView: React.FC = () => {
       ═══════════════════════════════════════════════════════════════ */}
       <AnimatedModal isOpen={!!selectedBadgeVisitor} onClose={() => setSelectedBadgeVisitor(null)} className="max-w-sm">
         {selectedBadgeVisitor && (
-          <div className={`w-full rounded-2xl shadow-2xl border ${
+          <div className={`w-full rounded-2xl shadow-2xl border max-h-[85dvh] overflow-y-auto overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch] ${
             isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
           }`}>
             <div className={`flex items-center justify-between px-5 py-4 border-b ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>

@@ -139,7 +139,7 @@ export const ArchiveView: React.FC = () => {
               <motion.div
                 key={audit.id}
                 variants={staggerChild}
-                className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 transition-colors"
+                className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 transition-colors content-visibility-auto transform-gpu"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-0.5">
@@ -215,7 +215,7 @@ export const ArchiveView: React.FC = () => {
 
       {/* Desktop Audit Table (>= md) */}
       <div className="hidden md:block bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto [touch-action:pan-x] [-webkit-overflow-scrolling:touch]">
           <table className="w-full text-xs text-start">
             <thead className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase font-black text-[10px] tracking-wider">
               <tr>
@@ -328,7 +328,7 @@ export const ArchiveView: React.FC = () => {
       <AnimatedModal isOpen={!!selectedAuditModal} onClose={() => setSelectedAuditModal(null)} className="max-w-lg">
         {selectedAuditModal && (
           <div
-            className={`w-full rounded-3xl p-5 sm:p-8 shadow-2xl border transition-colors ${
+            className={`w-full rounded-3xl p-5 sm:p-8 shadow-2xl border transition-colors max-h-[85dvh] overflow-y-auto overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch] ${
               isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
             }`}
           >

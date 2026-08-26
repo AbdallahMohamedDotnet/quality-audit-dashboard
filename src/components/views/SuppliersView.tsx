@@ -360,7 +360,7 @@ export const SuppliersView: React.FC = () => {
                 <motion.div
                   key={sup.id}
                   variants={staggerChild}
-                  className="bg-white dark:bg-slate-800/80 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3 transition-colors"
+                  className="bg-white dark:bg-slate-800/80 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3 transition-colors content-visibility-auto transform-gpu"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="space-y-0.5">
@@ -479,7 +479,7 @@ export const SuppliersView: React.FC = () => {
 
       {/* Desktop Suppliers Table (>= md) */}
       <div className="hidden md:block bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden backdrop-blur-sm transition-colors">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto [touch-action:pan-x] [-webkit-overflow-scrolling:touch]">
           <table className="w-full text-start text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-900/40 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
@@ -713,7 +713,7 @@ export const SuppliersView: React.FC = () => {
 
       {/* Add Supplier Modal with AnimatedModal */}
       <AnimatedModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} className="max-w-2xl">
-        <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-6 shadow-2xl space-y-5">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-5 sm:p-6 shadow-2xl space-y-5 max-h-[85dvh] overflow-y-auto overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch]">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md">
@@ -880,7 +880,7 @@ export const SuppliersView: React.FC = () => {
       {/* Edit Supplier Modal with AnimatedModal */}
       <AnimatedModal isOpen={!!editingSupplier} onClose={() => setEditingSupplier(null)} className="max-w-2xl">
         {editingSupplier && (
-          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-6 shadow-2xl space-y-5">
+          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-5 sm:p-6 shadow-2xl space-y-5 max-h-[85dvh] overflow-y-auto overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch]">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 {isAr ? `تعديل بيانات المورد (${editingSupplier.id})` : `Edit Supplier (${editingSupplier.id})`}
@@ -1012,7 +1012,7 @@ export const SuppliersView: React.FC = () => {
       {/* Supplier Evaluation Scorecard Modal with AnimatedModal */}
       <AnimatedModal isOpen={!!evalSupplier} onClose={() => setEvalSupplier(null)} className="max-w-xl">
         {evalSupplier && (
-          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-6 shadow-2xl space-y-5">
+          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 w-full p-5 sm:p-6 shadow-2xl space-y-5 max-h-[85dvh] overflow-y-auto overscroll-y-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch]">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
