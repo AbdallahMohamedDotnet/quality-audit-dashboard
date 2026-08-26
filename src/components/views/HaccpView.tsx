@@ -7,6 +7,7 @@ import { HACCP_FLOWS, SECTORS } from '../../data';
 import { StatCard } from '../common/StatCard';
 import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
 import { ScrollReveal } from '../common/ScrollReveal';
+import { formatLiveClocks } from '../../utils/date';
 
 export const HaccpView: React.FC = () => {
   const {
@@ -18,7 +19,6 @@ export const HaccpView: React.FC = () => {
     dispatchWhatsApp,
     printReport,
     showToast,
-    clocks,
   } = useAudit();
 
   const currentSectorObj = SECTORS.find(s => s.val === currentSector);
@@ -30,14 +30,15 @@ export const HaccpView: React.FC = () => {
   const ccpSteps = flowSteps.filter(s => s.isCCP);
 
   const handleShareHaccpWhatsApp = () => {
+    const nowClocks = formatLiveClocks(new Date(), isAr);
     const sectorName = currentSectorObj ? (isAr ? currentSectorObj.ar : currentSectorObj.en) : currentSector;
     const ccpListText = ccpSteps
       .map((s, idx) => `• CCP #${idx + 1}: ${isAr ? s.label.ar : s.label.en}`)
       .join('\n');
 
     const msg = isAr
-      ? `*🛡️ خطة الهاسب ونقاط التحكم الحرجة (HACCP Plan)*\nالقطاع: ${sectorName}\nالتاريخ: ${clocks.gregorianDate}\nإجمالي مراحل التدفق: ${flowSteps.length} مراحل\nنقاط التحكم الحرجة المعتمدة (CCPs): ${ccpSteps.length}\n------------------------\n${ccpListText}\n------------------------\nتم التوثيق والاعتماد وفق معايير ISO 22000 & Codex Alimentarius.`
-      : `*🛡️ Certified HACCP Flow & CCP Plan*\nSector: ${sectorName}\nDate: ${clocks.gregorianDate}\nTotal Flow Stages: ${flowSteps.length}\nCritical Control Points (CCPs): ${ccpSteps.length}\n------------------------\n${ccpListText}\n------------------------\nCertified under ISO 22000 & Codex Alimentarius standards.`;
+      ? `*🛡️ خطة الهاسب ونقاط التحكم الحرجة (HACCP Plan)*\nالقطاع: ${sectorName}\nالتاريخ: ${nowClocks.gregorianDate}\nإجمالي مراحل التدفق: ${flowSteps.length} مراحل\nنقاط التحكم الحرجة المعتمدة (CCPs): ${ccpSteps.length}\n------------------------\n${ccpListText}\n------------------------\nتم التوثيق والاعتماد وفق معايير ISO 22000 & Codex Alimentarius.`
+      : `*🛡️ Certified HACCP Flow & CCP Plan*\nSector: ${sectorName}\nDate: ${nowClocks.gregorianDate}\nTotal Flow Stages: ${flowSteps.length}\nCritical Control Points (CCPs): ${ccpSteps.length}\n------------------------\n${ccpListText}\n------------------------\nCertified under ISO 22000 & Codex Alimentarius standards.`;
 
     dispatchWhatsApp(msg);
   };

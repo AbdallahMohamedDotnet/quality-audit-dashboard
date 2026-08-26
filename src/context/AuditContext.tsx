@@ -74,9 +74,6 @@ interface AuditContextType {
   setSelectedDept: (dept: string) => void;
   startAudit: (deptKey: string) => void;
 
-  // Clocks
-  clocks: LiveClocks;
-
   // Toast
   toast: ToastInfo | null;
   showToast: (message: string, type?: 'success' | 'info' | 'warning' | 'error') => void;
@@ -286,16 +283,6 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setToast(null);
     }, 4000);
   }, []);
-
-  // Live Clocks
-  const [clocks, setClocks] = useState<LiveClocks>(() => formatLiveClocks(new Date(), isAr));
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setClocks(formatLiveClocks(new Date(), isAr));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [isAr]);
 
   // Sync HTML tags for Dark Mode & Language
   useEffect(() => {
@@ -760,11 +747,12 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       const deptName = DEPARTMENTS[selectedDept]?.[isAr ? 'ar' : 'en'] || selectedDept;
       const roleName = ROLES.find(r => r.val === currentRole)?.[isAr ? 'ar' : 'en'] || currentRole;
 
+      const nowClocks = formatLiveClocks(new Date(), isAr);
       const record: AuditRecord = {
         id: Date.now(),
         type: 'AUDIT',
-        date: clocks.gregorianDate,
-        time: clocks.time,
+        date: nowClocks.gregorianDate,
+        time: nowClocks.time,
         dept: deptName,
         deptKey: selectedDept,
         score: `${scorePercent}%`,
@@ -798,7 +786,6 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     },
     [
       auditAnswers,
-      clocks,
       currentRole,
       currentSector,
       isAr,
@@ -815,13 +802,14 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   // NCR Actions
   const addNcr = useCallback(
     (ncrData: Omit<NcrRecord, 'id' | 'date' | 'status'>) => {
+      const nowClocks = formatLiveClocks(new Date(), isAr);
       const newNcr: NcrRecord = {
         id: `NCR-${Date.now()}`,
         type: ncrData.type,
         deptName: ncrData.deptName,
         std: ncrData.std || 'N/A',
         desc: ncrData.desc,
-        date: clocks.gregorianDate,
+        date: nowClocks.gregorianDate,
         status: 'OPEN',
       };
       setNcrs(prev => [newNcr, ...prev]);
@@ -832,7 +820,7 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         'success'
       );
     },
-    [clocks.gregorianDate, isAr, showToast]
+    [isAr, showToast]
   );
 
   const closeNcr = useCallback(
@@ -857,10 +845,11 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   // Visitor Actions
   const addVisitor = useCallback(
     (v: Omit<VisitorRecord, 'id' | 'timeIn' | 'timeOut'>) => {
+      const nowClocks = formatLiveClocks(new Date(), isAr);
       const newVisitor: VisitorRecord = {
         id: Date.now(),
         ...v,
-        timeIn: clocks.time,
+        timeIn: nowClocks.time,
         timeOut: null,
       };
       setVisitors(prev => [newVisitor, ...prev]);
@@ -869,20 +858,21 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         'success'
       );
     },
-    [clocks.time, isAr, showToast]
+    [isAr, showToast]
   );
 
   const checkoutVisitor = useCallback(
     (id: number) => {
+      const nowClocks = formatLiveClocks(new Date(), isAr);
       setVisitors(prev =>
-        prev.map(v => (v.id === id ? { ...v, timeOut: clocks.time } : v))
+        prev.map(v => (v.id === id ? { ...v, timeOut: nowClocks.time } : v))
       );
       showToast(
         isAr ? 'تم تسجيل خروج الزائر وختم التوقيت' : 'Visitor checked out successfully',
         'info'
       );
     },
-    [clocks.time, isAr, showToast]
+    [isAr, showToast]
   );
 
   // AI Complaint Analysis
@@ -972,9 +962,10 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   // CAPA Master Tracker Actions
   const addCapa = useCallback(
     (capaData: Omit<CapaRecord, 'id' | 'createdAt'>) => {
+      const nowClocks = formatLiveClocks(new Date(), isAr);
       const newCapa: CapaRecord = {
         id: `CAPA-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`,
-        createdAt: clocks.gregorianDate,
+        createdAt: nowClocks.gregorianDate,
         ...capaData,
       };
       setCapas(prev => [newCapa, ...prev]);
@@ -983,7 +974,7 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         'success'
       );
     },
-    [clocks.gregorianDate, isAr, showToast]
+    [isAr, showToast]
   );
 
   const updateCapaStatus = useCallback(
@@ -992,13 +983,14 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       status: CapaRecord['status'],
       extra?: { verifiedBy?: string; closedAt?: string; effectivenessRating?: number }
     ) => {
+      const nowClocks = formatLiveClocks(new Date(), isAr);
       setCapas(prev =>
         prev.map(c => {
           if (c.id === id) {
             return {
               ...c,
               status,
-              ...(status === 'CLOSED' ? { closedAt: clocks.gregorianDate } : {}),
+              ...(status === 'CLOSED' ? { closedAt: nowClocks.gregorianDate } : {}),
               ...extra,
             };
           }
@@ -1010,7 +1002,7 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         'success'
       );
     },
-    [clocks.gregorianDate, isAr, showToast]
+    [isAr, showToast]
   );
 
   const updateCapa = useCallback(
@@ -1039,6 +1031,7 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       preventiveAction = '',
       priority: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' = 'HIGH'
     ) => {
+      const nowClocks = formatLiveClocks(new Date(), isAr);
       const newId = `CAPA-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`;
       const targetDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
       const newCapa: CapaRecord = {
@@ -1054,7 +1047,7 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         preventiveAction: preventiveAction || (isAr ? 'مراجعة إجراءات التشغيل القياسية وتدريب الفريق' : 'Review SOP and retrain personnel'),
         targetDate,
         status: 'OPEN',
-        createdAt: clocks.gregorianDate,
+        createdAt: nowClocks.gregorianDate,
       };
 
       setCapas(prev => [newCapa, ...prev]);
@@ -1066,7 +1059,7 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       );
       return newId;
     },
-    [clocks.gregorianDate, isAr, showToast]
+    [isAr, showToast]
   );
 
   // Training & Competency Actions
@@ -1189,7 +1182,6 @@ export const AuditProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         selectedDept,
         setSelectedDept,
         startAudit,
-        clocks,
         toast,
         showToast,
         logoSvg,

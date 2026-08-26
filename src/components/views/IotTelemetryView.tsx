@@ -7,6 +7,7 @@ import { SECTORS, IOT_SENSORS } from '../../data';
 import { StatCard } from '../common/StatCard';
 import { AnimatedPage, StaggerGrid } from '../common/AnimatedPage';
 import { staggerChild, cardHover } from '../../utils/animations';
+import { formatLiveClocks } from '../../utils/date';
 
 export const IotTelemetryView: React.FC = () => {
   const {
@@ -20,7 +21,6 @@ export const IotTelemetryView: React.FC = () => {
     setActiveTab,
     dispatchWhatsApp,
     showToast,
-    clocks,
   } = useAudit();
 
   const [selectedSensorFilter, setSelectedSensorFilter] = useState<'ALL' | 'CRITICAL' | 'WARNING' | 'OPTIMAL'>('ALL');
@@ -54,6 +54,7 @@ export const IotTelemetryView: React.FC = () => {
   });
 
   const handleShareTelemetryWhatsApp = () => {
+    const nowClocks = formatLiveClocks(new Date(), isAr);
     const sectorName = currentSectorObj ? (isAr ? currentSectorObj.ar : currentSectorObj.en) : currentSector;
     const readingsSummary = sensorStatusList
       .map(
@@ -63,8 +64,8 @@ export const IotTelemetryView: React.FC = () => {
       .join('\n');
 
     const msg = isAr
-      ? `*📡 تقرير المراقبة اللحظية للمجسات وحساسات IoT*\nالقطاع: ${sectorName}\nالتاريخ والتوقيت: ${clocks.gregorianDate} - ${clocks.time}\nالحالة: ${criticalCount > 0 ? '⚠️ يوجد حيود حرج' : '✅ جميع القراءات مطابقة'}\n------------------------\n${readingsSummary}\n------------------------\nتم الإصدار عبر وحدة المراقبة المركزية - منصة التدقيق الرقمية.`
-      : `*📡 Real-Time IoT Sensors & Telemetry Stream*\nSector: ${sectorName}\nTimestamp: ${clocks.gregorianDate} - ${clocks.time}\nStatus: ${criticalCount > 0 ? '⚠️ Critical Deviation' : '✅ Optimal Operating Range'}\n------------------------\n${readingsSummary}\n------------------------\nCertified Digital Quality Platform.`;
+      ? `*📡 تقرير المراقبة اللحظية للمجسات وحساسات IoT*\nالقطاع: ${sectorName}\nالتاريخ والتوقيت: ${nowClocks.gregorianDate} - ${nowClocks.time}\nالحالة: ${criticalCount > 0 ? '⚠️ يوجد حيود حرج' : '✅ جميع القراءات مطابقة'}\n------------------------\n${readingsSummary}\n------------------------\nتم الإصدار عبر وحدة المراقبة المركزية - منصة التدقيق الرقمية.`
+      : `*📡 Real-Time IoT Sensors & Telemetry Stream*\nSector: ${sectorName}\nTimestamp: ${nowClocks.gregorianDate} - ${nowClocks.time}\nStatus: ${criticalCount > 0 ? '⚠️ Critical Deviation' : '✅ Optimal Operating Range'}\n------------------------\n${readingsSummary}\n------------------------\nCertified Digital Quality Platform.`;
 
     dispatchWhatsApp(msg);
   };

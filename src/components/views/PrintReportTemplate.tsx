@@ -4,6 +4,7 @@ import React from 'react';
 import { useAudit } from '../../context/AuditContext';
 import { SECTORS, DEPARTMENTS, SECTOR_DEPARTMENTS, STANDARDS } from '../../data';
 import { calculateSectorMetrics, getSectorLatestScores } from '../../utils/calculations';
+import { formatLiveClocks } from '../../utils/date';
 
 export const PrintReportTemplate: React.FC = () => {
   const {
@@ -11,12 +12,17 @@ export const PrintReportTemplate: React.FC = () => {
     currentSector,
     selectedDept,
     currentRole,
-    clocks,
     logoSvg,
     auditAnswers,
     archivedAudits,
     ncrs,
   } = useAudit();
+
+  const [printClocks, setPrintClocks] = React.useState(() => formatLiveClocks(new Date(), isAr));
+
+  React.useEffect(() => {
+    setPrintClocks(formatLiveClocks(new Date(), isAr));
+  }, [isAr]);
 
   const currentSectorObj = SECTORS.find(s => s.val === currentSector);
   const sectorDeptKeys = SECTOR_DEPARTMENTS[currentSector] || [];
@@ -50,9 +56,9 @@ export const PrintReportTemplate: React.FC = () => {
 
         <div className="text-end text-xs space-y-0.5" suppressHydrationWarning>
           <div className="font-bold" suppressHydrationWarning>
-            {isAr ? 'التاريخ:' : 'Date:'} {clocks.gregorianDate}
+            {isAr ? 'التاريخ:' : 'Date:'} {printClocks.gregorianDate}
           </div>
-          <div className="font-mono text-[11px] text-slate-600" suppressHydrationWarning>{clocks.time}</div>
+          <div className="font-mono text-[11px] text-slate-600" suppressHydrationWarning>{printClocks.time}</div>
           <div className="font-mono text-[10px] text-slate-500" suppressHydrationWarning>REF #AUDIT-CERT</div>
         </div>
       </div>

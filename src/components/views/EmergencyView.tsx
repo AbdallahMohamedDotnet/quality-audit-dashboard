@@ -6,6 +6,7 @@ import { useAudit } from '../../context/AuditContext';
 import { SECTORS, EMERGENCY_PROTOCOLS, CONTAINMENT_TEMPLATES } from '../../data';
 import { AnimatedPage } from '../common/AnimatedPage';
 import { ScrollReveal } from '../common/ScrollReveal';
+import { formatLiveClocks } from '../../utils/date';
 
 export const EmergencyView: React.FC = () => {
   const {
@@ -18,7 +19,6 @@ export const EmergencyView: React.FC = () => {
     dispatchEmail,
     printReport,
     showToast,
-    clocks,
   } = useAudit();
 
   const currentSectorObj = SECTORS.find(s => s.val === currentSector);
@@ -29,9 +29,10 @@ export const EmergencyView: React.FC = () => {
   const containmentList = CONTAINMENT_TEMPLATES[currentSector] || CONTAINMENT_TEMPLATES._food || [];
 
   const handleBroadcastEmergencyWhatsApp = () => {
+    const nowClocks = formatLiveClocks(new Date(), isAr);
     const title = activeProtocol ? (isAr ? activeProtocol.ar : activeProtocol.en) : emergency.type;
     const sectorName = currentSectorObj ? (isAr ? currentSectorObj.ar : currentSectorObj.en) : currentSector;
-    const msg = `*🚨 ${isAr ? 'بلاغ طوارئ وعزل فوري' : 'EMERGENCY RECALL ALERT'} — ${sectorName}*\n${clocks.gregorianDate} - ${clocks.time}\n\n${isAr ? 'النوع' : 'Type'}: ${title}\n${isAr ? 'المادة/المصدر' : 'Item/Source'}: ${emergency.food || '-'}\n${isAr ? 'رقم التشغيلة/المرجع' : 'Batch/Ref'}: ${emergency.lot || '-'}\n${isAr ? 'الإجراء المتخذ' : 'Action Taken'}: ${emergency.action || '-'}\n------------------------\n${isAr ? 'يرجى تفعيل خطة الطوارئ والعزل الفوري.' : 'Engage immediate emergency quarantine and recall protocol.'}`;
+    const msg = `*🚨 ${isAr ? 'بلاغ طوارئ وعزل فوري' : 'EMERGENCY RECALL ALERT'} — ${sectorName}*\n${nowClocks.gregorianDate} - ${nowClocks.time}\n\n${isAr ? 'النوع' : 'Type'}: ${title}\n${isAr ? 'المادة/المصدر' : 'Item/Source'}: ${emergency.food || '-'}\n${isAr ? 'رقم التشغيلة/المرجع' : 'Batch/Ref'}: ${emergency.lot || '-'}\n${isAr ? 'الإجراء المتخذ' : 'Action Taken'}: ${emergency.action || '-'}\n------------------------\n${isAr ? 'يرجى تفعيل خطة الطوارئ والعزل الفوري.' : 'Engage immediate emergency quarantine and recall protocol.'}`;
 
     dispatchWhatsApp(msg);
   };
