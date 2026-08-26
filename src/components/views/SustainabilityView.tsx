@@ -27,12 +27,12 @@ export const SustainabilityView: React.FC = () => {
 
   return (
     <AnimatedPage>
-      {/* Header */}
+      {/* Header Banner */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
-              <i className="fa-solid fa-leaf"></i>
+              <span>🌱</span>
             </span>
             <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
               {isAr ? 'الاستدامة والبصمة الكربونية (ESG & Green Facilities)' : 'ESG & Carbon Footprint Tracker'}
@@ -52,7 +52,7 @@ export const SustainabilityView: React.FC = () => {
           onClick={handleShareEsgReport}
           className="px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5"
         >
-          <i className="fa-brands fa-whatsapp text-sm"></i>
+          <span>📲</span>
           <span>{isAr ? 'مشاركة تقرير ESG' : 'Share ESG Report'}</span>
         </motion.button>
       </div>
@@ -63,7 +63,7 @@ export const SustainabilityView: React.FC = () => {
           title={isAr ? 'البصمة الكربونية المقدرة' : 'Carbon Footprint'}
           value={`${carbonTons} MT`}
           subtitle={isAr ? 'طن مكافئ CO2e' : 'Metric Tons CO2e'}
-          icon={<i className="fa-solid fa-smog text-xl"></i>}
+          icon={<span className="text-xl">🏭</span>}
           variant="emerald"
         />
 
@@ -71,7 +71,7 @@ export const SustainabilityView: React.FC = () => {
           title={isAr ? 'مؤشر الكفاءة البيئية' : 'Eco-Efficiency Rating'}
           value="94.2%"
           subtitle={isAr ? 'مطابق لمعايير ISO 14001' : 'ISO 14001 Compliant'}
-          icon={<i className="fa-solid fa-tree text-xl"></i>}
+          icon={<span className="text-xl">🌲</span>}
           variant="teal"
           trend="+3.1%"
         />
@@ -80,7 +80,7 @@ export const SustainabilityView: React.FC = () => {
           title={isAr ? 'وفورات الطاقة المحققة' : 'Energy Savings'}
           value="18.5%"
           subtitle={isAr ? 'مقارنة بالمتوسط الشهري' : 'vs. baseline benchmark'}
-          icon={<i className="fa-solid fa-bolt text-xl"></i>}
+          icon={<span className="text-xl">⚡</span>}
           variant="amber"
         />
       </StaggerGrid>
@@ -90,8 +90,9 @@ export const SustainabilityView: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Resource Consumption Inputs (5 cols) */}
           <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-            <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800">
-              {isAr ? 'مدخلات استهلاك الموارد الشهرية' : 'Monthly Resource Consumption'}
+            <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
+              <span>📊</span>
+              <span>{isAr ? 'مدخلات استهلاك الموارد الشهرية' : 'Monthly Resource Consumption'}</span>
             </h3>
 
             <div className="space-y-4">
@@ -147,14 +148,15 @@ export const SustainabilityView: React.FC = () => {
 
           {/* Environmental Initiatives & Action Guide (7 cols) */}
           <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-            <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800">
-              {isAr ? 'مبادرات خفض الانبعاثات والتحسين البيئي' : 'Carbon Reduction Initiatives & Audit Protocols'}
+            <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
+              <span>🌱</span>
+              <span>{isAr ? 'مبادرات خفض الانبعاثات والتحسين البيئي' : 'Carbon Reduction Initiatives & Audit Protocols'}</span>
             </h3>
 
             <div className="space-y-3">
               <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-start gap-3">
                 <div className="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-lightbulb text-sm"></i>
+                  <span className="text-sm">💡</span>
                 </div>
                 <div className="space-y-0.5">
                   <h4 className="text-xs font-black text-emerald-700 dark:text-emerald-300">
@@ -170,7 +172,7 @@ export const SustainabilityView: React.FC = () => {
 
               <div className="p-3.5 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-start gap-3">
                 <div className="w-8 h-8 rounded-xl bg-sky-500 text-white flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-faucet-drip text-sm"></i>
+                  <span className="text-sm">🚰</span>
                 </div>
                 <div className="space-y-0.5">
                   <h4 className="text-xs font-black text-sky-700 dark:text-sky-300">
@@ -186,7 +188,7 @@ export const SustainabilityView: React.FC = () => {
 
               <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
                 <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-recycle text-sm"></i>
+                  <span className="text-sm">♻️</span>
                 </div>
                 <div className="space-y-0.5">
                   <h4 className="text-xs font-black text-amber-700 dark:text-amber-300">

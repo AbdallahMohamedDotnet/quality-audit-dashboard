@@ -75,12 +75,12 @@ export const RecallView: React.FC = () => {
 
   return (
     <AnimatedPage>
-      {/* Header */}
+      {/* Header Banner */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center">
-              <i className="fa-solid fa-boxes-packing"></i>
+              <span>🚨</span>
             </span>
             <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
               {isAr ? 'مصفوفة مخاطر الاستدعاء والعزل (Recall & Quarantine)' : 'Product Recall & Quarantine Matrix'}
@@ -101,7 +101,7 @@ export const RecallView: React.FC = () => {
             onClick={printReport}
             className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
           >
-            <i className="fa-solid fa-print"></i>
+            <span>🖨️</span>
             <span>{isAr ? 'تصدير PDF' : 'Print PDF'}</span>
           </motion.button>
 
@@ -112,7 +112,7 @@ export const RecallView: React.FC = () => {
             onClick={handleShareRecallWhatsApp}
             className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-1.5"
           >
-            <i className="fa-brands fa-whatsapp text-sm"></i>
+            <span>📲</span>
             <span>{isAr ? 'واتساب' : 'WhatsApp'}</span>
           </motion.button>
 
@@ -123,7 +123,7 @@ export const RecallView: React.FC = () => {
             onClick={handleSendRecallEmail}
             className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-1.5"
           >
-            <i className="fa-solid fa-envelope"></i>
+            <span>✉️</span>
             <span>{isAr ? 'إيميل' : 'Email'}</span>
           </motion.button>
         </div>
@@ -132,34 +132,34 @@ export const RecallView: React.FC = () => {
       {/* RPN Risk KPI Cards */}
       <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          title={isAr ? 'مؤشر أولوية الخطر (RPN)' : 'Risk Priority Number (RPN)'}
+          title={isAr ? '🎯 مؤشر أولوية الخطر (RPN)' : '🎯 Risk Priority Number (RPN)'}
           value={`${rpnScore} / 25`}
           subtitle={isAr ? `المستوى: ${riskInfo.labelAr}` : `Level: ${riskInfo.labelEn}`}
-          icon={<i className="fa-solid fa-gauge-high text-xl"></i>}
+          icon={<span className="text-xl">🎯</span>}
           variant={rpnScore >= 15 ? 'rose' : rpnScore >= 8 ? 'amber' : 'emerald'}
         />
 
         <StatCard
-          title={isAr ? 'معامل الشدة والتأثير' : 'Severity Rating'}
+          title={isAr ? '⚠️ معامل الشدة والتأثير' : '⚠️ Severity Rating'}
           value={`${recallRisk.severity} / 5`}
           subtitle={isAr ? 'شدة الضرر على السلامة' : 'Impact severity'}
-          icon={<i className="fa-solid fa-skull-crossbones text-xl"></i>}
+          icon={<span className="text-xl">⚠️</span>}
           variant="rose"
         />
 
         <StatCard
-          title={isAr ? 'معامل احتمالية الحدوث' : 'Probability Rating'}
+          title={isAr ? '📈 معامل احتمالية الحدوث' : '📈 Probability Rating'}
           value={`${recallRisk.probability} / 5`}
           subtitle={isAr ? 'تكرار وفرصة الوقوع' : 'Occurrence rate'}
-          icon={<i className="fa-solid fa-chart-line text-xl"></i>}
+          icon={<span className="text-xl">📈</span>}
           variant="amber"
         />
 
         <StatCard
-          title={isAr ? 'بروتوكول الاحتواء' : 'Containment Protocol'}
-          value={rpnScore >= 15 ? (isAr ? 'حظر فوري' : 'Lockdown') : isAr ? 'مراقبة' : 'Monitor'}
+          title={isAr ? '🛡️ بروتوكول الاحتواء' : '🛡️ Containment Protocol'}
+          value={rpnScore >= 15 ? (isAr ? '🚨 حظر فوري' : '🚨 Lockdown') : isAr ? '👀 مراقبة' : '👀 Monitor'}
           subtitle={isAr ? 'الإجراء التشغيلي الموصى به' : 'Recommended action'}
-          icon={<i className="fa-solid fa-shield-virus text-xl"></i>}
+          icon={<span className="text-xl">🛡️</span>}
           variant={rpnScore >= 15 ? 'rose' : 'sky'}
         />
       </StaggerGrid>
@@ -169,14 +169,15 @@ export const RecallView: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Risk Controls */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-            <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800">
-              {isAr ? 'تقييم مؤشرات الخطر الميداني' : 'Field Risk Assessment'}
+            <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
+              <span>📊</span>
+              <span>{isAr ? 'تقييم مؤشرات الخطر الميداني' : 'Field Risk Assessment'}</span>
             </h3>
 
             <div className="space-y-4">
               <div>
                 <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1.5">
-                  {isAr ? 'المادة أو الصنف المستهدف بالفحص' : 'Target Item / Material'}
+                  {isAr ? '📦 المادة أو الصنف المستهدف بالفحص' : '📦 Target Item / Material'}
                 </label>
                 <select
                   value={recallRisk.item}
@@ -197,9 +198,9 @@ export const RecallView: React.FC = () => {
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs font-bold">
                   <span className="text-slate-600 dark:text-slate-300">
-                    {isAr ? 'معامل الشدة (Severity):' : 'Severity Impact:'}
+                    {isAr ? '⚠️ معامل الشدة (Severity):' : '⚠️ Severity Impact:'}
                   </span>
-                  <span className="font-mono px-2 py-0.5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                  <span className="font-mono px-2 py-0.5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 font-black">
                     {recallRisk.severity} / 5
                   </span>
                 </div>
@@ -217,9 +218,9 @@ export const RecallView: React.FC = () => {
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs font-bold">
                   <span className="text-slate-600 dark:text-slate-300">
-                    {isAr ? 'معامل الاحتمالية (Probability):' : 'Probability Factor:'}
+                    {isAr ? '📈 معامل الاحتمالية (Probability):' : '📈 Probability Factor:'}
                   </span>
-                  <span className="font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                  <span className="font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black">
                     {recallRisk.probability} / 5
                   </span>
                 </div>
@@ -240,7 +241,7 @@ export const RecallView: React.FC = () => {
                 onClick={handleEscalateToCapaTracker}
                 className="w-full bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white font-black py-3.5 rounded-xl shadow-lg shadow-rose-600/20 transition-all text-xs flex items-center justify-center gap-2"
               >
-                <i className="fa-solid fa-arrows-spin"></i>
+                <span>🔄</span>
                 <span>{isAr ? 'تصعيد حالة الاستدعاء إلى سجل CAPA' : 'Escalate Recall to CAPA Tracker'}</span>
               </motion.button>
             </div>
@@ -249,7 +250,7 @@ export const RecallView: React.FC = () => {
           {/* Containment Checklist */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
             <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
-              <i className="fa-solid fa-clipboard-check text-sky-500"></i>
+              <span>📋</span>
               <span>{isAr ? 'قائمة التحقق من إجراءات الاحتواء والعزل' : 'Containment Protocol Verification'}</span>
             </h3>
 

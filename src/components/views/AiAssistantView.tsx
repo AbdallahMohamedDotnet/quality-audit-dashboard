@@ -110,7 +110,7 @@ export const AiAssistantView: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-500 flex items-center justify-center">
-              <i className="fa-solid fa-brain"></i>
+              <span>🤖</span>
             </span>
             <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
               {isAr ? 'مساعد الذكاء الاصطناعي لتحليل الشكاوى والـ CAPA' : 'AI Complaint & Root-Cause CAPA Engine'}
@@ -126,7 +126,7 @@ export const AiAssistantView: React.FC = () => {
         {/* Quick Presets */}
         <div className="flex items-center gap-1.5 flex-wrap">
           <span className="text-[10px] font-bold text-slate-400 uppercase">
-            {isAr ? 'أمثلة سريعة:' : 'Quick Presets:'}
+            {isAr ? '💡 أمثلة سريعة:' : '💡 Quick Presets:'}
           </span>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -144,7 +144,7 @@ export const AiAssistantView: React.FC = () => {
             onClick={() => handleLoadPreset('cleanliness')}
             className="px-2.5 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500 text-purple-600 hover:text-white text-[11px] font-bold transition-all"
           >
-            🛏️ {isAr ? 'نظافة' : 'Hygiene'}
+            🧼 {isAr ? 'نظافة' : 'Hygiene'}
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -170,15 +170,16 @@ export const AiAssistantView: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Complaint Input Form (5 cols) */}
         <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-          <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800">
-            {isAr ? 'بيانات البلاغ أو الشكوى الواردة' : 'Incoming Incident Details'}
+          <h3 className="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
+            <span>📝</span>
+            <span>{isAr ? 'بيانات البلاغ أو الشكوى الواردة' : 'Incoming Incident Details'}</span>
           </h3>
 
           <div className="space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                  {isAr ? 'اسم العميل / النزيل' : 'Customer Name'}
+                  {isAr ? '👤 اسم العميل / النزيل' : '👤 Customer Name'}
                 </label>
                 <input
                   type="text"
@@ -193,7 +194,7 @@ export const AiAssistantView: React.FC = () => {
 
               <div>
                 <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                  {isAr ? 'رقم الغرفة / الطلب' : 'Room / Order Ref'}
+                  {isAr ? '🚪 رقم الغرفة / الطلب' : '🚪 Room / Order Ref'}
                 </label>
                 <input
                   type="text"
@@ -209,7 +210,7 @@ export const AiAssistantView: React.FC = () => {
 
             <div>
               <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                {isAr ? 'القسم محل الواقعة' : 'Incident Department'}
+                {isAr ? '🏢 القسم محل الواقعة' : '🏢 Incident Department'}
               </label>
               <select
                 value={complaint.dept}
@@ -229,7 +230,7 @@ export const AiAssistantView: React.FC = () => {
 
             <div>
               <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 block mb-1">
-                {isAr ? 'نص الشكوى أو الملاحظة بالتفصيل' : 'Complaint Narrative'}
+                {isAr ? '✍️ نص الشكوى أو الملاحظة بالتفصيل' : '✍️ Complaint Narrative'}
               </label>
               <textarea
                 rows={4}
@@ -253,7 +254,7 @@ export const AiAssistantView: React.FC = () => {
               onClick={analyzeComplaintAi}
               className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs shadow-lg shadow-purple-600/30 transition-all flex items-center justify-center gap-2"
             >
-              <i className="fa-solid fa-wand-magic-sparkles"></i>
+              <span>✨</span>
               <span>{isAr ? 'تحليل ومطابقة بالذكاء الاصطناعي' : 'Run AI Root-Cause Analysis'}</span>
             </motion.button>
           </div>
@@ -263,13 +264,13 @@ export const AiAssistantView: React.FC = () => {
         <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
             <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <i className="fa-solid fa-microchip text-purple-500"></i>
-              {isAr ? 'مخرجات التحليل الاستراتيجي وخطة CAPA' : 'AI Strategic Findings & CAPA Blueprint'}
+              <span>🤖</span>
+              <span>{isAr ? 'مخرجات التحليل الاستراتيجي وخطة CAPA' : 'AI Strategic Findings & CAPA Blueprint'}</span>
             </h3>
 
             {complaint.output && (
               <span className="text-[10px] font-mono font-black text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
-                100% AI Confidence
+                ✨ 100% AI Confidence
               </span>
             )}
           </div>
@@ -283,7 +284,7 @@ export const AiAssistantView: React.FC = () => {
                 exit={{ opacity: 0 }}
                 className="py-16 text-center border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl space-y-2"
               >
-                <i className="fa-solid fa-robot text-4xl text-slate-400 mb-2 block animate-pulse"></i>
+                <span className="text-4xl text-slate-400 mb-2 block animate-pulse">🤖</span>
                 <p className="text-xs font-bold text-slate-500">
                   {isAr
                     ? 'أدخل بيانات الشكوى واضغط "تحليل" لتوليد الرد الرسمي وخطة الإجراءات التصحيحية فوراً'
@@ -303,7 +304,7 @@ export const AiAssistantView: React.FC = () => {
                 <div className="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/30 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-black text-sky-600 dark:text-sky-400 flex items-center gap-1.5">
-                      <i className="fa-regular fa-comment-dots"></i>
+                      <span>💌</span>
                       {isAr ? 'صيغة الاعتذار والاسترضاء المعتمدة للعميل' : 'Customer Apology & Redress Response'}
                     </span>
                     <div className="flex items-center gap-2">
@@ -312,7 +313,7 @@ export const AiAssistantView: React.FC = () => {
                         onClick={() => handleCopyText(complaint.output!.reply, isAr ? 'صيغة الرد' : 'Response')}
                         className="text-[11px] font-bold text-slate-500 hover:text-sky-500 flex items-center gap-1 transition-colors"
                       >
-                        <i className="fa-regular fa-copy"></i>
+                        <span>📋</span>
                         <span>{isAr ? 'نسخ' : 'Copy'}</span>
                       </button>
                       <button
@@ -320,7 +321,7 @@ export const AiAssistantView: React.FC = () => {
                         onClick={handleShareApologyWhatsApp}
                         className="text-[11px] font-bold text-[#25D366] hover:underline flex items-center gap-1"
                       >
-                        <i className="fa-brands fa-whatsapp"></i>
+                        <span>📲</span>
                         <span>{isAr ? 'واتساب' : 'WhatsApp'}</span>
                       </button>
                     </div>
@@ -334,7 +335,7 @@ export const AiAssistantView: React.FC = () => {
                 <div className="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/30 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-black text-purple-600 dark:text-purple-400 flex items-center gap-1.5">
-                      <i className="fa-solid fa-chart-line"></i>
+                      <span>📊</span>
                       {isAr ? 'التقرير الفني للإدارة العليا' : 'Executive Incident Brief'}
                     </span>
                     <div className="flex items-center gap-2">
@@ -343,7 +344,7 @@ export const AiAssistantView: React.FC = () => {
                         onClick={() => handleCopyText(complaint.output!.report, isAr ? 'التقرير الفني' : 'Report')}
                         className="text-[11px] font-bold text-slate-500 hover:text-purple-500 flex items-center gap-1 transition-colors"
                       >
-                        <i className="fa-regular fa-copy"></i>
+                        <span>📋</span>
                         <span>{isAr ? 'نسخ' : 'Copy'}</span>
                       </button>
                       <button
@@ -351,7 +352,7 @@ export const AiAssistantView: React.FC = () => {
                         onClick={handleEscalateGmEmail}
                         className="text-[11px] font-bold text-sky-500 hover:underline flex items-center gap-1"
                       >
-                        <i className="fa-regular fa-envelope"></i>
+                        <span>✉️</span>
                         <span>{isAr ? 'تصعيد بالإيميل' : 'Email GM'}</span>
                       </button>
                     </div>
@@ -364,7 +365,7 @@ export const AiAssistantView: React.FC = () => {
                 {/* 3. CAPA 3-Stage Blueprint */}
                 <div className="space-y-2 pt-2">
                   <span className="text-xs font-black text-slate-700 dark:text-slate-300 block">
-                    {isAr ? 'بروتوكول المعالجة ثلاثي المراحل (CAPA Timeline)' : '3-Tier CAPA Timeline'}
+                    {isAr ? '🔄 بروتوكول المعالجة ثلاثي المراحل (CAPA Timeline)' : '🔄 3-Tier CAPA Timeline'}
                   </span>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
@@ -373,7 +374,7 @@ export const AiAssistantView: React.FC = () => {
                       className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-1"
                     >
                       <span className="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase block">
-                        {isAr ? '1. الاحتواء الفوري (2h)' : '1. Immediate Containment'}
+                        {isAr ? '⚡ 1. الاحتواء الفوري (2h)' : '⚡ 1. Immediate Containment'}
                       </span>
                       <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
                         {complaint.output.capaImmediate}
@@ -385,7 +386,7 @@ export const AiAssistantView: React.FC = () => {
                       className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30 space-y-1"
                     >
                       <span className="text-[10px] font-black text-purple-600 dark:text-purple-400 uppercase block">
-                        {isAr ? '2. التحقيق الجذري (48h)' : '2. 5-Whys Root Cause'}
+                        {isAr ? '🔍 2. التحقيق الجذري (48h)' : '🔍 2. 5-Whys Root Cause'}
                       </span>
                       <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
                         {complaint.output.capaRootCause}
@@ -397,7 +398,7 @@ export const AiAssistantView: React.FC = () => {
                       className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-1"
                     >
                       <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase block">
-                        {isAr ? '3. الوقاية الشاملة (7d)' : '3. Preventative Systemic'}
+                        {isAr ? '🛡️ 3. الوقاية الشاملة (7d)' : '🛡️ 3. Preventative Systemic'}
                       </span>
                       <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
                         {complaint.output.capaPreventive}
@@ -431,7 +432,7 @@ export const AiAssistantView: React.FC = () => {
                       }}
                       className="w-full py-3 rounded-2xl bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-700 hover:to-amber-700 text-white text-xs font-black shadow-md shadow-rose-500/20 transition-all flex items-center justify-center gap-2"
                     >
-                      <i className="fa-solid fa-arrows-spin"></i>
+                      <span>🔄</span>
                       <span>
                         {isAr
                           ? 'اعتماد وتصدير الخطة مباشرة إلى سجل CAPA Master Tracker'

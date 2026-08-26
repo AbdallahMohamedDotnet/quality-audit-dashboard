@@ -86,12 +86,12 @@ export const IotTelemetryView: React.FC = () => {
 
   return (
     <AnimatedPage>
-      {/* Header */}
+      {/* Header Banner */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
-              <i className="fa-solid fa-tower-broadcast"></i>
+              <span>📡</span>
             </span>
             <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
               {isAr ? 'المراقبة اللحظية للمجسات وإنترنت الأشياء (IoT)' : 'Live IoT Sensor Telemetry Stream'}
@@ -124,11 +124,11 @@ export const IotTelemetryView: React.FC = () => {
             <span>
               {isTelemetrySimulating
                 ? isAr
-                  ? 'البث الحي نشط (Active Stream)'
-                  : 'Live Streaming ON'
+                  ? '📡 البث الحي نشط (Active Stream)'
+                  : '📡 Live Streaming ON'
                 : isAr
-                ? 'تشغيل البث التجريبي'
-                : 'Start Simulation'}
+                ? '▶️ تشغيل البث التجريبي'
+                : '▶️ Start Simulation'}
             </span>
           </motion.button>
 
@@ -139,7 +139,7 @@ export const IotTelemetryView: React.FC = () => {
             onClick={handleShareTelemetryWhatsApp}
             className="px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5"
           >
-            <i className="fa-brands fa-whatsapp text-sm"></i>
+            <span>📲</span>
             <span>{isAr ? 'إرسال تقرير القراءات' : 'Share Readings'}</span>
           </motion.button>
         </div>
@@ -149,11 +149,11 @@ export const IotTelemetryView: React.FC = () => {
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 transition-colors">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-slate-600 dark:text-slate-300 flex items-center gap-2">
-            <i className="fa-solid fa-industry text-sky-500"></i>
+            <span>🏭</span>
             <span>{isAr ? 'تحديد منشأة الفحص والمجسات:' : 'Select Industry Facility:'}</span>
           </span>
           <span className="text-[11px] font-bold text-slate-400">
-            {isAr ? `${sensors.length} مجساً متصلاً` : `${sensors.length} Connected Sensors`}
+            {isAr ? `📡 ${sensors.length} مجساً متصلاً` : `📡 ${sensors.length} Connected Sensors`}
           </span>
         </div>
 
@@ -182,34 +182,34 @@ export const IotTelemetryView: React.FC = () => {
       {/* Sensor KPI Statistics */}
       <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          title={isAr ? 'إجمالي المجسات النشطة' : 'Total Active Sensors'}
+          title={isAr ? '📡 إجمالي المجسات النشطة' : '📡 Total Active Sensors'}
           value={sensorStatusList.length}
           subtitle={isAr ? 'محدثة كل 3 ثوانٍ' : 'Telemetry refreshed live'}
-          icon={<i className="fa-solid fa-microchip text-xl"></i>}
+          icon={<span className="text-xl">📡</span>}
           variant="sky"
         />
 
         <StatCard
-          title={isAr ? 'القراءات المثالية (Optimal)' : 'Optimal Sensors'}
+          title={isAr ? '✅ القراءات المثالية (Optimal)' : '✅ Optimal Sensors'}
           value={optimalCount}
           subtitle={isAr ? 'ضمن الحدود الآمنة' : 'Within safe parameters'}
-          icon={<i className="fa-solid fa-circle-check text-xl"></i>}
+          icon={<span className="text-xl">✅</span>}
           variant="emerald"
         />
 
         <StatCard
-          title={isAr ? 'تنبيهات اقتراب الحد (Warning)' : 'Near Tolerance Threshold'}
+          title={isAr ? '⚠️ تنبيهات اقتراب الحد (Warning)' : '⚠️ Near Tolerance Threshold'}
           value={warningCount}
           subtitle={isAr ? 'تحتاج مراقبة وقائية' : 'Approaching upper/lower cap'}
-          icon={<i className="fa-solid fa-triangle-exclamation text-xl"></i>}
+          icon={<span className="text-xl">⚠️</span>}
           variant="amber"
         />
 
         <StatCard
-          title={isAr ? 'الحيود الحرج (Critical Breach)' : 'Critical Breaches'}
+          title={isAr ? '🚨 الحيود الحرج (Critical Breach)' : '🚨 Critical Breaches'}
           value={criticalCount}
           subtitle={isAr ? 'تتطلب تدخلاً فورياً' : 'Immediate quarantine required'}
-          icon={<i className="fa-solid fa-radiation text-xl"></i>}
+          icon={<span className="text-xl">🚨</span>}
           variant="rose"
         />
       </StaggerGrid>
@@ -225,7 +225,7 @@ export const IotTelemetryView: React.FC = () => {
               : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400'
           }`}
         >
-          {isAr ? 'جميع المجسات' : 'All Sensors'} ({sensorStatusList.length})
+          {isAr ? '📑 جميع المجسات' : '📑 All Sensors'} ({sensorStatusList.length})
         </button>
 
         <button
@@ -237,7 +237,7 @@ export const IotTelemetryView: React.FC = () => {
               : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400'
           }`}
         >
-          {isAr ? 'المطابقة' : 'Optimal'} ({optimalCount})
+          {isAr ? '✅ المطابقة' : '✅ Optimal'} ({optimalCount})
         </button>
 
         <button
@@ -249,7 +249,7 @@ export const IotTelemetryView: React.FC = () => {
               : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400'
           }`}
         >
-          {isAr ? 'التحذيرات' : 'Warnings'} ({warningCount})
+          {isAr ? '⚠️ التحذيرات' : '⚠️ Warnings'} ({warningCount})
         </button>
 
         <button
@@ -261,7 +261,7 @@ export const IotTelemetryView: React.FC = () => {
               : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400'
           }`}
         >
-          {isAr ? 'الحيود الحرج' : 'Critical'} ({criticalCount})
+          {isAr ? '🚨 الحيود الحرج' : '🚨 Critical'} ({criticalCount})
         </button>
       </div>
 
@@ -294,15 +294,15 @@ export const IotTelemetryView: React.FC = () => {
                   >
                     {s.status === 'CRITICAL'
                       ? isAr
-                        ? 'إنذار حرج'
-                        : 'CRITICAL'
+                        ? '🚨 إنذار حرج'
+                        : '🚨 CRITICAL'
                       : s.status === 'WARNING'
                       ? isAr
-                        ? 'تحذير'
-                        : 'WARNING'
+                        ? '⚠️ تحذير'
+                        : '⚠️ WARNING'
                       : isAr
-                      ? 'مطابق'
-                      : 'OPTIMAL'}
+                      ? '✅ مطابق'
+                      : '✅ OPTIMAL'}
                   </span>
 
                   <span className="text-[10px] font-mono text-slate-400 font-bold">
@@ -316,8 +316,8 @@ export const IotTelemetryView: React.FC = () => {
                   </h3>
                   <p className="text-[11px] text-slate-500 font-medium">
                     {isAr
-                      ? `النطاق المسموح به: ${s.min} ~ ${s.max} ${s.unit}`
-                      : `Permissible range: ${s.min} ~ ${s.max} ${s.unit}`}
+                      ? `📏 النطاق المسموح به: ${s.min} ~ ${s.max} ${s.unit}`
+                      : `📏 Permissible range: ${s.min} ~ ${s.max} ${s.unit}`}
                   </p>
                 </div>
               </div>
@@ -326,7 +326,7 @@ export const IotTelemetryView: React.FC = () => {
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
                 <div>
                   <span className="text-[10px] font-bold text-slate-400 block">
-                    {isAr ? 'القراءة الآن' : 'Current Value'}
+                    {isAr ? '⚡ القراءة الآن' : '⚡ Current Value'}
                   </span>
                   <div className="flex items-baseline gap-1">
                     <span
@@ -345,7 +345,7 @@ export const IotTelemetryView: React.FC = () => {
                 </div>
 
                 <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 shadow-inner">
-                  <i className="fa-solid fa-gauge text-lg"></i>
+                  <span className="text-xl">📡</span>
                 </div>
               </div>
 
@@ -356,7 +356,7 @@ export const IotTelemetryView: React.FC = () => {
                   onClick={() => setActiveTab('calibration')}
                   className="text-[11px] font-bold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1"
                 >
-                  <i className="fa-solid fa-scale-balanced text-[10px]"></i>
+                  <span>⚖️</span>
                   <span>{isAr ? 'سجل المعايرة' : 'Calibration'}</span>
                 </button>
 
@@ -367,7 +367,7 @@ export const IotTelemetryView: React.FC = () => {
                     onClick={() => handleCreateSensorNcr(s)}
                     className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-black shadow-sm transition-all flex items-center gap-1"
                   >
-                    <i className="fa-solid fa-plus text-[9px]"></i>
+                    <span>⚠️</span>
                     <span>{isAr ? 'قيد NCR' : 'Log NCR'}</span>
                   </motion.button>
                 )}
